@@ -5,40 +5,11 @@ namespace LetterBuilder
 {
     class DirectorySystem
     {
-        public string ConnectionString { get; }
-        struct CatalogTableRow
-        {
-            public int id;
-            public string name;
-            public int idParentCatalog;
-
-            public CatalogTableRow(int id = 0, string name = null, int idParentCatalog = 0)
-            {
-                this.id = id;
-                this.name = name;
-                this.idParentCatalog = idParentCatalog;
-            }
-        };
-
-        struct TextBlockTableRow
-        {
-            public int id;
-            public string name;
-            public string text;
-            public int idParentCatalog;
-
-            public TextBlockTableRow(int id = 0, string name = null, string text = null, int idParentCatalog = 0)
-            {
-                this.id = id;
-                this.name = name;
-                this.text = text;
-                this.idParentCatalog = idParentCatalog;
-            }
-        };
+        private readonly string _connectionString;
 
         public DirectorySystem(string connectionString)
         {
-            ConnectionString = connectionString;
+            _connectionString = connectionString;
         }
 
         /// <summary>
@@ -51,7 +22,7 @@ namespace LetterBuilder
         /// </param>
         public void AddCatalog(string name, int parentCatalogID = 0)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -63,7 +34,7 @@ namespace LetterBuilder
 
         public void UpdateCatalog(int id, string name, int parentCatalogID)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -75,7 +46,7 @@ namespace LetterBuilder
 
         public void DeleteCatalog(int id)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -96,7 +67,7 @@ namespace LetterBuilder
         /// </param>
         public void AddText(string name, string text, int parentCatalogID = 0)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -108,7 +79,7 @@ namespace LetterBuilder
 
         public void UpdateTextBlock(int id, string name, string text, int parentCatalogID)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -120,7 +91,7 @@ namespace LetterBuilder
 
         public void DeleteTextBlock(int id)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -142,10 +113,10 @@ namespace LetterBuilder
             Dictionary<int, List<int>> directoryChilds = new Dictionary<int, List<int>>();
             Dictionary<int, TextBlockTableRow> allTextBlockInfo = new Dictionary<int, TextBlockTableRow>();
             Dictionary<int, List<int>> directoryTextBlockAttachments = new Dictionary<int, List<int>>();
-
+            const int indentWidth = 2;
             // Получение данных о каталогах и их запись в allCatalogInfo и directoryChilds.
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -157,21 +128,21 @@ namespace LetterBuilder
                 {
                     CatalogTableRow currRow = new CatalogTableRow(
                         (int)reader.GetValue(0), (string)reader.GetValue(1), (int)reader.GetValue(2));
-                    allCatalogInfo[currRow.id] = currRow;
-                    if (directoryChilds.ContainsKey(currRow.idParentCatalog))
+                    allCatalogInfo[currRow.ID] = currRow;
+                    if (directoryChilds.ContainsKey(currRow.IDParentCatalog))
                     {
-                        directoryChilds[currRow.idParentCatalog].Add(currRow.id);
+                        directoryChilds[currRow.IDParentCatalog].Add(currRow.ID);
                     }
                     else
                     {
-                        directoryChilds[currRow.idParentCatalog] = new List<int> { currRow.id };
+                        directoryChilds[currRow.IDParentCatalog] = new List<int> { currRow.ID };
                     }
                 }
             }
 
             // Получение данных о текстовых файлах их запись в directoryTextBlockAttachments.
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand();
@@ -183,14 +154,14 @@ namespace LetterBuilder
                 {
                     TextBlockTableRow currRow = new TextBlockTableRow(
                         (int)reader.GetValue(0), (string)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3));
-                    allTextBlockInfo[currRow.id] = currRow;
-                    if (directoryTextBlockAttachments.ContainsKey(currRow.idParentCatalog))
+                    allTextBlockInfo[currRow.ID] = currRow;
+                    if (directoryTextBlockAttachments.ContainsKey(currRow.IDParentCatalog))
                     {
-                        directoryTextBlockAttachments[currRow.idParentCatalog].Add(currRow.id);
+                        directoryTextBlockAttachments[currRow.IDParentCatalog].Add(currRow.ID);
                     }
                     else
                     {
-                        directoryTextBlockAttachments[currRow.idParentCatalog] = new List<int> { currRow.id };
+                        directoryTextBlockAttachments[currRow.IDParentCatalog] = new List<int> { currRow.ID };
                     }
                 }
             }
@@ -199,7 +170,7 @@ namespace LetterBuilder
 
             if (allCatalogInfo.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             // folderIndicesProcessingOrder - стек, содержащий порядок обработки папок.
@@ -207,14 +178,14 @@ namespace LetterBuilder
             Stack<int> folderIndicesProcessingOrder = new Stack<int>();
             Stack<int> parentDirectoryIndices = new Stack<int>();
             int depthLevel = 0;
-            string result = "";
+            string result = string.Empty;
 
             // Вывод информации о файлах, находящихся в корневом каталоге
             if (directoryTextBlockAttachments.ContainsKey(0))
             {
                 foreach (int textBlockIdx in directoryTextBlockAttachments[0])
                 {
-                    result += $"{allTextBlockInfo[textBlockIdx].name} (text: {textBlockIdx})\n";
+                    result += $"{allTextBlockInfo[textBlockIdx].Name} (text: {textBlockIdx})\n";
                 }
             }
 
@@ -237,14 +208,15 @@ namespace LetterBuilder
                 }
                 else
                 {
-                    result += $"{new string(' ', depthLevel * 2)}{allCatalogInfo[currIdx].name} (catalog: {currIdx})\n";
+                    result += $"{new string(' ', depthLevel * indentWidth)}{allCatalogInfo[currIdx].Name} (catalog: {currIdx})\n";
 
                     // Запись в результирующую строку информации о вложенных файлах текущей папки
                     if (directoryTextBlockAttachments.ContainsKey(currIdx) && (directoryTextBlockAttachments[currIdx].Count != 0))
                     {
                         foreach (int textBlockIdx in directoryTextBlockAttachments[currIdx])
                         {
-                            result += $"{new string(' ', depthLevel * 2 + 2)}{allTextBlockInfo[textBlockIdx].name} (text: {textBlockIdx})\n";
+                            string blankIndent = new string(' ', (depthLevel + 1) * indentWidth);
+                            result += $"{blankIndent}{allTextBlockInfo[textBlockIdx].Name} (text: {textBlockIdx})\n";
                         }
                     }
 

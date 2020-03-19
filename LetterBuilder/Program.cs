@@ -86,7 +86,7 @@ namespace LetterBuilder
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect Input");
+                    Console.WriteLine("Integer value required");
                 }
             }
             else if ((args.Length == 3) && (args[0] == "--delete"))
