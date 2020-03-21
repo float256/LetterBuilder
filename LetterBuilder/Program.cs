@@ -5,10 +5,19 @@ namespace LetterBuilder
 {
     class Program
     {
+        static bool IsHelpCommand(string[] args) => (args.Length == 1) && (args[0] == "--help");
+        static bool IsShowtreeCommand(string[] args) => (args.Length == 1) && (args[0] == "--showtree");
+        static bool IsAddCatalogCommand(string[] args) => (args.Length == 2) && (args[0] == "--add") && (args[1] == "catalog");
+        static bool IsAddTextCommand(string[] args) => (args.Length == 2) && (args[0] == "--add") && (args[1] == "text");
+        static bool IsUpdateCatalogCommand(string[] args) => (args.Length == 3) && (args[0] == "--update") && (args[1] == "catalog");
+        static bool IsUpdateTextCommand(string[] args) => (args.Length == 3) && (args[0] == "--update") && (args[1] == "text");
+        static bool IsDeleteCalalogCommand(string[] args) => (args.Length == 3) && (args[0] == "--delete") && (args[1] == "catalog");
+        static bool IsDeleteTextCommand(string[] args) => (args.Length == 3) && (args[0] == "--delete") && (args[1] == "text");
+
         static void Main(string[] args)
         {
             DirectorySystem dirSystem = new DirectorySystem(@"Data Source=DESKTOP-2U3C1KN\SQLEXPRESS;Initial Catalog=DirectoryStructure;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            if ((args.Length == 1) && (args[0] == "--help"))
+            if (IsHelpCommand(args))
             {
                 Console.WriteLine("Available commands:\n" +
                     "  --showtree - print all catalogs\n" +
@@ -19,11 +28,11 @@ namespace LetterBuilder
                     "  --update catalog <id>\n" +
                     "  --update text <id>");
             }
-            else if ((args.Length == 1) && (args[0] == "--showtree"))
+            else if (IsShowtreeCommand(args))
             {
                 Console.Write(dirSystem.GetStructure());
             }
-            else if ((args.Length == 2) && (args[0] == "--add") && (args[1] == "catalog"))
+            else if (IsAddCatalogCommand(args))
             {
                 Console.Write("Please enter catalog name: ");
                 string catalogName = Console.ReadLine();
@@ -35,10 +44,10 @@ namespace LetterBuilder
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect Input");
+                    Console.WriteLine("Integer value required");
                 }
             }
-            else if ((args.Length == 2) && (args[0] == "--add") && (args[1] == "text"))
+            else if (IsAddTextCommand(args))
             {
                 Console.Write("Please enter text block name: ");
                 string name = Console.ReadLine();
@@ -54,10 +63,10 @@ namespace LetterBuilder
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect Input");
+                    Console.WriteLine("Integer value required");
                 }
             }
-            else if ((args.Length == 3) && (args[0] == "--update") && (args[1] == "catalog"))
+            else if (IsUpdateCatalogCommand(args))
             {
                 int id, parentCatalogId;
                 Console.Write("Please enter catalog name: ");
@@ -69,10 +78,10 @@ namespace LetterBuilder
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect Input");
+                    Console.WriteLine("Integer value required");
                 }
             }
-            else if ((args.Length == 3) && (args[0] == "--update") && (args[1] == "text"))
+            else if (IsUpdateTextCommand(args))
             {
                 int id, catalogId;
                 Console.Write("Please enter block name: ");
@@ -89,7 +98,7 @@ namespace LetterBuilder
                     Console.WriteLine("Integer value required");
                 }
             }
-            else if ((args.Length == 3) && (args[0] == "--delete"))
+            else if (IsDeleteCalalogCommand(args))
             {
                 int id;
                 Console.Write("Are you sure? yes/no: ");
@@ -98,22 +107,28 @@ namespace LetterBuilder
                 {
                     if (int.TryParse(args[2], out id))
                     {
-                        switch (args[1])
-                        {
-                            case "text":
-                                dirSystem.DeleteTextBlock(id);
-                                break;
-                            case "catalog":
-                                dirSystem.DeleteCatalog(id);
-                                break;
-                            default:
-                                Console.WriteLine("Incorrect Input");
-                                break;
-                        }
+                        dirSystem.DeleteCatalog(id);
                     }
                     else
                     {
-                        Console.WriteLine("Incorrect Input");
+                        Console.WriteLine("Integer value required");
+                    }
+                }
+            }
+            else if (IsDeleteTextCommand(args))
+            {
+                int id;
+                Console.Write("Are you sure? yes/no: ");
+                string answer = Console.ReadLine();
+                if (answer == "yes")
+                {
+                    if (int.TryParse(args[2], out id))
+                    {
+                        dirSystem.DeleteTextBlock(id);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Integer value required");
                     }
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace LetterBuilder
@@ -25,9 +26,11 @@ namespace LetterBuilder
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"INSERT INTO catalog VALUES ('{name}', {parentCatalogID})";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogID)", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar);
+                command.Parameters.Add("@parentCatalogID", SqlDbType.Int);
+                command.Parameters["@name"].Value = name;
+                command.Parameters["@parentCatalogID"].Value = parentCatalogID;
                 command.ExecuteNonQuery();
             }
         }
@@ -37,9 +40,13 @@ namespace LetterBuilder
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"UPDATE catalog SET name='{name}', id_parent_catalog={parentCatalogID} WHERE id_catalog={id}";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand("UPDATE catalog SET name=@name, id_parent_catalog=@parentCatalogID WHERE id_catalog=@ID", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar);
+                command.Parameters.Add("@parentCatalogID", SqlDbType.Int);
+                command.Parameters.Add("@ID", SqlDbType.Int);
+                command.Parameters["@name"].Value = name;
+                command.Parameters["@parentCatalogID"].Value = parentCatalogID;
+                command.Parameters["@ID"].Value = id;
                 command.ExecuteNonQuery();
             }
         }
@@ -49,9 +56,9 @@ namespace LetterBuilder
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"DELETE FROM catalog WHERE id_catalog={id}";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand("DELETE FROM catalog WHERE id_catalog=@ID", connection);
+                command.Parameters.Add("@ID", SqlDbType.Int);
+                command.Parameters["@ID"].Value = id;
                 command.ExecuteNonQuery();
             }
         }
@@ -70,9 +77,13 @@ namespace LetterBuilder
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"INSERT INTO text_block VALUES ('{name}', '{text}', {parentCatalogID})";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand("INSERT INTO text_block VALUES (@name, @text, @parentCatalogID)", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar);
+                command.Parameters.Add("@text", SqlDbType.NVarChar);
+                command.Parameters.Add("@parentCatalogID", SqlDbType.Int);
+                command.Parameters["@name"].Value = name;
+                command.Parameters["@text"].Value = text;
+                command.Parameters["@parentCatalogID"].Value = parentCatalogID;
                 command.ExecuteNonQuery();
             }
         }
@@ -82,9 +93,15 @@ namespace LetterBuilder
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"UPDATE text_block SET name='{name}', text='{text}', id_parent_catalog={parentCatalogID} WHERE id_text_block={id}";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand("UPDATE text_block SET name=@name, text=@text, id_parent_catalog=@parentCatalogID WHERE id_text_block=@ID", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar);
+                command.Parameters.Add("@text", SqlDbType.NVarChar);
+                command.Parameters.Add("@parentCatalogID", SqlDbType.Int);
+                command.Parameters.Add("@ID", SqlDbType.Int);
+                command.Parameters["@name"].Value = name;
+                command.Parameters["@text"].Value = text;
+                command.Parameters["@parentCatalogID"].Value = parentCatalogID;
+                command.Parameters["@ID"].Value = id;
                 command.ExecuteNonQuery();
             }
         }
@@ -94,9 +111,9 @@ namespace LetterBuilder
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"DELETE  FROM text_block WHERE id_text_block={id}";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand("DELETE FROM text_block WHERE id_text_block=@ID", connection);
+                command.Parameters.Add("@ID", SqlDbType.Int);
+                command.Parameters["@ID"].Value = id;
                 command.ExecuteNonQuery();
             }
         }
