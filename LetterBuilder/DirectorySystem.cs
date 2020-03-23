@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -119,33 +120,31 @@ namespace LetterBuilder
         }
 
         /// <summary>
-        ///     Этот метод возвращает структуру системы каталогов
+        /// Получение данных из таблицы catalog
         /// </summary>
         /// <returns>
-        ///     Строка, содержащая структуру системы
+        /// Функция возвращает два значения:
+        /// 1) Словарь содержащий всю информацию из таблицы catalog. Значение строк записывается в 
+        /// переменные класса CatalogTableRow. В качестве ключа для словаря используется id каталога
+        /// 2) Словарь содержащий id всех дочерних каталогов для каждого каталога. В качестве ключа
+        /// для словаря используется id каталога
         /// </returns>
-        public string GetStructure()
+        private (Dictionary<int, CatalogTableRow> catalogTableInfo, Dictionary<int, List<int>> directoryChilds) GetCatalogInfo()
         {
-            Dictionary<int, CatalogTableRow> allCatalogInfo = new Dictionary<int, CatalogTableRow>();
+            Dictionary<int, CatalogTableRow> catalogTableInfo = new Dictionary<int, CatalogTableRow>();
             Dictionary<int, List<int>> directoryChilds = new Dictionary<int, List<int>>();
-            Dictionary<int, TextBlockTableRow> allTextBlockInfo = new Dictionary<int, TextBlockTableRow>();
-            Dictionary<int, List<int>> directoryTextBlockAttachments = new Dictionary<int, List<int>>();
-            const int indentWidth = 2;
-            // Получение данных о каталогах и их запись в allCatalogInfo и directoryChilds.
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand();
-                command.CommandText = $"SELECT * FROM catalog";
-                command.Connection = connection;
+                SqlCommand command = new SqlCommand($"SELECT * FROM catalog", connection);
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     CatalogTableRow currRow = new CatalogTableRow(
                         (int)reader.GetValue(0), (string)reader.GetValue(1), (int)reader.GetValue(2));
-                    allCatalogInfo[currRow.ID] = currRow;
+                    catalogTableInfo[currRow.ID] = currRow;
                     if (directoryChilds.ContainsKey(currRow.IDParentCatalog))
                     {
                         directoryChilds[currRow.IDParentCatalog].Add(currRow.ID);
@@ -156,8 +155,23 @@ namespace LetterBuilder
                     }
                 }
             }
+            return (catalogTableInfo, directoryChilds);
+        }
 
-            // Получение данных о текстовых файлах их запись в directoryTextBlockAttachments.
+        /// <summary>
+        /// Получение данных из таблицы text_block
+        /// </summary>
+        /// <returns>
+        /// Функция возвращает два значения:
+        /// 1) Словарь содержащий всю информацию из таблицы text_block. Значение строк записывается в 
+        /// переменные класса TextBlockTableRow. В качестве ключа для словаря используется id каталога
+        /// 2) Словарь содержащий id всех текстовых файлов в каталоге. В качестве ключа
+        /// для словаря используется id каталога
+        /// </returns>
+        private (Dictionary<int, TextBlockTableRow> textBlockTableInfo, Dictionary<int, List<int>> directoryTextBlockAttachments)  GetTextBlockTableInfo()
+        {
+            Dictionary<int, TextBlockTableRow> textBlockTableInfo = new Dictionary<int, TextBlockTableRow>();
+            Dictionary<int, List<int>> directoryTextBlockAttachments = new Dictionary<int, List<int>>();
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -171,7 +185,7 @@ namespace LetterBuilder
                 {
                     TextBlockTableRow currRow = new TextBlockTableRow(
                         (int)reader.GetValue(0), (string)reader.GetValue(1), (string)reader.GetValue(2), (int)reader.GetValue(3));
-                    allTextBlockInfo[currRow.ID] = currRow;
+                    textBlockTableInfo[currRow.ID] = currRow;
                     if (directoryTextBlockAttachments.ContainsKey(currRow.IDParentCatalog))
                     {
                         directoryTextBlockAttachments[currRow.IDParentCatalog].Add(currRow.ID);
@@ -182,79 +196,75 @@ namespace LetterBuilder
                     }
                 }
             }
+            return (textBlockTableInfo, directoryTextBlockAttachments);
+        }
 
-            // Составление результирующей строки.
-
-            if (allCatalogInfo.Count == 0)
+        private Node CreateTree(Dictionary<int, List<int>> directoryChilds,
+            Dictionary<int, List<int>> directoryTextBlockAttachments,
+            int currentCatalog = 0)
+        {
+            Node result = new Node(currentCatalog, NodeType.Catalog);
+            if (directoryTextBlockAttachments.ContainsKey(currentCatalog))
             {
-                return string.Empty;
-            }
-
-            // folderIndicesProcessingOrder - стек, содержащий порядок обработки папок.
-            // parentDirectoryIndices - стек, содержащий индексы всех родительских каталогов относительно текущей обрабатываемой папки.
-            Stack<int> folderIndicesProcessingOrder = new Stack<int>();
-            Stack<int> parentDirectoryIndices = new Stack<int>();
-            int depthLevel = 0;
-            string result = string.Empty;
-
-            // Вывод информации о файлах, находящихся в корневом каталоге
-            if (directoryTextBlockAttachments.ContainsKey(0))
-            {
-                foreach (int textBlockIdx in directoryTextBlockAttachments[0])
+                foreach (int id in directoryTextBlockAttachments[currentCatalog])
                 {
-                    result += $"{allTextBlockInfo[textBlockIdx].Name} (text: {textBlockIdx})\n";
+                    result.AddChild(id, NodeType.TextBlock);
                 }
             }
-
-            foreach (int item in directoryChilds[0])
+            if (directoryChilds.ContainsKey(currentCatalog))
             {
-                folderIndicesProcessingOrder.Push(item);
-            }
-            while (folderIndicesProcessingOrder.Count != 0)
-            {
-                int currIdx = folderIndicesProcessingOrder.Peek();
-
-                // Если текущий обрабатываемый каталог находится в parentDirectoryIndices, то содержимое
-                // этой папки уже обработано и добавлено в result. Поэтому нужно удалить его из parentDirectoryIndices
-                // и folderIndicesProcessingOrder, и понизить уровень глубины папок.
-                if ((parentDirectoryIndices.Count != 0) && (parentDirectoryIndices.Peek() == currIdx))
+                foreach (int id in directoryChilds[currentCatalog])
                 {
-                    parentDirectoryIndices.Pop();
-                    folderIndicesProcessingOrder.Pop();
-                    depthLevel--;
-                }
-                else
-                {
-                    result += $"{new string(' ', depthLevel * indentWidth)}{allCatalogInfo[currIdx].Name} (catalog: {currIdx})\n";
-
-                    // Запись в результирующую строку информации о вложенных файлах текущей папки
-                    if (directoryTextBlockAttachments.ContainsKey(currIdx) && (directoryTextBlockAttachments[currIdx].Count != 0))
-                    {
-                        foreach (int textBlockIdx in directoryTextBlockAttachments[currIdx])
-                        {
-                            string blankIndent = new string(' ', (depthLevel + 1) * indentWidth);
-                            result += $"{blankIndent}{allTextBlockInfo[textBlockIdx].Name} (text: {textBlockIdx})\n";
-                        }
-                    }
-
-                    // Если у папки есть вложенные папки, то они добавляются в parentDirectoryIndices,
-                    // т.е. их обработка начнется сразу после текущей итерации
-                    if (directoryChilds.ContainsKey(currIdx) && (directoryChilds[currIdx].Count != 0))
-                    {
-                        parentDirectoryIndices.Push(currIdx);
-                        foreach (int item in directoryChilds[currIdx])
-                        {
-                            folderIndicesProcessingOrder.Push(item);
-                        }
-                        depthLevel++;
-                    }
-                    else
-                    {
-                        folderIndicesProcessingOrder.Pop();
-                    }
+                    result.AddChild(CreateTree(directoryChilds, directoryTextBlockAttachments, id));
                 }
             }
             return result;
+        }
+
+        private void PrintTree(Node tree, Dictionary<int, CatalogTableRow> catalogTableInfo,
+            Dictionary<int, TextBlockTableRow> textBlockTableInfo, int indentWidth = 2, int depthLevel = 0)
+        {
+            string blankIndent = new string(' ', depthLevel * indentWidth);
+            foreach (Node node in tree.NodeChilds)
+            {
+                if (node.Type == NodeType.Catalog)
+                {
+                    int id = catalogTableInfo[node.NodeData].ID;
+                    string name = catalogTableInfo[node.NodeData].Name;
+                    Console.WriteLine($"{blankIndent}{name}(catalog:{id})");
+                    PrintTree(node, catalogTableInfo, textBlockTableInfo, depthLevel: depthLevel + 1);
+                }
+                else
+                {
+                    int id = textBlockTableInfo[node.NodeData].ID;
+                    string name = textBlockTableInfo[node.NodeData].Name;
+                    Console.WriteLine($"{blankIndent}{name}(catalog:{id})");
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Этот метод выводит в консоль структуру системы каталогов
+        /// </summary>
+        public void PrintStructure()
+        {
+            Dictionary<int, CatalogTableRow> catalogTableInfo;
+            Dictionary<int, List<int>> directoryChilds;
+            Dictionary<int, TextBlockTableRow> textBlockTableInfo;
+            Dictionary<int, List<int>> directoryTextBlockAttachments;
+            string result = string.Empty;
+
+            // Получение данных о каталогах и их запись в catalogTableInfo и directoryChilds.
+            (catalogTableInfo, directoryChilds) = GetCatalogInfo();
+
+            // Получение данных о текстовых файлах их запись в directoryTextBlockAttachments.
+            (textBlockTableInfo, directoryTextBlockAttachments) = GetTextBlockTableInfo();
+
+            // Создание дерева файловой системы
+            Node tree = CreateTree(directoryChilds, directoryTextBlockAttachments);
+
+            // Печать результата.
+            PrintTree(tree, catalogTableInfo, textBlockTableInfo);
         }
     }
 }

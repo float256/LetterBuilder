@@ -30,7 +30,7 @@ namespace LetterBuilder
             }
             else if (IsShowtreeCommand(args))
             {
-                Console.Write(dirSystem.GetStructure());
+                dirSystem.PrintStructure();
             }
             else if (IsAddCatalogCommand(args))
             {
