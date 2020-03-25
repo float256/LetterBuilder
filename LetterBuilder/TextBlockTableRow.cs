@@ -6,17 +6,17 @@ namespace LetterBuilder
 {
     class TextBlockTableRow
     {
-        public int ID;
-        public string Name;
-        public string Text;
-        public int IDParentCatalog;
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
+        public int ParentCatalogId { get; set; }
 
-        public TextBlockTableRow(int id = 0, string name = "", string text = "", int idParentCatalog = 0)
+        public TextBlockTableRow(int id = 0, string name = "", string text = "", int parentCatalogId = 0)
         {
-            ID = id;
+            Id = id;
             Name = name;
             Text = text;
-            IDParentCatalog = idParentCatalog;
+            ParentCatalogId = parentCatalogId;
         }
     }
 }

@@ -6,15 +6,15 @@ namespace LetterBuilder
 {
     class CatalogTableRow
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int IDParentCatalog { get; set; }
+        public int ParentCatalogId { get; set; }
 
-        public CatalogTableRow(int id = 0, string name = "", int idParentCatalog = 0)
+        public CatalogTableRow(int id = 0, string name = "", int parentCatalogId = 0)
         {
-            ID = id;
+            Id = id;
             Name = name;
-            IDParentCatalog = idParentCatalog;
+            ParentCatalogId = parentCatalogId;
         }
     }
 }

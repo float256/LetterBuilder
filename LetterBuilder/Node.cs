@@ -4,33 +4,33 @@ using System.Text;
 
 namespace LetterBuilder
 {
-    class Node
+    public class Node
     {
-        public int NodeData { get; set; }
+        public int ElementId { get; set; }
         public NodeType Type;
-        public Node NodeParent { get; private set; }
-        public LinkedList<Node> NodeChilds { get; private set; } = new LinkedList<Node>();
+        public Node ParentNode { get; private set; }
+        public LinkedList<Node> ChildrenNodes { get; private set; } = new LinkedList<Node>();
 
-        public Node(int data, NodeType type, Node parent = null)
+        public Node(int elementId, NodeType type, Node parent = null)
         {
-            NodeData = data;
+            ElementId = elementId;
             Type = type;
-            NodeParent = parent;
+            ParentNode = parent;
         }
 
-        public void AddChild(int data, NodeType type)
+        public void AddChild(int elementId, NodeType type)
         {
-            Node node = new Node(data, type, this);
-            NodeChilds.AddLast(node);
+            Node node = new Node(elementId, type, this);
+            ChildrenNodes.AddLast(node);
         }
 
         public void AddChild(Node node)
         {
-            NodeChilds.AddLast(node);
+            ChildrenNodes.AddLast(node);
         }
     }
 
-    enum NodeType
+    public enum NodeType
     {
         Catalog = 1,
         TextBlock = 2
