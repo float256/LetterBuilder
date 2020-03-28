@@ -8,7 +8,7 @@ namespace LetterBuilder.Tests
     public class NodeTests
     {
         [Fact]
-        public void Node_AddElementId_NodeWithCorrectElementId()
+        public void Node_SetElementId_NodeWithoutChildren_NodeWithCorrectElementId()
         {
             // Arrange
             Node node = new Node(0, NodeType.Catalog);
@@ -23,7 +23,7 @@ namespace LetterBuilder.Tests
         }
 
         [Fact]
-        public void Node_AddElementId_NodeWithCorrectType()
+        public void Node_SetType_NodeWithoutChildren_NodeWithCorrectType()
         {
             // Arrange
             Node node = new Node(0, NodeType.Catalog);
@@ -38,51 +38,59 @@ namespace LetterBuilder.Tests
         }
 
         [Fact]
-        public void EmptyTree_AddSomeChildren_nonEmptyTreeWithCorrectChildrenElementId()
+        public void Node_AddChild_FiveChildrenNodes_AllChildrenNodesAddedWithCorrectElementIdAndType()
         {
             // Arrange
             Node node = new Node(0, NodeType.Catalog);
+            List<int> testElementsId = new List<int> { 30239, 0 , 1, 123, 837293};
+            List<NodeType> testTypes = new List<NodeType>()
+            {
+                NodeType.Catalog,
+                NodeType.TextBlock,
+                NodeType.Catalog,
+                NodeType.TextBlock,
+                NodeType.Catalog
+            };
 
             // Act
-            List<int> testValues = new List<int>();
-            Random randomGenerator = new Random();
-            for (int i = 0; i < randomGenerator.Next(1, 100); i++)
+            for (int i = 0; i < 5; i++)
             {
-                testValues.Add(randomGenerator.Next());
-                node.AddChild(testValues[i], NodeType.Catalog);
+                node.AddChild(testElementsId[i], testTypes[i]);
             }
 
             // Assert
-            List<int> valuesFromTree = new List<int>();
-            foreach (Node item in node.ChildrenNodes)
+            for (int i = 0; i < 5; i++)
             {
-                valuesFromTree.Add(item.ElementId);
+                Assert.Equal(testElementsId[i], node.ChildrenNodes[i].ElementId);
+                Assert.Equal(testTypes[i], node.ChildrenNodes[i].Type);
             }
-            Assert.Equal(testValues, valuesFromTree);
         }
 
         [Fact]
-        public void EmptyTree_AddSomeChildren_nonEmptyTreeWithCorrectChildrenType()
+        public void Node_AddChild_FiveChildrenNodes_AllChildrenNodesAddedInCorrectOrder()
         {
             // Arrange
             Node node = new Node(0, NodeType.Catalog);
+            List<Node> testNodes = new List<Node>
+            {
+                new Node(2, NodeType.Catalog),
+                new Node(3189, NodeType.TextBlock),
+                new Node(1, NodeType.TextBlock),
+                new Node(223, NodeType.Catalog),
+                new Node(1111, NodeType.Catalog)
+            };
 
             // Act
-            List<NodeType> testTypes = new List<NodeType>();
-            Random randomGenerator = new Random();
-            for (int i = 0; i < randomGenerator.Next(1, 100); i++)
+            foreach (Node item in testNodes)
             {
-                testTypes.Add((NodeType) randomGenerator.Next(1, 3));
-                node.AddChild(0, testTypes[i]);
+                node.AddChild(item);
             }
 
             // Assert
-            List<NodeType> typesFromTree = new List<NodeType>();
-            foreach (Node item in node.ChildrenNodes)
+            for (int i = 0; i < 5; i++)
             {
-                typesFromTree.Add(item.Type);
+                Assert.Equal(node.ChildrenNodes[i], testNodes[i]);
             }
-            Assert.Equal(testTypes, typesFromTree);
         }
     }
 }

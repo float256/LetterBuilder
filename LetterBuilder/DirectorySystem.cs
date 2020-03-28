@@ -9,18 +9,6 @@ namespace LetterBuilder
     {
         private readonly string _connectionString;
 
-        private struct CatalogsReadingResult
-        {
-            public Dictionary<int, CatalogTableRow> CatalogTableInfo;
-            public Dictionary<int, List<int>> CatalogToChildCatalogsMap;
-        }
-
-        private struct TextBlocksReadingResult
-        {
-            public Dictionary<int, TextBlockTableRow> TextBlockTableInfo;
-            public Dictionary<int, List<int>> CatalogToChildTextBlocksMap;
-        }
-
         public DirectorySystem(string connectionString)
         {
             _connectionString = connectionString;
