@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
-    <title>Document</title>
+    <title>Adding Catalog</title>
 </head>
 <body>
     <!-- Navigation bar -->
@@ -30,9 +30,9 @@
     </nav>
     <div class="row container-fluid main-block">
 
-        <!-- Directory Structure -->
+        <!-- All Directories -->
 
-        <div class="col-4 p-3">
+        <div class="col-4 p-3 overflow-auto">
             <div class="folder pt-2 pl-2">
                 <a class="text-decoration-none text-dark" href="#">
                     <i class="fas fa-folder-open"></i>
@@ -98,46 +98,25 @@
             </div>
         </div>
 
-        <!-- Folder Content -->
+        <!-- Catalog Editing -->
 
         <div class="col-8 ml-auto mb-5">
-            <div class="folder-content w-75 mx-auto mt-4 container">
-                <div class="row">
-                    <div class="col-1 mt-auto mb-auto">
-                        <i class="fas fa-folder-open"></i>
+            <div class="folder-content w-75 pt-4 pb-4 px-5 mt-4 container">
+                <h1>Добавление каталога</h1>
+                <form action="" class="p-0" method="post">
+                    <div class="form-group col-9 p-0">
+                        <label for="CatalogName" class="text-primary mt-2">Название</label>
+                        <input name="catalog_name" class="p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field" id="CatalogName">
                     </div>
-                    <p class="col-10  mt-auto mb-auto">
-                        Catalog
-                    </p>
-                    <div class="dropleft ml-auto">
-                        <button class="btn shadow-none mt-auto mb-auto" id="catalog1DropdownMenu" data-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
-                            <a class="dropdown-item" href="#">Редактировать</a>
-                            <a class="dropdown-item" href="#">Удалить</a>
-                            <a class="dropdown-item" href="#">Другое действие</a>
-                        </div>
+                    <div class="form-group col-9 p-0">
+                        <label for="CatalogText" class="text-primary mt-2 mb-3">Текст</label>
+                        <textarea name="text" class="p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field" id="CatalogText" rows="1"></textarea>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-1 mt-auto mb-auto">
-                        <i class="fas fa-file-alt"></i>
+                    <div class="row justify-content-md-center my-5 pt-1">
+                        <a href="catalog-view.html" class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Отмена</a>
+                        <button type="submit" class="btn col-2 rounded-0 pt-2 pb-2 btn-primary">Сохранить</button>
                     </div>
-                    <p class="col-10  mt-auto mb-auto">
-                        Text Block
-                    </p>
-                    <div class="dropleft ml-auto">
-                        <button class="btn shadow-none mt-auto mb-auto" id="text1DropdownMenu" data-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu rounded-0" aria-labelledby="text1DropdownMenu">
-                            <a class="dropdown-item" href="#">Редактировать</a>
-                            <a class="dropdown-item" href="#">Удалить</a>
-                            <a class="dropdown-item" href="#">Другое действие</a>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
