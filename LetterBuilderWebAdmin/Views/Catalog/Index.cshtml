@@ -1,0 +1,43 @@
+﻿@model List<Catalog>;
+@{
+    ViewData["Title"] = "Catalog Content";
+}
+<div class="col-3 p-3 overflow-auto all_directories">
+    -
+</div>
+
+<div class="col-9 mb-5">
+    @if (Model.Count > 0)
+    {
+        <div class="folder-content mt-4 container">
+            @foreach (Catalog item in Model)
+            {
+                <div class="row">
+                    <div class="col-1 mt-auto mb-auto">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <a href="/Catalog/Index/@item.Id" class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                        @item.Name
+                    </a>
+                    <div class="dropleft ml-auto">
+                        <button class="btn shadow-none mt-auto mb-auto" id="catalog1DropdownMenu" data-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
+                            <a class="dropdown-item" href="#">Редактировать</a>
+                            <a class="dropdown-item" href="#">Удалить</a>
+                            <a class="dropdown-item" href="#">Добавить каталог</a>
+                            <a class="dropdown-item" href="#">Добавить текстовый файл</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="w-75 mt-5 mx-auto">
+            <h1 class="display-4 mx-auto mt-5">Каталог пуст</h1>
+        </div>
+    }
+</div>
