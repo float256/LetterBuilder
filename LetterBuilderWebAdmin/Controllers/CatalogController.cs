@@ -11,17 +11,25 @@ namespace LetterBuilderWebAdmin.Controllers
     public class CatalogController : Controller
     {
         private string _connectionString;
+        private CatalogRepository _catalogRepository;
+        private TextBlockRepository _textBlockRepository;
+
         public CatalogController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("default");
+            _catalogRepository = new CatalogRepository(_connectionString);
+            _textBlockRepository = new TextBlockRepository(_connectionString);
         }
 
         [HttpGet]
         public IActionResult Index(int id)
         {
-            CatalogRepository catalogRepository = new CatalogRepository(_connectionString);
-            
-            return View(catalogRepository.GetCatalogContent(id));
+            CatalogContent catalogContent = new CatalogContent
+            {
+                Catalogs = _catalogRepository.GetSubcatalogsByParentCatalogId(id),
+                TextBlocks = _textBlockRepository.GetTextBlocksByParentCatalogId(id)
+            };
+            return View(catalogContent);
         }
 
         [HttpGet]
@@ -31,29 +39,26 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult Delete(int id) => View();
 
         [HttpGet]
-        public IActionResult Update(int id) => View();
+        public IActionResult Update(int id) => View(_catalogRepository.GetById(id));
 
         [HttpPost]
         public IActionResult AddCatalog(Catalog catalog)
         {
-            CatalogRepository catalogRepository = new CatalogRepository(_connectionString);
-            catalogRepository.Add(catalog);
+            _catalogRepository.Add(catalog);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult DeleteCatalog(Catalog catalog)
         {
-            CatalogRepository catalogRepository = new CatalogRepository(_connectionString);
-            catalogRepository.Delete(catalog.Id);
+            _catalogRepository.Delete(catalog.Id);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult UpdateCatalog(Catalog catalog)
         {
-            CatalogRepository catalogRepository = new CatalogRepository(_connectionString);
-            catalogRepository.Update(catalog);
+            _catalogRepository.Update(catalog);
             return RedirectToAction("Index");
         }
     }

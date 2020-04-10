@@ -10,7 +10,6 @@ namespace LetterBuilderWebAdmin.Models
     public class CatalogRepository : IRepository<Catalog>
     {
         private string _connectionString;
-        public int ParentCatalogId { get; set; }
 
         public CatalogRepository(string connectionString)
         {
@@ -54,13 +53,20 @@ namespace LetterBuilderWebAdmin.Models
         }
 
         /// <summary>
-        /// Данный метод удаляет каталог из базы данных и все вложенные в него каталоги
+        /// Данный метод удаляет каталог из базы данных и все вложенные в него каталоги и текстовые файлы
         /// </summary>
-        /// <param name="id">Id каталога, которое требуется удалить</param>
+        /// <param name="id">Id каталога, которого требуется удалить</param>
         public void Delete(int id)
         {
+            // Удаление вложенных файлов
+            TextBlockRepository textBlockRepository = new TextBlockRepository(_connectionString);
+            foreach (TextBlock item in textBlockRepository.GetTextBlocksByParentCatalogId(id))
+            {
+                textBlockRepository.Delete(item.Id);
+            }
+
             // Удаление вложенных каталогов
-            foreach (Catalog item in GetCatalogContent(id))
+            foreach (Catalog item in GetSubcatalogsByParentCatalogId(id))
             {
                 Delete(item.Id);
             }
@@ -80,16 +86,16 @@ namespace LetterBuilderWebAdmin.Models
         /// Данный метод возвращает все каталоги, находящиеся в указанной директории.
         /// Если подкаталогов нет, то возвращается пустой список
         /// </summary>
-        /// <param name="id">Id каталога</param>
-        public List<Catalog> GetCatalogContent(int id)
+        /// <param name="parentCatalogId">Id родительского каталога</param>
+        public List<Catalog> GetSubcatalogsByParentCatalogId(int parentCatalogId)
         {
-            List<Catalog> catalogContent = new List<Catalog>();
+            List<Catalog> subcatalogs = new List<Catalog>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection);
                 command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
-                command.Parameters["@parentCatalogId"].Value = id;
+                command.Parameters["@parentCatalogId"].Value = parentCatalogId;
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -100,10 +106,10 @@ namespace LetterBuilderWebAdmin.Models
                         Name = (string)reader.GetValue(1),
                         ParentCatalogId = (int)reader.GetValue(2)
                     };
-                    catalogContent.Add(currCatalog);
+                    subcatalogs.Add(currCatalog);
                 }
             }
-            return catalogContent.FindAll(item => item.ParentCatalogId == id);
+            return subcatalogs;
         }
 
         /// <summary>
