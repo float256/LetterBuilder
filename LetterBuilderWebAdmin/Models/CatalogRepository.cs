@@ -11,11 +11,108 @@ namespace LetterBuilderWebAdmin.Models
     {
         private string _connectionString;
         public int ParentCatalogId { get; set; }
-        public List<Catalog> RepositoryContent { get; } = new List<Catalog>();
 
         public CatalogRepository(string connectionString)
         {
             _connectionString = connectionString;
+        }
+
+        /// <summary>
+        /// Метод добавляет в базу данных каталог с указанными в entity значениями
+        /// </summary>
+        /// <param name="entity">Объект типа Catalog</param>
+        public void Add(Catalog entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId)", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar);
+                command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
+                command.Parameters["@name"].Value = entity.Name;
+                command.Parameters["@parentCatalogId"].Value = entity.ParentCatalogId;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Данный метод обновляет имя каталога в базе данных. Id записи берется из поля Id передаваемого объекта
+        /// </summary>
+        /// <param name="entity">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
+        public void Update(Catalog entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("UPDATE catalog SET name=@name WHERE id_catalog=@id", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar);
+                command.Parameters.Add("@id", SqlDbType.Int);
+                command.Parameters["@name"].Value = entity.Name;
+                command.Parameters["@id"].Value = entity.Id;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Данный метод удаляет каталог из базы данных и все вложенные в него каталоги
+        /// </summary>
+        /// <param name="id">Id каталога, которое требуется удалить</param>
+        public void Delete(int id)
+        {
+            // Удаление вложенных каталогов
+            foreach (Catalog item in GetCatalogContent(id))
+            {
+                Delete(item.Id);
+            }
+
+            // Удаление текущего каталога
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("DELETE FROM catalog WHERE id_catalog=@id", connection);
+                command.Parameters.Add("@id", SqlDbType.Int);
+                command.Parameters["@id"].Value = id;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Данный метод возвращает все каталоги, находящиеся в указанной директории.
+        /// Если подкаталогов нет, то возвращается пустой список
+        /// </summary>
+        /// <param name="id">Id каталога</param>
+        public List<Catalog> GetCatalogContent(int id)
+        {
+            List<Catalog> catalogContent = new List<Catalog>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection);
+                command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
+                command.Parameters["@parentCatalogId"].Value = id;
+                command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Catalog currCatalog = new Catalog
+                    {
+                        Id = (int)reader.GetValue(0),
+                        Name = (string)reader.GetValue(1),
+                        ParentCatalogId = (int)reader.GetValue(2)
+                    };
+                    catalogContent.Add(currCatalog);
+                }
+            }
+            return catalogContent.FindAll(item => item.ParentCatalogId == id);
+        }
+
+        /// <summary>
+        /// Данный метод возвращает все каталоги, находящиеся в базе данных
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Catalog> GetAll()
+        {
+            List<Catalog> repositoryContent = new List<Catalog>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -30,77 +127,40 @@ namespace LetterBuilderWebAdmin.Models
                         Name = (string)reader.GetValue(1),
                         ParentCatalogId = (int)reader.GetValue(2)
                     };
-                    RepositoryContent.Add(currCatalog);
+                    repositoryContent.Add(currCatalog);
                 }
             }
+            return repositoryContent;
         }
 
+
         /// <summary>
-        /// Метод добавляет в базу данных и в RepositoryContent каталог с указанными в entity значениями
+        /// Данный метод возвращает запись из базы данных по Id
         /// </summary>
-        /// <param name="entity">Объект типа Catalog</param>
-        public void Add(Catalog entity)
+        /// <param name="id">Id записи</param>
+        /// <returns>Объект класса Catalog, содержащий значения для указанного
+        /// каталога из базы данных. Если записи нет, то возвращается объект со значениями по-умолчанию</returns>
+        public Catalog GetById(int id)
         {
-            RepositoryContent.Add(entity);
+            Catalog catalog = new Catalog();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId)", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
-                command.Parameters["@name"].Value = entity.Name;
-                command.Parameters["@parentCatalogId"].Value = entity.ParentCatalogId;
-                RepositoryContent[RepositoryContent.Count - 1].Id = (int)command.ExecuteScalar();
-            }
-        }
-
-        /// <summary>
-        /// Данный метод обновляет значение в базе данных и в RepositoryContent. Id записи берется из поля Id передаваемого объекта
-        /// </summary>
-        /// <param name="entity">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
-        public void Update(Catalog entity)
-        {
-            Catalog catalogFromRepository = RepositoryContent.Find(item => item.Id == entity.Id);
-            catalogFromRepository.Name = entity.Name;
-            catalogFromRepository.ParentCatalogId = entity.ParentCatalogId;
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand("UPDATE catalog SET name=@name, id_parent_catalog=@parentCatalogId WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
-                command.Parameters.Add("@id", SqlDbType.Int);
-                command.Parameters["@name"].Value = entity.Name;
-                command.Parameters["@parentCatalogId"].Value = entity.ParentCatalogId;
-                command.Parameters["@id"].Value = entity.Id;
-                command.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Данный метод удаляет значение из базы данных и из RepositoryContent
-        /// </summary>
-        /// <param name="id">Id значения, которое требуется удалить</param>
-        public void Delete(int id)
-        {
-            RepositoryContent.Remove(RepositoryContent.Find(item => item.Id == id));
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand("DELETE FROM catalog WHERE id_catalog=@id", connection);
+                SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_catalog = @id", connection);
                 command.Parameters.Add("@id", SqlDbType.Int);
                 command.Parameters["@id"].Value = id;
                 command.ExecuteNonQuery();
-            }
-        }
 
-        /// <summary>
-        /// Данный метод возвращает все каталоги, находящиеся в директории
-        /// </summary>
-        /// <param name="id">Id каталога</param>
-        public List<Catalog> GetCatalogContent(int id)
-        {
-            return RepositoryContent.FindAll(item => item.ParentCatalogId == id);
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    catalog.Id = (int)reader.GetValue(0);
+                    catalog.Name = (string)reader.GetValue(1);
+                    catalog.ParentCatalogId = (int)reader.GetValue(2);
+                }
+            }
+            return catalog;
         }
     }
 }

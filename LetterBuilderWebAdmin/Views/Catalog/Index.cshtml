@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "Catalog Content";
 }
+
 <div class="col-3 p-3 overflow-auto all_directories">
-    -
 </div>
 
 <div class="col-9 mb-5">
@@ -24,10 +24,10 @@
                             <i class="fas fa-ellipsis-v"></i>
                         </button>
                         <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
-                            <a class="dropdown-item" href="#">Редактировать</a>
-                            <a class="dropdown-item" href="#">Удалить</a>
-                            <a class="dropdown-item" href="#">Добавить каталог</a>
-                            <a class="dropdown-item" href="#">Добавить текстовый файл</a>
+                            <a class="dropdown-item" href="@Url.Action("Update", "Catalog", new { id = item.Id})">Редактировать</a>
+                            <a class="dropdown-item" href="@Url.Action("Delete", "Catalog", new { id = item.Id})">Удалить</a>
+                            <a class="dropdown-item" href="@Url.Action("Add", "Catalog", new { id = item.Id})">Добавить каталог</a>
+                            <a class="dropdown-item" href="@Url.Action("Add", "TextBlock", new { id = item.Id})">Добавить текстовый файл</a>
                         </div>
                     </div>
                 </div>
@@ -38,6 +38,10 @@
     {
         <div class="w-75 mt-5 mx-auto">
             <h1 class="display-4 mx-auto mt-5">Каталог пуст</h1>
+            <p class="mt-4">
+                Вы можете добавить <a href=@Url.Action("Add", "Catalog", new { id = @ViewContext.RouteData.Values["id"] })>каталог</a> или
+                <a href=@Url.Action("Add", "TextBlock", new { id = @ViewContext.RouteData.Values["id"] })>текстовый файл сюда</a>
+            </p>
         </div>
     }
 </div>

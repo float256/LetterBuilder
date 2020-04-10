@@ -19,8 +19,8 @@
                 <i class="fas fa-ellipsis-v"></i>
             </button>
             <div class="dropdown-menu rounded-0 dropdown-menu-right" aria-labelledby="MainDropdownMenu">
-                <a class="dropdown-item" href="#">Добавить каталог</a>
-                <a class="dropdown-item" href="#">Добавить текст</a>
+                <a class="dropdown-item" href=@Url.Action("Add", "Catalog", new { id = @ViewContext.RouteData.Values["id"] })>Добавить каталог</a>
+                <a class="dropdown-item" href=@Url.Action("Add", "TextBlock", new { id = @ViewContext.RouteData.Values["id"] })>Добавить текст</a>
             </div>
         </div>
     </nav>
