@@ -1,0 +1,26 @@
+﻿@model CatalogContent;
+
+@foreach (Catalog item in Model.Catalogs)
+{
+    <div class="folder pt-2 pl-2">
+        <a class="text-decoration-none text-dark" href=@Url.Action("Index", "Catalog", new { id = item.Id })>
+            <i class="fas fa-folder-open"></i>
+            @item.Name
+        </a>
+        <button class="btn shadow-none list_expansion_button" type="button" data-toggle="collapse" data-target="#catalog-@item.Id" aria-expanded="false">
+            <i class="fas fa-caret-left"></i>
+        </button>
+        <div class="collapse pl-4" id="catalog-@item.Id">
+            @await Component.InvokeAsync("DirectoryStructure", new { id = item.Id })
+        </div>
+    </div>
+}
+@foreach (TextBlock item in Model.TextBlocks)
+{
+    <div class="text pt-2 pl-2">
+        <p class="text-decoration-none text-dark">
+            <i class="fas fa-file-alt"></i>
+            @item.Name
+        </p>
+    </div>
+}

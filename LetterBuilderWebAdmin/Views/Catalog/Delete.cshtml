@@ -2,18 +2,15 @@
     ViewData["Title"] = "Delete Catalog";
 }
 
-<div class="col-3 p-3 overflow-auto all_directories">
-</div>
-
 <div class="col-9 ml-auto mb-5">
     <div class="folder-content pt-5 pb-4 px-5 mt-4 container">
         <h1>Вы уверены?</h1>
-        <form action=@Url.Action("DeleteCatalog", "Catalog") method="post" class="p-0">
+        <form asp-controller="Catalog" asp-action="DeleteCatalog" method="post" class="p-0">
             <div class="row justify-content-md-center my-5 pt-1">
                 <a href=@Url.Action("Index", "Catalog") class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Нет</a>
                 <button type="submit" class="btn col-2 rounded-0 pt-2 pb-2 btn-primary">Да</button>
             </div>
-        <input name="Id" type="hidden" value="@ViewContext.RouteData.Values["id"]">
-    </form>
+            <input name="Id" type="hidden" value="@ViewContext.RouteData.Values["id"]">
+        </form>
     </div>
 </div>

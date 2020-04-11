@@ -3,13 +3,10 @@
     ViewData["Title"] = "Update Text Block";
 }
 
-<div class="col-3 p-3 overflow-auto all_directories">
-</div>
-
 <div class="col-9 ml-auto mb-5">
     <div class="folder-content pt-5 pb-4 px-5 mt-4 container">
         <h1>Обновление текстового файла</h1>
-        <form action=@Url.Action("UpdateTextBlock", "TextBlock") method="post" class="p-0">
+        <form asp-action="UpdateTextBlock" asp-controller="TextBlock" class="p-0" method="post">
             <div class="form-group col-9 p-0">
                 <label asp-for="Name" class="text-primary mt-2">Название</label>
                 <input asp-for="Name" class="p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field" id="CatalogName">
