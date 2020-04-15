@@ -1,10 +1,11 @@
-﻿@{
+﻿@model TextBlock
+@{
     ViewData["Title"] = "Delete Text Block";
 }
 
 <div class="col-9 ml-auto mb-5">
     <div class="folder-content pt-5 pb-4 px-5 mt-4 container">
-        <h1>Вы уверены?</h1>
+        <h1 class="text-center">Вы уверены, что хотите удалить текстовый блок "@Model.Name"?</h1>
         <form asp-action="DeleteTextBlock" asp-controller="TextBlock" method="post" class="p-0">
             <div class="row justify-content-md-center my-5 pt-1">
                 <a href=@Url.Action("Index", "Catalog") class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Нет</a>

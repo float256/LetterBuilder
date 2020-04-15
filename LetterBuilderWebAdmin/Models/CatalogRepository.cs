@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LetterBuilderWebAdmin.Models
 {
-    public class CatalogRepository : IRepository<Catalog>
+    public class CatalogRepository : ICatalogRepository
     {
         private string _connectionString;
 
@@ -25,12 +25,10 @@ namespace LetterBuilderWebAdmin.Models
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId)", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
-                command.Parameters["@name"].Value = entity.Name;
-                command.Parameters["@parentCatalogId"].Value = entity.ParentCatalogId;
-                command.ExecuteNonQuery();
+                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId) SELECT SCOPE_IDENTITY()", connection);
+                command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
+                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                entity.Id = Convert.ToInt32(command.ExecuteScalar());
             }
         }
 
@@ -44,10 +42,8 @@ namespace LetterBuilderWebAdmin.Models
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand("UPDATE catalog SET name=@name WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar);
-                command.Parameters.Add("@id", SqlDbType.Int);
-                command.Parameters["@name"].Value = entity.Name;
-                command.Parameters["@id"].Value = entity.Id;
+                command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
                 command.ExecuteNonQuery();
             }
         }
@@ -76,8 +72,7 @@ namespace LetterBuilderWebAdmin.Models
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand("DELETE FROM catalog WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int);
-                command.Parameters["@id"].Value = id;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
                 command.ExecuteNonQuery();
             }
         }
@@ -94,8 +89,7 @@ namespace LetterBuilderWebAdmin.Models
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int);
-                command.Parameters["@parentCatalogId"].Value = parentCatalogId;
+                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -116,7 +110,7 @@ namespace LetterBuilderWebAdmin.Models
         /// Данный метод возвращает все каталоги, находящиеся в базе данных
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Catalog> GetAll()
+        public List<Catalog> GetAll()
         {
             List<Catalog> repositoryContent = new List<Catalog>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -153,8 +147,7 @@ namespace LetterBuilderWebAdmin.Models
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_catalog = @id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int);
-                command.Parameters["@id"].Value = id;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
                 command.ExecuteNonQuery();
 
                 SqlDataReader reader = command.ExecuteReader();

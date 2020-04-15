@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LetterBuilderWebAdmin.Models
 {
-    public class TextBlock : IEntity
+    public class TextBlock
     {
         [Required(ErrorMessage = "Данное поле является обязательным")]
         [HiddenInput(DisplayValue = false)]

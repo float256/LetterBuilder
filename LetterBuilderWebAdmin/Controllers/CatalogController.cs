@@ -36,7 +36,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult Add(int id) => View();
 
         [HttpGet]
-        public IActionResult Delete(int id) => View();
+        public IActionResult Delete(int id) => View(_catalogRepository.GetById(id));
 
         [HttpGet]
         public IActionResult Update(int id) => View(_catalogRepository.GetById(id));
