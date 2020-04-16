@@ -33,7 +33,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(int id) => View();
+        public IActionResult Add(int id) => View(_catalogRepository.GetById(id));
 
         [HttpGet]
         public IActionResult Delete(int id) => View(_catalogRepository.GetById(id));
@@ -45,21 +45,22 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult AddCatalog(Catalog catalog)
         {
             _catalogRepository.Add(catalog);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
 
         [HttpPost]
-        public IActionResult DeleteCatalog(Catalog catalog)
+        public IActionResult DeleteCatalog(int id)
         {
+            Catalog catalog = _catalogRepository.GetById(id);
             _catalogRepository.Delete(catalog.Id);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult UpdateCatalog(Catalog catalog)
         {
             _catalogRepository.Update(catalog);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
     }
 }

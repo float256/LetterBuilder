@@ -13,6 +13,7 @@ namespace LetterBuilderWebAdmin.Controllers
     {
         private string _connectionString;
         private TextBlockRepository _textBlockRepository;
+
         public TextBlockController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("default");
@@ -20,7 +21,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(int id) => View();
+        public IActionResult Add(int id) => View(new TextBlock { ParentCatalogId = id });
 
         [HttpGet]
         public IActionResult Delete(int id) => View(_textBlockRepository.GetById(id));
@@ -32,21 +33,22 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult AddTextBlock(TextBlock textBlock)
         {
             _textBlockRepository.Add(textBlock);
-            return RedirectToAction("Index", "Catalog");
+            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
 
         [HttpPost]
-        public IActionResult DeleteTextBlock(TextBlock textBlock)
+        public IActionResult DeleteTextBlock(int id)
         {
-            _textBlockRepository.Delete(textBlock.Id);
-            return RedirectToAction("Index", "Catalog");
+            TextBlock textBlock = _textBlockRepository.GetById(id);
+            _textBlockRepository.Delete(id);
+            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult UpdateTextBlock(TextBlock textBlock)
         {
             _textBlockRepository.Update(textBlock);
-            return RedirectToAction("Index", "Catalog");
+            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
     }
 }

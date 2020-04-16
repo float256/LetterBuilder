@@ -13,7 +13,7 @@
                     <div class="col-1 mt-auto mb-auto">
                         <i class="fas fa-folder-open"></i>
                     </div>
-                    <a href="/Catalog/Index/@item.Id" class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                    <a href=@Url.Action("Index", "Catalog", new { id = item.Id }) class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
                         @item.Name
                     </a>
                     <div class="dropleft ml-auto">
@@ -23,8 +23,6 @@
                         <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
                             <a class="dropdown-item" href="@Url.Action("Update", "Catalog", new { id = item.Id})">Редактировать</a>
                             <a class="dropdown-item" href="@Url.Action("Delete", "Catalog", new { id = item.Id})">Удалить</a>
-                            <a class="dropdown-item" href="@Url.Action("Add", "Catalog", new { id = item.Id})">Добавить каталог</a>
-                            <a class="dropdown-item" href="@Url.Action("Add", "TextBlock", new { id = item.Id})">Добавить текстовый файл</a>
                         </div>
                     </div>
                 </div>
@@ -35,9 +33,9 @@
                     <div class="col-1 mt-auto mb-auto">
                         <i class="fas fa-file-alt"></i>
                     </div>
-                    <p class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                    <a href=@Url.Action("Update", "TextBlock", new { id = item.Id }) class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
                         @item.Name
-                    </p>
+                    </a>
                     <div class="dropleft ml-auto">
                         <button class="btn shadow-none mt-auto mb-auto" id="catalog1DropdownMenu" data-toggle="dropdown">
                             <i class="fas fa-ellipsis-v"></i>
