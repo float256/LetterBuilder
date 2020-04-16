@@ -1,0 +1,22 @@
+﻿@model Catalog
+@{
+    ViewData["Title"] = "Update Catalog";
+}
+
+<div class="col-9 ml-auto mb-5">
+    <div class="folder-content pt-5 pb-4 px-5 mt-4 container">
+        <h1>Обновление каталога</h1>
+        <form asp-action="UpdateCatalog" asp-controller="Catalog" method="post" class="p-0">
+            <div class="form-group col-9 p-0">
+                <label asp-for="Name" class="text-primary mt-2">Название</label>
+                <input asp-for="Name" class="p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field" id="CatalogName" value=@Model.Name>
+                <span asp-validation-for="Name" class="text-danger mt-2 small" />
+            </div>
+            <div class="row justify-content-md-center my-5 pt-1">
+                <a href=@Url.Action("Index", "Catalog") class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Отмена</a>
+                <button type="submit" class="btn col-2 rounded-0 pt-2 pb-2 btn-primary">Сохранить</button>
+            </div>
+            <input asp-for="Id" type="hidden" value="@Model.Id">
+        </form>
+</div>
+</div>

@@ -1,0 +1,25 @@
+﻿h1 {
+    font-size: 20px;
+}
+
+.navbar {
+    background-color: #3367d6;
+}
+
+.folder-content {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+    margin-left: 6vw;
+    width: 70%;
+}
+
+.field:focus {
+    border-color: #e07373;
+}
+
+.list_expansion_button {
+    transition: 0.25s;
+}
+
+.list_expansion_button[data-is-open=true] {
+    transform: rotate(-90deg);
+}

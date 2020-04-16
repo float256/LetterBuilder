@@ -1,0 +1,64 @@
+﻿@model CatalogContent;
+@{
+    ViewData["Title"] = "Catalog Content";
+}
+
+<div class="col-9 mb-5">
+    @if (Model.Catalogs.Count > 0 || Model.TextBlocks.Count > 0)
+    {
+        <div class="folder-content mt-4 container">
+            @foreach (Catalog item in Model.Catalogs)
+            {
+                <div class="row">
+                    <div class="col-1 mt-auto mb-auto">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <a href="/Catalog/Index/@item.Id" class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                        @item.Name
+                    </a>
+                    <div class="dropleft ml-auto">
+                        <button class="btn shadow-none mt-auto mb-auto" id="catalog1DropdownMenu" data-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
+                            <a class="dropdown-item" href="@Url.Action("Update", "Catalog", new { id = item.Id})">Редактировать</a>
+                            <a class="dropdown-item" href="@Url.Action("Delete", "Catalog", new { id = item.Id})">Удалить</a>
+                            <a class="dropdown-item" href="@Url.Action("Add", "Catalog", new { id = item.Id})">Добавить каталог</a>
+                            <a class="dropdown-item" href="@Url.Action("Add", "TextBlock", new { id = item.Id})">Добавить текстовый файл</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            @foreach (TextBlock item in Model.TextBlocks)
+            {
+                <div class="row">
+                    <div class="col-1 mt-auto mb-auto">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <p class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                        @item.Name
+                    </p>
+                    <div class="dropleft ml-auto">
+                        <button class="btn shadow-none mt-auto mb-auto" id="catalog1DropdownMenu" data-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
+                            <a class="dropdown-item" href="@Url.Action("Update", "TextBlock", new { id = item.Id})">Редактировать</a>
+                            <a class="dropdown-item" href="@Url.Action("Delete", "TextBlock", new { id = item.Id})">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="w-75 mt-5 mx-auto">
+            <h1 class="display-4 mx-auto mt-5">Каталог пуст</h1>
+            <p class="mt-4">
+                Вы можете добавить <a href=@Url.Action("Add", "Catalog", new { id = @ViewContext.RouteData.Values["id"] })>каталог</a> или
+                <a href=@Url.Action("Add", "TextBlock", new { id = @ViewContext.RouteData.Values["id"] })>текстовый файл сюда</a>
+            </p>
+        </div>
+    }
+</div>
