@@ -1,17 +1,38 @@
-﻿@model CatalogContent;
+﻿@model List<OrderOfCatalog>;
 
-@foreach (Catalog item in Model.Catalogs)
-{
-    <div class="folder pt-2 pl-2">
-        <button class="btn shadow-none list_expansion_button col-1 p-0" type="button" data-toggle="collapse" data-target="#catalog-@item.Id" aria-expanded="false">
-            <i class="fas fa-caret-right"></i>
-        </button>
-        <a class="text-decoration-none text-dark" href=@Url.Action("Index", "Catalog", new { id = item.Id })>
-            <i class="fas fa-folder-open"></i>
-            @item.Name
-        </a>
-        <div class="collapse pl-4" id="catalog-@item.Id">
-            @await Component.InvokeAsync("DirectoryStructure", new { id = item.Id })
-        </div>
-    </div>
+@{
+    BuildCatalogTree(Model, 0);
+
+    void BuildCatalogTree(List<OrderOfCatalog> allOrderedCatalogs, int depthLevel)
+    {
+        foreach (OrderOfCatalog item in allOrderedCatalogs.FindAll(item => item.DepthLevel == depthLevel))
+        {
+            Catalog currCatalog = item.Catalog;
+            int currDepthLevel = item.DepthLevel;
+            <div class="folder pt-2 pl-2" id="catalog-@currCatalog.Id">
+                @if (allOrderedCatalogs.Exists(item => item.Catalog.ParentCatalogId == currCatalog.Id))
+                {
+                    <button class="btn shadow-none list_expansion_button col-1 p-0" type="button" data-toggle="collapse" data-target="#catalog-@currCatalog.Id-content" aria-expanded="false">
+                        <i class="fas fa-caret-right"></i>
+                    </button>
+                    <a class="text-decoration-none text-dark" href=@Url.Action("Index", "Catalog", new { id = currCatalog.Id })>
+                        <i class="fas fa-folder-open"></i>
+                        @currCatalog.Name
+                    </a>
+                    <div class="collapse pl-4" id="catalog-@currCatalog.Id-content">
+                        @{
+                            BuildCatalogTree(allOrderedCatalogs, depthLevel + 1);
+                        }
+                    </div>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-dark offset-1 pl-1" href=@Url.Action("Index", "Catalog", new { id = currCatalog.Id })>
+                        <i class="fas fa-folder-open"></i>
+                        @currCatalog.Name
+                    </a>
+                }
+            </div>
+        }
+    }
 }
