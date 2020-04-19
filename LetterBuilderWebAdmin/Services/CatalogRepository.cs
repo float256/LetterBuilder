@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,9 +12,9 @@ namespace LetterBuilderWebAdmin.Models
     {
         private string _connectionString;
 
-        public CatalogRepository(string connectionString)
+        public CatalogRepository(IConfiguration config)
         {
-            _connectionString = connectionString;
+            _connectionString = config.GetConnectionString("default");
         }
 
         /// <summary>
@@ -25,9 +26,10 @@ namespace LetterBuilderWebAdmin.Models
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId) SELECT SCOPE_IDENTITY()", connection);
+                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId, @order) SELECT SCOPE_IDENTITY()", connection);
                 command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
                 command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
                 entity.Id = Convert.ToInt32(command.ExecuteScalar());
             }
         }
@@ -36,7 +38,7 @@ namespace LetterBuilderWebAdmin.Models
         /// Данный метод обновляет имя каталога в базе данных. Id записи берется из поля Id передаваемого объекта
         /// </summary>
         /// <param name="entity">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
-        public void Update(Catalog entity)
+        public void UpdateName(Catalog entity)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -49,25 +51,30 @@ namespace LetterBuilderWebAdmin.Models
         }
 
         /// <summary>
-        /// Данный метод удаляет каталог из базы данных и все вложенные в него каталоги и текстовые файлы
+        /// Данный метод обновляет поле OrderInParentCatalog данного элемента,
+        /// но он не меняет порядок элемента, имеющего такой же порядковый номер
+        /// и такой же родительский каталог, что и данный элемент.
+        /// Id записи берется из поля Id передаваемого объекта
+        /// </summary>
+        /// <param name="entity">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
+        public void UpdateOrder(Catalog entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("UPDATE catalog SET order_in_parent_directory=@order WHERE id_catalog=@id", connection);
+                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Данный метод удаляет каталог из базы данных, но он не удаляет записи о вложенных файлах и папках
         /// </summary>
         /// <param name="id">Id каталога, которого требуется удалить</param>
         public void Delete(int id)
         {
-            // Удаление вложенных файлов
-            TextBlockRepository textBlockRepository = new TextBlockRepository(_connectionString);
-            foreach (TextBlock item in textBlockRepository.GetTextBlocksByParentCatalogId(id))
-            {
-                textBlockRepository.Delete(item.Id);
-            }
-
-            // Удаление вложенных каталогов
-            foreach (Catalog item in GetSubcatalogsByParentCatalogId(id))
-            {
-                Delete(item.Id);
-            }
-
-            // Удаление текущего каталога
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -98,7 +105,8 @@ namespace LetterBuilderWebAdmin.Models
                     {
                         Id = (int)reader.GetValue(0),
                         Name = (string)reader.GetValue(1),
-                        ParentCatalogId = (int)reader.GetValue(2)
+                        ParentCatalogId = (int)reader.GetValue(2),
+                        OrderInParentCatalog = (int)reader.GetValue(3)
                     };
                     subcatalogs.Add(currCatalog);
                 }
@@ -109,7 +117,7 @@ namespace LetterBuilderWebAdmin.Models
         /// <summary>
         /// Данный метод возвращает все каталоги, находящиеся в базе данных
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Объект типа List, содержащий все каталоги</returns>
         public List<Catalog> GetAll()
         {
             List<Catalog> repositoryContent = new List<Catalog>();
@@ -125,7 +133,8 @@ namespace LetterBuilderWebAdmin.Models
                     {
                         Id = (int)reader.GetValue(0),
                         Name = (string)reader.GetValue(1),
-                        ParentCatalogId = (int)reader.GetValue(2)
+                        ParentCatalogId = (int)reader.GetValue(2),
+                        OrderInParentCatalog = (int)reader.GetValue(3)
                     };
                     repositoryContent.Add(currCatalog);
                 }
@@ -157,6 +166,7 @@ namespace LetterBuilderWebAdmin.Models
                     catalog.Id = (int)reader.GetValue(0);
                     catalog.Name = (string)reader.GetValue(1);
                     catalog.ParentCatalogId = (int)reader.GetValue(2);
+                    catalog.OrderInParentCatalog = (int)reader.GetValue(3);
                 }
             }
             return catalog;

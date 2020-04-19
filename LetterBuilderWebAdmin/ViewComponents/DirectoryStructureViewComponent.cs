@@ -11,26 +11,22 @@ namespace LetterBuilderWebAdmin.ViewComponents
 {
     public class DirectoryStructureViewComponent : ViewComponent
     {
-        private string _connectionString ;
-        private TextBlockRepository _textBlockRepository;
-        private CatalogRepository _catalogRepository;
+        private ICatalogRepository _catalogRepository;
 
-        public DirectoryStructureViewComponent(IConfiguration configuration)
+        public DirectoryStructureViewComponent(ICatalogRepository catalogRepository)
         {
-            _connectionString = configuration.GetConnectionString("default");
-            _textBlockRepository = new TextBlockRepository(_connectionString);
-            _catalogRepository = new CatalogRepository(_connectionString);
+            _catalogRepository = catalogRepository;
         }
         public IViewComponentResult Invoke(int id)
         {
             List<Catalog> allCatalogs = _catalogRepository.GetAll();
-            List<OrderOfCatalog> allOrderedCatalogs = new List<OrderOfCatalog>();
+            List<CatalogDepthLevel> allOrderedCatalogs = new List<CatalogDepthLevel>();
             int currDepthLevel = 0;
 
             // Добавление каталогов, находящихся в корне файловой системы (такие элементы имеют ParentCatalogId = 0)
             foreach (var item in allCatalogs.FindAll(item => item.ParentCatalogId == 0))
             {
-                allOrderedCatalogs.Add(new OrderOfCatalog { Catalog = item, DepthLevel = 0 });
+                allOrderedCatalogs.Add(new CatalogDepthLevel { Catalog = item, DepthLevel = 0 });
             }
 
             allCatalogs.RemoveAll(item => item.ParentCatalogId == 0);
@@ -40,7 +36,7 @@ namespace LetterBuilderWebAdmin.ViewComponents
                 
                 // Получение индексов каталогов, распологающихся на 1 уровень выше текущих
                 List<int> indicesOfParentCatalogs = new List<int>();
-                foreach (OrderOfCatalog parentCatalogOrder in allOrderedCatalogs.FindAll(item => item.DepthLevel == currDepthLevel - 1))
+                foreach (CatalogDepthLevel parentCatalogOrder in allOrderedCatalogs.FindAll(item => item.DepthLevel == currDepthLevel - 1))
                 {
                     indicesOfParentCatalogs.Add(parentCatalogOrder.Catalog.Id);
                 }
@@ -51,7 +47,7 @@ namespace LetterBuilderWebAdmin.ViewComponents
                     Catalog currCatalog = allCatalogs[i];
                     if (indicesOfParentCatalogs.Contains(currCatalog.ParentCatalogId))
                     {
-                        allOrderedCatalogs.Add(new OrderOfCatalog
+                        allOrderedCatalogs.Add(new CatalogDepthLevel
                         {
                             Catalog = currCatalog,
                             DepthLevel = currDepthLevel

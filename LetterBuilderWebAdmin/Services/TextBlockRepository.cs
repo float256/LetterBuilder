@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,9 +12,9 @@ namespace LetterBuilderWebAdmin.Models
     {
         private string _connectionString;
 
-        public TextBlockRepository(string connectionString)
+        public TextBlockRepository(IConfiguration config)
         {
-            _connectionString = connectionString;
+            _connectionString = config.GetConnectionString("default");
         }
 
         /// <summary>
@@ -25,10 +26,11 @@ namespace LetterBuilderWebAdmin.Models
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("INSERT INTO text_block VALUES (@name, @text, @parentCatalogId) SELECT SCOPE_IDENTITY()", connection);
+                SqlCommand command = new SqlCommand("INSERT INTO text_block VALUES (@name, @text, @parentCatalogId, @order) SELECT SCOPE_IDENTITY()", connection);
                 command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
                 command.Parameters.Add("@text", SqlDbType.NVarChar).Value = entity.Text;
                 command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
                 entity.Id = Convert.ToInt32(command.ExecuteScalar());
             }
         }
@@ -37,7 +39,7 @@ namespace LetterBuilderWebAdmin.Models
         /// Данный метод обновляет имя и содержание текстового файла в базе данных. Id записи берется из поля Id передаваемого объекта
         /// </summary>
         /// <param name="entity">Объект класса TextBlock, значения которого будут использоваться для обновления записи></param>
-        public void Update(TextBlock entity)
+        public void UpdateNameAndText(TextBlock entity)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -50,6 +52,24 @@ namespace LetterBuilderWebAdmin.Models
             }
         }
 
+        /// <summary>
+        /// Данный метод обновляет поле OrderInParentCatalog данного элемента,
+        /// но он не меняет порядок элемента, имеющего такой же порядковый номер
+        /// и такой же родительский каталог, что и данный элемент.
+        /// Id записи берется из поля Id передаваемого объекта
+        /// </summary>
+        /// <param name="entity">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
+        public void UpdateOrder(TextBlock entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("UPDATE text_block SET order_in_parent_directory=@order WHERE id_text_block=@id", connection);
+                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                command.ExecuteNonQuery();
+            }
+        }
 
         /// <summary>
         ///  Данный метод удаляет текстовый файл из базы данных
@@ -69,7 +89,7 @@ namespace LetterBuilderWebAdmin.Models
         /// <summary>
         /// Данный метод возвращает все текстовые файлы, находящиеся в базе данных
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Объект типа List, содержащий все текстовые файлы</returns>
         public List<TextBlock> GetAll()
         {
             List<TextBlock> repositoryContent = new List<TextBlock>();
@@ -86,7 +106,8 @@ namespace LetterBuilderWebAdmin.Models
                         Id = (int)reader.GetValue(0),
                         Name = (string)reader.GetValue(1),
                         Text = (string)reader.GetValue(2),
-                        ParentCatalogId = (int)reader.GetValue(3)
+                        ParentCatalogId = (int)reader.GetValue(3),
+                        OrderInParentCatalog = (int)reader.GetValue(4)
                     };
                     repositoryContent.Add(currTextBlock);
                 }
@@ -118,6 +139,7 @@ namespace LetterBuilderWebAdmin.Models
                     textBlock.Name = (string)reader.GetValue(1);
                     textBlock.Text = (string)reader.GetValue(2);
                     textBlock.ParentCatalogId = (int)reader.GetValue(3);
+                    textBlock.OrderInParentCatalog = (int)reader.GetValue(4);
                 }
             }
             return textBlock;
@@ -146,7 +168,8 @@ namespace LetterBuilderWebAdmin.Models
                         Id = (int)reader.GetValue(0),
                         Name = (string)reader.GetValue(1),
                         Text = (string)reader.GetValue(2),
-                        ParentCatalogId = (int)reader.GetValue(3)
+                        ParentCatalogId = (int)reader.GetValue(3),
+                        OrderInParentCatalog = (int)reader.GetValue(4)
                     };
                     textBlocks.Add(currTextBlock);
                 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LetterBuilderWebAdmin.Models
 {
-    public class OrderOfCatalog
+    public class CatalogDepthLevel
     {
         public Catalog Catalog { get; set; }
         public int DepthLevel { get; set; }

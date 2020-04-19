@@ -9,6 +9,7 @@ namespace LetterBuilderWebAdmin.Models
         List<TextBlock> GetAll();
         TextBlock GetById(int id);
         List<TextBlock> GetTextBlocksByParentCatalogId(int parentCatalogId);
-        void Update(TextBlock entity);
+        void UpdateNameAndText(TextBlock entity);
+        void UpdateOrder(TextBlock entity);
     }
 }

@@ -1,16 +1,18 @@
-﻿@model List<OrderOfCatalog>;
+﻿@model List<CatalogDepthLevel>;
 
 @{
     BuildCatalogTree(Model, 0);
 
-    void BuildCatalogTree(List<OrderOfCatalog> allOrderedCatalogs, int depthLevel)
+    void BuildCatalogTree(List<CatalogDepthLevel> allOrderedCatalogs, int depthLevel)
     {
-        foreach (OrderOfCatalog item in allOrderedCatalogs.FindAll(item => item.DepthLevel == depthLevel))
+        List<CatalogDepthLevel> catalogsOnCurrentDepthLevel = allOrderedCatalogs.FindAll(item => item.DepthLevel == depthLevel);
+        catalogsOnCurrentDepthLevel.Sort((a, b) => a.Catalog.OrderInParentCatalog.CompareTo(b.Catalog.OrderInParentCatalog));
+        foreach (CatalogDepthLevel item in catalogsOnCurrentDepthLevel)
         {
             Catalog currCatalog = item.Catalog;
             int currDepthLevel = item.DepthLevel;
-            List<OrderOfCatalog> allSubcatalogsOrder = allOrderedCatalogs.FindAll(item => item.DepthLevel > depthLevel);
-            <div class="folder pt-2 pl-2" id="catalog-@currCatalog.Id">
+            List<CatalogDepthLevel> allSubcatalogsOrder = allOrderedCatalogs.FindAll(item => item.DepthLevel > depthLevel);
+            <div class="folder pt-2 pl-2" id="catalog-@currCatalog.Id" data-order=@currCatalog.OrderInParentCatalog>
                 @if (allOrderedCatalogs.Exists(item => item.Catalog.ParentCatalogId == currCatalog.Id))
                 {
                     <button class="btn shadow-none list_expansion_button col-1 p-0" type="button" data-toggle="collapse" data-target="#catalog-@currCatalog.Id-content" aria-expanded="false">
@@ -22,7 +24,9 @@
                     </a>
                     <div class="collapse pl-4" id="catalog-@currCatalog.Id-content">
                         @{
-                            List<OrderOfCatalog> currSubcatalogs = allSubcatalogsOrder.FindAll(item => item.Catalog.ParentCatalogId == currCatalog.Id);
+                            List<CatalogDepthLevel> currSubcatalogs = allSubcatalogsOrder.FindAll(item => 
+                                ((item.Catalog.ParentCatalogId == currCatalog.Id) && (item.DepthLevel == currDepthLevel + 1)) ||
+                                (item.DepthLevel > currDepthLevel + 1));
                             BuildCatalogTree(currSubcatalogs, depthLevel + 1);
                         }
                     </div>
@@ -46,7 +50,7 @@
                 $('button[data-target="#catalog-' + id + '-content"]').attr('data-is-open', 'true');
             }
             $('#catalog-' + id + '-content').addClass('show');
-            while (!collapsedElem.hasClass('all_directories')) {
+            while (collapsedElem.attr('id') !== undefined) {
                 collapsedElem.addClass('show');
                 $('button[data-target="#' + collapsedElem.attr('id') + '"]').attr('data-is-open', 'true');
                 collapsedElem = collapsedElem.parent().parent();

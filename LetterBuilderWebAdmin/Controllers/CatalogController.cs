@@ -5,20 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using LetterBuilderWebAdmin.Models;
+using LetterBuilderWebAdmin.Services;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
     public class CatalogController : Controller
     {
-        private string _connectionString;
-        private CatalogRepository _catalogRepository;
-        private TextBlockRepository _textBlockRepository;
+        private IFileSystemRepository _fileSystemRepository;
 
-        public CatalogController(IConfiguration configuration)
+        public CatalogController(IFileSystemRepository fileSystemRepository)
         {
-            _connectionString = configuration.GetConnectionString("default");
-            _catalogRepository = new CatalogRepository(_connectionString);
-            _textBlockRepository = new TextBlockRepository(_connectionString);
+            _fileSystemRepository = fileSystemRepository;
         }
 
         [HttpGet]
@@ -26,40 +23,54 @@ namespace LetterBuilderWebAdmin.Controllers
         {
             CatalogContent catalogContent = new CatalogContent
             {
-                Catalogs = _catalogRepository.GetSubcatalogsByParentCatalogId(id),
-                TextBlocks = _textBlockRepository.GetTextBlocksByParentCatalogId(id)
+                Catalogs = _fileSystemRepository.GetSubcatalogs(id),
+                TextBlocks = _fileSystemRepository.GetCatalogAttachments(id)
             };
             return View(catalogContent);
         }
 
         [HttpGet]
-        public IActionResult Add(int id) => View(_catalogRepository.GetById(id));
+        public IActionResult Add(int id) => View(_fileSystemRepository.GetCatalogById(id));
 
         [HttpGet]
-        public IActionResult Delete(int id) => View(_catalogRepository.GetById(id));
+        public IActionResult Delete(int id) => View(_fileSystemRepository.GetCatalogById(id));
 
         [HttpGet]
-        public IActionResult Update(int id) => View(_catalogRepository.GetById(id));
+        public IActionResult Update(int id) => View(_fileSystemRepository.GetCatalogById(id));
 
         [HttpPost]
         public IActionResult AddCatalog(Catalog catalog)
         {
-            _catalogRepository.Add(catalog);
+            _fileSystemRepository.Add(catalog);
             return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult DeleteCatalog(int id)
         {
-            Catalog catalog = _catalogRepository.GetById(id);
-            _catalogRepository.Delete(catalog.Id);
+            Catalog catalog = _fileSystemRepository.GetCatalogById(id);
+            _fileSystemRepository.DeleteCatalog(catalog.Id);
             return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult UpdateCatalog(Catalog catalog)
         {
-            _catalogRepository.Update(catalog);
+            _fileSystemRepository.UpdateValue(catalog);
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
+        }
+
+        public IActionResult MoveUp(int id)
+        {
+            Catalog catalog = _fileSystemRepository.GetCatalogById(id);
+            _fileSystemRepository.UpdateOrder(catalog, catalog.OrderInParentCatalog - 1);
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
+        }
+
+        public IActionResult MoveDown(int id)
+        {
+            Catalog catalog = _fileSystemRepository.GetCatalogById(id);
+            _fileSystemRepository.UpdateOrder(catalog, catalog.OrderInParentCatalog + 1);
             return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
     }
