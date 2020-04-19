@@ -9,25 +9,27 @@
         {
             Catalog currCatalog = item.Catalog;
             int currDepthLevel = item.DepthLevel;
+            List<OrderOfCatalog> allSubcatalogsOrder = allOrderedCatalogs.FindAll(item => item.DepthLevel > depthLevel);
             <div class="folder pt-2 pl-2" id="catalog-@currCatalog.Id">
                 @if (allOrderedCatalogs.Exists(item => item.Catalog.ParentCatalogId == currCatalog.Id))
                 {
                     <button class="btn shadow-none list_expansion_button col-1 p-0" type="button" data-toggle="collapse" data-target="#catalog-@currCatalog.Id-content" aria-expanded="false">
                         <i class="fas fa-caret-right"></i>
                     </button>
-                    <a class="text-decoration-none text-dark" href=@Url.Action("Index", "Catalog", new { id = currCatalog.Id })>
+                    <a class="text-decoration-none text-dark" href=@Url.Action("Index", "Catalog", new { id = currCatalog.Id }) id="catalog-@currCatalog.Id-header">
                         <i class="fas fa-folder-open"></i>
                         @currCatalog.Name
                     </a>
                     <div class="collapse pl-4" id="catalog-@currCatalog.Id-content">
                         @{
-                            BuildCatalogTree(allOrderedCatalogs, depthLevel + 1);
+                            List<OrderOfCatalog> currSubcatalogs = allSubcatalogsOrder.FindAll(item => item.Catalog.ParentCatalogId == currCatalog.Id);
+                            BuildCatalogTree(currSubcatalogs, depthLevel + 1);
                         }
                     </div>
                 }
                 else
                 {
-                    <a class="text-decoration-none text-dark offset-1 pl-1" href=@Url.Action("Index", "Catalog", new { id = currCatalog.Id })>
+                    <a class="text-decoration-none text-dark offset-1 pl-1" href=@Url.Action("Index", "Catalog", new { id = currCatalog.Id }) id="catalog-@currCatalog.Id-header">
                         <i class="fas fa-folder-open"></i>
                         @currCatalog.Name
                     </a>
@@ -36,3 +38,30 @@
         }
     }
 }
+<script>
+    function openCollapsedElement(id) {
+        if (id > 0) {
+            let collapsedElem = $('#catalog-' + id).parent();
+            if ($('div').is('#catalog-' + id + '-content')) {
+                $('button[data-target="#catalog-' + id + '-content"]').attr('data-is-open', 'true');
+            }
+            $('#catalog-' + id + '-content').addClass('show');
+            while (!collapsedElem.hasClass('all_directories')) {
+                collapsedElem.addClass('show');
+                $('button[data-target="#' + collapsedElem.attr('id') + '"]').attr('data-is-open', 'true');
+                collapsedElem = collapsedElem.parent().parent();
+            }
+        }
+    }
+
+    function boldElement(id) {
+        if (id > 0) {
+            $('#catalog-' + id + '-header').addClass('font-weight-bold');
+        }
+    }
+
+    let urlParts = window.location.href.split('/');
+    let id = Number(urlParts[urlParts.length - 1]);
+    openCollapsedElement(id);
+    boldElement(id);
+</script>

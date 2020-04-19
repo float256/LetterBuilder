@@ -4,12 +4,4 @@
     elem.setAttribute('data-is-open', attributeValue === 'true' ? 'false' : 'true');
 }
 
-function openAllCollapsedElements(id) {
-    if (id > 0) {
-        let collapsedElem = $("#catalog-" + id).parent();
-        while (!collapsedElem.hasClass("all_directories")) {
-            collapsedElem.addClass("show");
-            collapsedElem = collapsedElem.parent().parent();
-        }
-    }
-}
+$('.all_directories').on('click', '.list_expansion_button', changeIsOpenAttribute);
