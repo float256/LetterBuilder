@@ -8,7 +8,7 @@
         <form asp-controller="Catalog" asp-action="AddCatalog" method="post" class="p-0">
             <div class="form-group col-9 p-0">
                 <label asp-for="Name" class="text-primary mt-2">Название</label>
-                <input asp-for="Name" class="p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field" id="CatalogName">
+                <input asp-for="Name" class="p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field" id="CatalogName" value="">
                 <span asp-validation-for="Name"  class="text-danger mt-2 small"/>
             </div>
             <div class="row justify-content-md-center my-5 pt-1">

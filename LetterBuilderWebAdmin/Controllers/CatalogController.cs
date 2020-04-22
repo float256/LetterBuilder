@@ -11,9 +11,9 @@ namespace LetterBuilderWebAdmin.Controllers
 {
     public class CatalogController : Controller
     {
-        private IFileSystemRepository _fileSystemRepository;
+        private IDirectorySystemFacade _fileSystemRepository;
 
-        public CatalogController(IFileSystemRepository fileSystemRepository)
+        public CatalogController(IDirectorySystemFacade fileSystemRepository)
         {
             _fileSystemRepository = fileSystemRepository;
         }
@@ -30,13 +30,22 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(int id) => View(_fileSystemRepository.GetCatalogById(id));
+        public IActionResult Add(int id)
+        {
+            return View(_fileSystemRepository.GetCatalogById(id));
+        }
 
         [HttpGet]
-        public IActionResult Delete(int id) => View(_fileSystemRepository.GetCatalogById(id));
+        public IActionResult Delete(int id)
+        {
+            return View(_fileSystemRepository.GetCatalogById(id));
+        }
 
         [HttpGet]
-        public IActionResult Update(int id) => View(_fileSystemRepository.GetCatalogById(id));
+        public IActionResult Update(int id)
+        {
+            return View(_fileSystemRepository.GetCatalogById(id));
+        }
 
         [HttpPost]
         public IActionResult AddCatalog(Catalog catalog)

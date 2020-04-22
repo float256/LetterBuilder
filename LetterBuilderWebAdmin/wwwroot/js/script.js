@@ -4,4 +4,8 @@
     elem.setAttribute('data-is-open', attributeValue === 'true' ? 'false' : 'true');
 }
 
-$('.all_directories').on('click', '.list_expansion_button', changeIsOpenAttribute);
+function run() {
+    $('.all_directories').on('click', '.list_expansion_button', changeIsOpenAttribute);
+}
+
+$('document').ready(run);

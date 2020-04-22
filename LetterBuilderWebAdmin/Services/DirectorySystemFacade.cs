@@ -1,4 +1,5 @@
 ﻿using LetterBuilderWebAdmin.Models;
+using LetterBuilderWebAdmin.Services.DAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,28 +7,34 @@ using System.Threading.Tasks;
 
 namespace LetterBuilderWebAdmin.Services
 {
-    public class FileSystemRepository : IFileSystemRepository
+    public class DirectorySystemFacade : IDirectorySystemFacade
     {
-        private ITextBlockRepository _textRepository;
-        private ICatalogRepository _catalogRepository;
+        private ITextBlockDataAccess _textDataAccess;
+        private ICatalogDataAccess _catalogDataAccess;
 
-        public FileSystemRepository(ITextBlockRepository textRepository, ICatalogRepository catalogRepository)
+        public DirectorySystemFacade(ITextBlockDataAccess textDataAccess, ICatalogDataAccess catalogDataAccess)
         {
-            _textRepository = textRepository;
-            _catalogRepository = catalogRepository;
+            _textDataAccess = textDataAccess;
+            _catalogDataAccess = catalogDataAccess;
         }
 
         /// <summary>
-        /// Данный метод возвращает все текстовые файлы, находящиеся в базе данных
+        /// Данный метод возвращает все текстовые файлы, находящиеся в базе данныхC:\Users\User\Source\Repos\float256\LetterBuilder\LetterBuilderWebAdmin\Services\DAO\ITextBlockRepository.cs
         /// </summary>
         /// <returns>Объект типа List, содержащий все текстовые файлы</returns>
-        public List<TextBlock> GetAllTextBlocks() => _textRepository.GetAll();
+        public List<TextBlock> GetAllTextBlocks()
+        {
+            return _textDataAccess.GetAll();
+        }
 
         /// <summary>
         /// Данный метод возвращает все каталоги, находящиеся в базе данных
         /// </summary>
         /// <returns>Объект типа List, содержащий все каталоги</returns>
-        public List<Catalog> GetAllCatalogs() => _catalogRepository.GetAll();
+        public List<Catalog> GetAllCatalogs()
+        {
+            return _catalogDataAccess.GetAll();
+        }
 
         /// <summary>
         /// Данный метод возвращает запись текстового файла из базы данных по Id
@@ -35,7 +42,10 @@ namespace LetterBuilderWebAdmin.Services
         /// <param name="id">Id записи</param>
         /// <returns>Объект класса TextBlock, содержащий значения для указанного
         /// текстового файла из базы данных. Если записи нет, то возвращается объект со значениями по-умолчанию</returns>
-        public TextBlock GetTextBlockById(int id) => _textRepository.GetById(id);
+        public TextBlock GetTextBlockById(int id)
+        {
+            return _textDataAccess.GetById(id);
+        }
 
         /// <summary>
         /// Данный метод возвращает запись каталога из базы данных по Id
@@ -43,7 +53,10 @@ namespace LetterBuilderWebAdmin.Services
         /// <param name="id">Id записи</param>
         /// <returns>Объект класса Catalog, содержащий значения для указанного
         /// каталога из базы данных. Если записи нет, то возвращается объект со значениями по-умолчанию</returns>
-        public Catalog GetCatalogById(int id) => _catalogRepository.GetById(id);
+        public Catalog GetCatalogById(int id)
+        {
+            return _catalogDataAccess.GetById(id);
+        }
 
         /// <summary>
         /// Метод добавляет в базу данных каталог с указанными в catalog значениями. Порядковый номер элемента вычисляется внутри метода
@@ -55,7 +68,7 @@ namespace LetterBuilderWebAdmin.Services
             // количеству всех элементов находящихся в том же каталоге, что и заданный + 1
             catalog.OrderInParentCatalog = GetSubcatalogs(catalog.ParentCatalogId).Count + GetCatalogAttachments(catalog.ParentCatalogId).Count + 1;
 
-            _catalogRepository.Add(catalog);
+            _catalogDataAccess.Add(catalog);
         }
 
         /// <summary>
@@ -68,34 +81,46 @@ namespace LetterBuilderWebAdmin.Services
             // количеству всех элементов находящихся в том же каталоге, что и заданный + 1
             textBlock.OrderInParentCatalog = GetSubcatalogs(textBlock.ParentCatalogId).Count + GetCatalogAttachments(textBlock.ParentCatalogId).Count + 1;
 
-            _textRepository.Add(textBlock);
+            _textDataAccess.Add(textBlock);
         }
 
         /// <summary>
         /// Данный метод обновляет имя и содержание текстового файла в базе данных. Id записи берется из поля Id передаваемого объекта
         /// </summary>
         /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи></param>
-        public void UpdateValue(TextBlock textBlock) => _textRepository.UpdateNameAndText(textBlock);
+        public void UpdateValue(TextBlock textBlock)
+        {
+            _textDataAccess.UpdateNameAndText(textBlock);
+        }
 
         /// <summary>
         /// Данный метод обновляет имя каталога в базе данных. Id записи берется из поля Id передаваемого объекта
         /// </summary>
         /// <param name="entity">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
-        public void UpdateValue(Catalog catalog) => _catalogRepository.UpdateName(catalog);
+        public void UpdateValue(Catalog catalog)
+        {
+            _catalogDataAccess.UpdateName(catalog);
+        }
 
         /// <summary>
         /// Данный метод получает подкаталоги для входного каталога
         /// </summary>
         /// <param name="id">Id каталога, в котором будет вестись поиск подкаталогов</param>
         /// <returns>Список подкаталогов, состоящий из объектов типа Catalog</returns>
-        public List<Catalog> GetSubcatalogs(int id) => _catalogRepository.GetSubcatalogsByParentCatalogId(id);
+        public List<Catalog> GetSubcatalogs(int id)
+        {
+            return _catalogDataAccess.GetSubcatalogsByParentCatalogId(id);
+        }
 
         /// <summary>
         /// Данный метод получает файлы, находящиеся в каталоге
         /// </summary>
         /// <param name="id">>Id каталога, в котором будет вестись поиск файлов</param>
         /// <returns>Список текстовых файлов, состоящий из объектов типа TextBlock</returns>
-        public List<TextBlock> GetCatalogAttachments(int id) => _textRepository.GetTextBlocksByParentCatalogId(id);
+        public List<TextBlock> GetCatalogAttachments(int id)
+        {
+            return _textDataAccess.GetTextBlocksByParentCatalogId(id);
+        }
 
 
         /// <summary>
@@ -117,7 +142,7 @@ namespace LetterBuilderWebAdmin.Services
                     if (item.OrderInParentCatalog > textBlock.OrderInParentCatalog)
                     {
                         item.OrderInParentCatalog--;
-                        _catalogRepository.UpdateOrder(item);
+                        _catalogDataAccess.UpdateOrder(item);
                     }
                 }
                 foreach (TextBlock item in GetCatalogAttachments(textBlock.ParentCatalogId))
@@ -125,11 +150,11 @@ namespace LetterBuilderWebAdmin.Services
                     if (item.OrderInParentCatalog > textBlock.OrderInParentCatalog)
                     {
                         item.OrderInParentCatalog--;
-                        _textRepository.UpdateOrder(item);
+                        _textDataAccess.UpdateOrder(item);
                     }
                 }
             }
-            _textRepository.Delete(id);
+            _textDataAccess.Delete(id);
         }
 
         /// <summary>
@@ -142,13 +167,13 @@ namespace LetterBuilderWebAdmin.Services
         public void DeleteCatalog(int id, bool isRestoreItemOrder=true)
         {
             // Удаление файлов в каталоге
-            foreach (TextBlock item in _textRepository.GetTextBlocksByParentCatalogId(id))
+            foreach (TextBlock item in _textDataAccess.GetTextBlocksByParentCatalogId(id))
             {
                 DeleteTextBlock(item.Id, false);
             }
 
             // Удаление подкаталогов
-            foreach (Catalog item in _catalogRepository.GetSubcatalogsByParentCatalogId(id))
+            foreach (Catalog item in _catalogDataAccess.GetSubcatalogsByParentCatalogId(id))
             {
                 DeleteCatalog(item.Id, false);
             }
@@ -162,7 +187,7 @@ namespace LetterBuilderWebAdmin.Services
                     if (item.OrderInParentCatalog > catalog.OrderInParentCatalog)
                     {
                         item.OrderInParentCatalog--;
-                        _catalogRepository.UpdateOrder(item);
+                        _catalogDataAccess.UpdateOrder(item);
                     }
                 }
                 foreach (TextBlock item in GetCatalogAttachments(catalog.ParentCatalogId))
@@ -170,13 +195,13 @@ namespace LetterBuilderWebAdmin.Services
                     if (item.OrderInParentCatalog > catalog.OrderInParentCatalog)
                     {
                         item.OrderInParentCatalog--;
-                        _textRepository.UpdateOrder(item);
+                        _textDataAccess.UpdateOrder(item);
                     }
                 }
             }
             
             // Удаление каталога
-            _catalogRepository.Delete(id);
+            _catalogDataAccess.Delete(id);
         }
 
         /// <summary>
@@ -191,27 +216,27 @@ namespace LetterBuilderWebAdmin.Services
 
             // Поиск каталога, находящегося в том же каталоге, что и textBlock и имеющего
             // порядковый номер, указанный в order, и замена его порядкового номера
-            Catalog catalogWithSameOrder = _catalogRepository.GetSubcatalogsByParentCatalogId(textBlock.ParentCatalogId).Find(
+            Catalog catalogWithSameOrder = _catalogDataAccess.GetSubcatalogsByParentCatalogId(textBlock.ParentCatalogId).Find(
                 item => item.OrderInParentCatalog == order);
-            if (catalogWithSameOrder != null )
+            if (catalogWithSameOrder != null)
             {
                 catalogWithSameOrder.OrderInParentCatalog = initalOrder;
-                _catalogRepository.UpdateOrder(catalogWithSameOrder);
+                _catalogDataAccess.UpdateOrder(catalogWithSameOrder);
             }
 
             // Поиск текстового блока, находящегося в том же каталоге, что и textBlock и имеющего
             // порядковый номер, указанный в order, и замена его порядкового номера
-            TextBlock textBlockWithSameOrder = _textRepository.GetTextBlocksByParentCatalogId(textBlock.ParentCatalogId).Find(
+            TextBlock textBlockWithSameOrder = _textDataAccess.GetTextBlocksByParentCatalogId(textBlock.ParentCatalogId).Find(
                 item => item.OrderInParentCatalog == order);
             if (textBlockWithSameOrder != null)
             {
                 textBlockWithSameOrder.OrderInParentCatalog = initalOrder;
-                _catalogRepository.UpdateOrder(catalogWithSameOrder);
+                _textDataAccess.UpdateOrder(textBlockWithSameOrder);
             }
 
             // Замена порядкового номера у textBlock
             textBlock.OrderInParentCatalog = order;
-            _textRepository.UpdateOrder(textBlock);
+            _textDataAccess.UpdateOrder(textBlock);
         }
 
         /// <summary>
@@ -226,27 +251,27 @@ namespace LetterBuilderWebAdmin.Services
 
             // Поиск каталога, находящегося в том же каталоге, что и textBlock и имеющего
             // порядковый номер, указанный в order, и замена его порядкового номера
-            Catalog catalogWithSameOrder = _catalogRepository.GetSubcatalogsByParentCatalogId(catalog.ParentCatalogId).Find(
+            Catalog catalogWithSameOrder = _catalogDataAccess.GetSubcatalogsByParentCatalogId(catalog.ParentCatalogId).Find(
                 item => item.OrderInParentCatalog == order);
             if (catalogWithSameOrder != null)
             {
                 catalogWithSameOrder.OrderInParentCatalog = initalOrder;
-                _catalogRepository.UpdateOrder(catalogWithSameOrder);
+                _catalogDataAccess.UpdateOrder(catalogWithSameOrder);
             }
 
             // Поиск текстового блока, находящегося в том же каталоге, что и textBlock и имеющего
             // порядковый номер, указанный в order, и замена его порядкового номера
-            TextBlock textBlockWithSameOrder = _textRepository.GetTextBlocksByParentCatalogId(catalog.ParentCatalogId).Find(
+            TextBlock textBlockWithSameOrder = _textDataAccess.GetTextBlocksByParentCatalogId(catalog.ParentCatalogId).Find(
                 item => item.OrderInParentCatalog == order);
             if (textBlockWithSameOrder != null)
             {
                 textBlockWithSameOrder.OrderInParentCatalog = initalOrder;
-                _textRepository.UpdateOrder(textBlockWithSameOrder);
+                _textDataAccess.UpdateOrder(textBlockWithSameOrder);
             }
 
             // Замена порядкового номера у textBlock
             catalog.OrderInParentCatalog = order;
-            _catalogRepository.UpdateOrder(catalog);
+            _catalogDataAccess.UpdateOrder(catalog);
         }
     }
 }

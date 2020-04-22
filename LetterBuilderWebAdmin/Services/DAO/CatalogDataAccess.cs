@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using LetterBuilderWebAdmin.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,13 +7,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetterBuilderWebAdmin.Models
+namespace LetterBuilderWebAdmin.Services.DAO
 {
-    public class CatalogRepository : ICatalogRepository
+    public class CatalogDataAccess : ICatalogDataAccess
     {
         private string _connectionString;
 
-        public CatalogRepository(IConfiguration config)
+        public CatalogDataAccess(IConfiguration config)
         {
             _connectionString = config.GetConnectionString("default");
         }

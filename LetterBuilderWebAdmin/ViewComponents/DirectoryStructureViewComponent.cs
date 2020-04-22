@@ -6,58 +6,77 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Configuration;
+using LetterBuilderWebAdmin.Services.DAO;
 
 namespace LetterBuilderWebAdmin.ViewComponents
 {
     public class DirectoryStructureViewComponent : ViewComponent
     {
-        private ICatalogRepository _catalogRepository;
+        private ICatalogDataAccess _catalogRepository;
 
-        public DirectoryStructureViewComponent(ICatalogRepository catalogRepository)
+        public DirectoryStructureViewComponent(ICatalogDataAccess catalogRepository)
         {
             _catalogRepository = catalogRepository;
         }
         public IViewComponentResult Invoke(int id)
         {
             List<Catalog> allCatalogs = _catalogRepository.GetAll();
-            List<CatalogDepthLevel> allOrderedCatalogs = new List<CatalogDepthLevel>();
-            int currDepthLevel = 0;
+            List<CatalogNode> topLevelCatalogNodes = new List<CatalogNode>();
+            List<CatalogNode> catalogsOnCurrDepthLevel = new List<CatalogNode>();
 
             // Добавление каталогов, находящихся в корне файловой системы (такие элементы имеют ParentCatalogId = 0)
-            foreach (var item in allCatalogs.FindAll(item => item.ParentCatalogId == 0))
+            foreach (Catalog item in allCatalogs.FindAll(item => item.ParentCatalogId == 0))
             {
-                allOrderedCatalogs.Add(new CatalogDepthLevel { Catalog = item, DepthLevel = 0 });
+                topLevelCatalogNodes.Add(new CatalogNode
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    IsSelected = (item.Id == id),
+                    IsOpened = (item.Id == id),
+                    Order = item.OrderInParentCatalog
+                });
             }
+            topLevelCatalogNodes.Sort((a, b) => a.Order.CompareTo(b.Order));
 
-            allCatalogs.RemoveAll(item => item.ParentCatalogId == 0);
-            while (allCatalogs.Count > 0)
+            // Построение дерева каталогов
+            catalogsOnCurrDepthLevel = topLevelCatalogNodes.ToList();
+            while (catalogsOnCurrDepthLevel.Count > 0)
             {
-                currDepthLevel++;
-                
-                // Получение индексов каталогов, распологающихся на 1 уровень выше текущих
-                List<int> indicesOfParentCatalogs = new List<int>();
-                foreach (CatalogDepthLevel parentCatalogOrder in allOrderedCatalogs.FindAll(item => item.DepthLevel == currDepthLevel - 1))
+                List<CatalogNode> catalogsOnNextDepthLevel = new List<CatalogNode>();
+                foreach (CatalogNode currParentCatalog in catalogsOnCurrDepthLevel)
                 {
-                    indicesOfParentCatalogs.Add(parentCatalogOrder.Catalog.Id);
-                }
-
-                // Запись каталогов, находящихся на текущем уровне, в allOrderedCatalog и удаление их из allCatalogs
-                for (int i = 0; i < allCatalogs.Count; i++)
-                {
-                    Catalog currCatalog = allCatalogs[i];
-                    if (indicesOfParentCatalogs.Contains(currCatalog.ParentCatalogId))
-                    {
-                        allOrderedCatalogs.Add(new CatalogDepthLevel
+                    List<Catalog> allSubcatalogs = allCatalogs.FindAll(item => item.ParentCatalogId == currParentCatalog.Id);
+                    allSubcatalogs.Sort((a, b) => a.OrderInParentCatalog.CompareTo(b.OrderInParentCatalog));
+                    foreach (Catalog currSubcatalog in allSubcatalogs)
+                    { 
+                        CatalogNode node = new CatalogNode
                         {
-                            Catalog = currCatalog,
-                            DepthLevel = currDepthLevel
-                        });
-                        allCatalogs.Remove(currCatalog);
-                        i--;
+                            Id = currSubcatalog.Id,
+                            Name = currSubcatalog.Name,
+                            ParentCatalog = currParentCatalog,
+                            Order = currSubcatalog.OrderInParentCatalog
+                        };
+                        currParentCatalog.ChildrenNodes.Add(node);
+                        catalogsOnNextDepthLevel.Add(node);
+
+                        // Выставление флагов IsSelected и IsOpened в true у родительских каталогов, если
+                        // текущий рассматриваемый каталог является
+                        // каталогом, в котором в данный момент находится пользователь
+                        if (node.Id == id)
+                        {
+                            node.IsOpened = node.IsSelected = true;
+                            CatalogNode parentNode = node.ParentCatalog;
+                            while (parentNode != null)
+                            {
+                                parentNode.IsOpened = true;
+                                parentNode = parentNode.ParentCatalog;
+                            }
+                        }
                     }
                 }
+                catalogsOnCurrDepthLevel = catalogsOnNextDepthLevel;
             }
-            return View(allOrderedCatalogs);
+            return View(topLevelCatalogNodes);
         }
     }
 }

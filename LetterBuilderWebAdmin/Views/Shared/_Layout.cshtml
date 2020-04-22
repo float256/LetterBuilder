@@ -32,7 +32,7 @@
     </nav>
     <div class="row container-fluid main-block">
         <div class="col-3 p-3 overflow-auto all_directories">
-            @await Component.InvokeAsync("DirectoryStructure", new { id = 0 })
+            @await Component.InvokeAsync("DirectoryStructure", new { id = int.Parse(ViewContext.RouteData.Values["id"].ToString()) })
         </div>
         @RenderBody()
     </div>

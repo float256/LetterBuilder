@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetterBuilderWebAdmin.Models;
 using LetterBuilderWebAdmin.Services;
+using LetterBuilderWebAdmin.Services.DAO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,9 +28,9 @@ namespace LetterBuilderWebAdmin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
-            services.AddSingleton<ICatalogRepository, CatalogRepository>();
-            services.AddSingleton<ITextBlockRepository, TextBlockRepository>();
-            services.AddSingleton<IFileSystemRepository, FileSystemRepository>();
+            services.AddSingleton<ICatalogDataAccess, CatalogDataAccess>();
+            services.AddSingleton<ITextBlockDataAccess, TextBlockDataAccess>();
+            services.AddSingleton<IDirectorySystemFacade, DirectorySystemFacade>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

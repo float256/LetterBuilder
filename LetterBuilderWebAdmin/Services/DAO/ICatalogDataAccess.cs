@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using LetterBuilderWebAdmin.Models;
+using System.Collections.Generic;
 
-namespace LetterBuilderWebAdmin.Models
+namespace LetterBuilderWebAdmin.Services.DAO
 {
-    public interface ICatalogRepository
+    public interface ICatalogDataAccess
     {
         void Add(Catalog entity);
         void UpdateName(Catalog entity);

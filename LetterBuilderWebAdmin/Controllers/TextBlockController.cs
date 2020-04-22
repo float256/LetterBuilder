@@ -12,21 +12,30 @@ namespace LetterBuilderWebAdmin.Controllers
 {
     public class TextBlockController : Controller
     {
-        private IFileSystemRepository _fileSystemRepository;
+        private IDirectorySystemFacade _fileSystemRepository;
 
-        public TextBlockController(IFileSystemRepository fileSystemRepository)
+        public TextBlockController(IDirectorySystemFacade fileSystemRepository)
         {
             _fileSystemRepository = fileSystemRepository;
         }
 
         [HttpGet]
-        public IActionResult Add(int id) => View(new TextBlock { ParentCatalogId = id });
+        public IActionResult Add(int id)
+        {
+            return View(new TextBlock { ParentCatalogId = id });
+        }
 
         [HttpGet]
-        public IActionResult Delete(int id) => View(_fileSystemRepository.GetTextBlockById(id));
+        public IActionResult Delete(int id)
+        {
+            return View(_fileSystemRepository.GetTextBlockById(id));
+        }
 
         [HttpGet]
-        public IActionResult Update(int id) => View(_fileSystemRepository.GetTextBlockById(id));
+        public IActionResult Update(int id)
+        {
+            return View(_fileSystemRepository.GetTextBlockById(id));
+        }
 
         [HttpPost]
         public IActionResult AddTextBlock(TextBlock textBlock)

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using LetterBuilderWebAdmin.Models;
+using System.Collections.Generic;
 
-namespace LetterBuilderWebAdmin.Models
+namespace LetterBuilderWebAdmin.Services.DAO
 {
-    public interface ITextBlockRepository
+    public interface ITextBlockDataAccess
     {
         void Add(TextBlock entity);
         void Delete(int id);

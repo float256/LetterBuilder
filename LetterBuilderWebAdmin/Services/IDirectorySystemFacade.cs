@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LetterBuilderWebAdmin.Services
 {
-    public interface IFileSystemRepository
+    public interface IDirectorySystemFacade
     {
         List<Catalog> GetAllCatalogs();
         List<TextBlock> GetAllTextBlocks();
