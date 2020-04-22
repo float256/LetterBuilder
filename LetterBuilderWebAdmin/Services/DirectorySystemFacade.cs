@@ -19,7 +19,7 @@ namespace LetterBuilderWebAdmin.Services
         }
 
         /// <summary>
-        /// Данный метод возвращает все текстовые файлы, находящиеся в базе данныхC:\Users\User\Source\Repos\float256\LetterBuilder\LetterBuilderWebAdmin\Services\DAO\ITextBlockRepository.cs
+        /// Данный метод возвращает все текстовые файлы, находящиеся в базе данных
         /// </summary>
         /// <returns>Объект типа List, содержащий все текстовые файлы</returns>
         public List<TextBlock> GetAllTextBlocks()
@@ -65,8 +65,14 @@ namespace LetterBuilderWebAdmin.Services
         public void Add(Catalog catalog)
         {
             // Элементы в базу данных добавляются в конец, т.е. их порядковый номер равен 
-            // количеству всех элементов находящихся в том же каталоге, что и заданный + 1
-            catalog.OrderInParentCatalog = GetSubcatalogs(catalog.ParentCatalogId).Count + GetCatalogAttachments(catalog.ParentCatalogId).Count + 1;
+            // максимальному номеру из элементов, находящихся в том же каталоге + 1
+            List<Catalog> neighboringCatalogs = GetSubcatalogs(catalog.ParentCatalogId);
+            List<TextBlock> neighboringTextBlocks = GetCatalogAttachments(catalog.ParentCatalogId);
+            int maxCatalogOrder = (neighboringCatalogs.Count > 0) ? 
+                neighboringCatalogs.Max(item => item.OrderInParentCatalog) : 0;
+            int maxTextBlockOrder = (neighboringTextBlocks.Count > 0) ?
+                neighboringTextBlocks.Max(item => item.OrderInParentCatalog) : 0;
+            catalog.OrderInParentCatalog = Math.Max(maxCatalogOrder, maxTextBlockOrder) + 1;
 
             _catalogDataAccess.Add(catalog);
         }
@@ -78,8 +84,14 @@ namespace LetterBuilderWebAdmin.Services
         public void Add(TextBlock textBlock)
         {
             // Элементы в базу данных добавляются в конец, т.е. их порядковый номер равен 
-            // количеству всех элементов находящихся в том же каталоге, что и заданный + 1
-            textBlock.OrderInParentCatalog = GetSubcatalogs(textBlock.ParentCatalogId).Count + GetCatalogAttachments(textBlock.ParentCatalogId).Count + 1;
+            // максимальному номеру из элементов, находящихся в том же каталоге + 1
+            List<Catalog> neighboringCatalogs = GetSubcatalogs(textBlock.ParentCatalogId);
+            List<TextBlock> neighboringTextBlocks = GetCatalogAttachments(textBlock.ParentCatalogId);
+            int maxCatalogOrder = (neighboringCatalogs.Count > 0) ?
+                neighboringCatalogs.Max(item => item.OrderInParentCatalog) : 0;
+            int maxTextBlockOrder = (neighboringTextBlocks.Count > 0) ?
+                neighboringTextBlocks.Max(item => item.OrderInParentCatalog) : 0;
+            textBlock.OrderInParentCatalog = Math.Max(maxCatalogOrder, maxTextBlockOrder) + 1;
 
             _textDataAccess.Add(textBlock);
         }
@@ -109,7 +121,7 @@ namespace LetterBuilderWebAdmin.Services
         /// <returns>Список подкаталогов, состоящий из объектов типа Catalog</returns>
         public List<Catalog> GetSubcatalogs(int id)
         {
-            return _catalogDataAccess.GetSubcatalogsByParentCatalogId(id);
+            return _catalogDataAccess.GetSubcatalogsByParentCatalogId(id).OrderBy(item => item.OrderInParentCatalog).ToList();
         }
 
         /// <summary>
@@ -119,87 +131,38 @@ namespace LetterBuilderWebAdmin.Services
         /// <returns>Список текстовых файлов, состоящий из объектов типа TextBlock</returns>
         public List<TextBlock> GetCatalogAttachments(int id)
         {
-            return _textDataAccess.GetTextBlocksByParentCatalogId(id);
+            return _textDataAccess.GetTextBlocksByParentCatalogId(id).OrderBy(item => item.OrderInParentCatalog).ToList();
         }
 
 
         /// <summary>
-        /// Данный метод удаляет текстовый файл из базы данных. Также,в случае, если
-        /// isRestoreItemOrder==true все элементы, находящиеся ниже по порядку декрементируют 
+        /// Данный метод удаляет текстовый файл из базы данных.
         /// значение OrderInParentCatalog
         /// </summary>
         /// <param name="id">Id значения, которое нужно удалить</param>
-        /// <param name="isRestoreItemOrder">Если true, то кроме удаления тааже будет восстановлен правильный 
-        /// порядок элементов, находящихся в том же каталоге, что и данный каталог</param>
-        public void DeleteTextBlock(int id, bool isRestoreItemOrder=true)
+        public void DeleteTextBlock(int id)
         {
-            // Уменьшение OrderInParentCatalog у соседних элементов
-            if (isRestoreItemOrder)
-            {
-                TextBlock textBlock = GetTextBlockById(id);
-                foreach (Catalog item in GetSubcatalogs(textBlock.ParentCatalogId))
-                {
-                    if (item.OrderInParentCatalog > textBlock.OrderInParentCatalog)
-                    {
-                        item.OrderInParentCatalog--;
-                        _catalogDataAccess.UpdateOrder(item);
-                    }
-                }
-                foreach (TextBlock item in GetCatalogAttachments(textBlock.ParentCatalogId))
-                {
-                    if (item.OrderInParentCatalog > textBlock.OrderInParentCatalog)
-                    {
-                        item.OrderInParentCatalog--;
-                        _textDataAccess.UpdateOrder(item);
-                    }
-                }
-            }
             _textDataAccess.Delete(id);
         }
 
         /// <summary>
-        /// Данный метод удаляет каталог и все фийлы и подкаталоги, содержащиеся в нем из базы данных. Также,в случае, если
-        /// isRestoreItemOrder==true все элементы, находящиеся ниже по порядку декрементируют значение OrderInParentCatalog
+        /// Данный метод удаляет каталог и все фийлы и подкаталоги, содержащиеся в нем из базы данных. 
         /// </summary>
         /// <param name="id">Id каталога, который нужно удалить</param>
-        /// <param name="isRestoreItemOrder">Если true, то кроме удаления тааже будет восстановлен правильный 
-        /// порядок элементов, находящихся в том же каталоге, что и данный каталог</param>
-        public void DeleteCatalog(int id, bool isRestoreItemOrder=true)
+        public void DeleteCatalog(int id)
         {
             // Удаление файлов в каталоге
             foreach (TextBlock item in _textDataAccess.GetTextBlocksByParentCatalogId(id))
             {
-                DeleteTextBlock(item.Id, false);
+                DeleteTextBlock(item.Id);
             }
 
             // Удаление подкаталогов
             foreach (Catalog item in _catalogDataAccess.GetSubcatalogsByParentCatalogId(id))
             {
-                DeleteCatalog(item.Id, false);
+                DeleteCatalog(item.Id);
             }
 
-            // Уменьшение OrderInParentCatalog у соседних элементов
-            if (isRestoreItemOrder)
-            {
-                Catalog catalog = GetCatalogById(id);
-                foreach (Catalog item in GetSubcatalogs(catalog.ParentCatalogId))
-                {
-                    if (item.OrderInParentCatalog > catalog.OrderInParentCatalog)
-                    {
-                        item.OrderInParentCatalog--;
-                        _catalogDataAccess.UpdateOrder(item);
-                    }
-                }
-                foreach (TextBlock item in GetCatalogAttachments(catalog.ParentCatalogId))
-                {
-                    if (item.OrderInParentCatalog > catalog.OrderInParentCatalog)
-                    {
-                        item.OrderInParentCatalog--;
-                        _textDataAccess.UpdateOrder(item);
-                    }
-                }
-            }
-            
             // Удаление каталога
             _catalogDataAccess.Delete(id);
         }
@@ -210,32 +173,54 @@ namespace LetterBuilderWebAdmin.Services
         /// </summary>
         /// <param name="textBlock">Объект типа TextBlock, который должен иметь Id и Order элемента, у которого нужно сменить порядковый номер</param>
         /// <param name="order">Новый порядковый номер элемента</param>
-        public void UpdateOrder(TextBlock textBlock, int order)
+        public void UpdateOrder(TextBlock textBlock, OrderAction orderAction)
         {
             int initalOrder = textBlock.OrderInParentCatalog;
 
-            // Поиск каталога, находящегося в том же каталоге, что и textBlock и имеющего
-            // порядковый номер, указанный в order, и замена его порядкового номера
-            Catalog catalogWithSameOrder = _catalogDataAccess.GetSubcatalogsByParentCatalogId(textBlock.ParentCatalogId).Find(
-                item => item.OrderInParentCatalog == order);
-            if (catalogWithSameOrder != null)
+            // Поиск каталога, находящегося в том же каталоге, что и 
+            // textBlock и находящегося ближе всех к данному элементу
+            Catalog nearestCatalog;
+            List<Catalog> neighboringCatalogs = GetSubcatalogs(textBlock.ParentCatalogId);
+            if (orderAction == OrderAction.MoveUp)
             {
-                catalogWithSameOrder.OrderInParentCatalog = initalOrder;
-                _catalogDataAccess.UpdateOrder(catalogWithSameOrder);
+                nearestCatalog = neighboringCatalogs.FindLast(item => item.OrderInParentCatalog < initalOrder);
+            }
+            else
+            {
+                nearestCatalog = neighboringCatalogs.Find(item => item.OrderInParentCatalog > initalOrder);
             }
 
-            // Поиск текстового блока, находящегося в том же каталоге, что и textBlock и имеющего
-            // порядковый номер, указанный в order, и замена его порядкового номера
-            TextBlock textBlockWithSameOrder = _textDataAccess.GetTextBlocksByParentCatalogId(textBlock.ParentCatalogId).Find(
-                item => item.OrderInParentCatalog == order);
-            if (textBlockWithSameOrder != null)
+            // Поиск текстового блока, находящегося в том же каталоге, что и 
+            // textBlock и находящегося ближе всех к данному элементу
+            TextBlock nearestTextBlock;
+            List<TextBlock> neighboringTextBlocks = GetCatalogAttachments(textBlock.ParentCatalogId);
+            if (orderAction == OrderAction.MoveUp)
             {
-                textBlockWithSameOrder.OrderInParentCatalog = initalOrder;
-                _textDataAccess.UpdateOrder(textBlockWithSameOrder);
+                nearestTextBlock = neighboringTextBlocks.FindLast(item => item.OrderInParentCatalog < initalOrder);
+            }
+            else
+            {
+                nearestTextBlock = neighboringTextBlocks.Find(item => item.OrderInParentCatalog > initalOrder);
             }
 
-            // Замена порядкового номера у textBlock
-            textBlock.OrderInParentCatalog = order;
+            // Замена порядкового номера у textBlock. Также заменяется порядковый номер ближайшего элемента
+            int distanceToNearestCatalog = (nearestCatalog != null) ? Math.Abs(nearestCatalog.OrderInParentCatalog - initalOrder) : 0;
+            int distanceToNearestTextBlock = (nearestTextBlock != null) ? Math.Abs(nearestTextBlock.OrderInParentCatalog - initalOrder) : 0;
+            
+            if (((nearestCatalog == null) && (nearestTextBlock != null)) ||
+                ((distanceToNearestCatalog >= distanceToNearestTextBlock) && nearestTextBlock != null))
+            {
+                textBlock.OrderInParentCatalog = nearestTextBlock.OrderInParentCatalog;
+                nearestTextBlock.OrderInParentCatalog = initalOrder;
+                _textDataAccess.UpdateOrder(nearestTextBlock);
+            }
+            else if (((nearestCatalog != null) && (nearestTextBlock == null)) ||
+                ((distanceToNearestCatalog <= distanceToNearestTextBlock) && (nearestCatalog != null)))
+            {
+                textBlock.OrderInParentCatalog = nearestCatalog.OrderInParentCatalog;
+                nearestCatalog.OrderInParentCatalog = initalOrder;
+                _catalogDataAccess.UpdateOrder(nearestCatalog);
+            }
             _textDataAccess.UpdateOrder(textBlock);
         }
 
@@ -245,32 +230,53 @@ namespace LetterBuilderWebAdmin.Services
         /// </summary>
         /// <param name="catalog">Объект типа Catalog, который должен иметь Id и Order элемента, у которого нужно сменить порядковый номер</param>
         /// <param name="order">Новый порядковый номер элемента</param>
-        public void UpdateOrder(Catalog catalog, int order)
+        public void UpdateOrder(Catalog catalog, OrderAction orderAction)
         {
             int initalOrder = catalog.OrderInParentCatalog;
 
-            // Поиск каталога, находящегося в том же каталоге, что и textBlock и имеющего
-            // порядковый номер, указанный в order, и замена его порядкового номера
-            Catalog catalogWithSameOrder = _catalogDataAccess.GetSubcatalogsByParentCatalogId(catalog.ParentCatalogId).Find(
-                item => item.OrderInParentCatalog == order);
-            if (catalogWithSameOrder != null)
+            // Поиск каталога, находящегося в том же каталоге, что и 
+            // textBlock и находящегося ближе всех к данному элементу
+            Catalog nearestCatalog;
+            List<Catalog> neighboringCatalogs = GetSubcatalogs(catalog.ParentCatalogId);
+            if (orderAction == OrderAction.MoveUp)
             {
-                catalogWithSameOrder.OrderInParentCatalog = initalOrder;
-                _catalogDataAccess.UpdateOrder(catalogWithSameOrder);
+                nearestCatalog = neighboringCatalogs.FindLast(item => item.OrderInParentCatalog < initalOrder);
+            }
+            else
+            {
+                nearestCatalog = neighboringCatalogs.Find(item => item.OrderInParentCatalog > initalOrder);
             }
 
-            // Поиск текстового блока, находящегося в том же каталоге, что и textBlock и имеющего
-            // порядковый номер, указанный в order, и замена его порядкового номера
-            TextBlock textBlockWithSameOrder = _textDataAccess.GetTextBlocksByParentCatalogId(catalog.ParentCatalogId).Find(
-                item => item.OrderInParentCatalog == order);
-            if (textBlockWithSameOrder != null)
+            // Поиск текстового блока, находящегося в том же каталоге, что и 
+            // textBlock и находящегося ближе всех к данному элементу
+            TextBlock nearestTextBlock;
+            List<TextBlock> neighboringTextBlocks = GetCatalogAttachments(catalog.ParentCatalogId);
+            if (orderAction == OrderAction.MoveUp)
             {
-                textBlockWithSameOrder.OrderInParentCatalog = initalOrder;
-                _textDataAccess.UpdateOrder(textBlockWithSameOrder);
+                nearestTextBlock = neighboringTextBlocks.FindLast(item => item.OrderInParentCatalog < initalOrder);
+            }
+            else
+            {
+                nearestTextBlock = neighboringTextBlocks.Find(item => item.OrderInParentCatalog > initalOrder);
             }
 
-            // Замена порядкового номера у textBlock
-            catalog.OrderInParentCatalog = order;
+            // Замена порядкового номера у textBlock. Также заменяется порядковый номер ближайшего элемента
+            int distanceToNearestCatalog = (nearestCatalog != null) ? Math.Abs(nearestCatalog.OrderInParentCatalog - initalOrder) : 0;
+            int distanceToNearestTextBlock = (nearestTextBlock != null) ? Math.Abs(nearestTextBlock.OrderInParentCatalog - initalOrder) : 0;
+            if (((nearestCatalog == null) && (nearestTextBlock != null)) ||
+                ((distanceToNearestCatalog >= distanceToNearestTextBlock) && (nearestTextBlock != null)))
+            {
+                catalog.OrderInParentCatalog = nearestTextBlock.OrderInParentCatalog;
+                nearestTextBlock.OrderInParentCatalog = initalOrder;
+                _textDataAccess.UpdateOrder(nearestTextBlock);
+            }
+            else if (((nearestCatalog != null) && (nearestTextBlock == null)) ||
+                (distanceToNearestCatalog <= distanceToNearestTextBlock) && (nearestCatalog != null))
+            {
+                catalog.OrderInParentCatalog = nearestCatalog.OrderInParentCatalog;
+                nearestCatalog.OrderInParentCatalog = initalOrder;
+                _catalogDataAccess.UpdateOrder(nearestCatalog);
+            }
             _catalogDataAccess.UpdateOrder(catalog);
         }
     }

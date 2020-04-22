@@ -16,11 +16,11 @@ namespace LetterBuilderWebAdmin.Services
         List<TextBlock> GetCatalogAttachments(int id);
         void Add(Catalog catalog);
         void Add(TextBlock catalog);
-        void DeleteTextBlock(int id, bool isRestoreItemOrder=true);
-        void DeleteCatalog(int id, bool isRestoreItemOrder=true);
+        void DeleteTextBlock(int id);
+        void DeleteCatalog(int id);
         void UpdateValue(TextBlock textBlock);
         void UpdateValue(Catalog catalog);
-        void UpdateOrder(TextBlock textBlock, int order);
-        void UpdateOrder(Catalog catalog, int order);
+        void UpdateOrder(TextBlock textBlock, OrderAction orderAction);
+        void UpdateOrder(Catalog catalog, OrderAction orderAction);
     }
 }

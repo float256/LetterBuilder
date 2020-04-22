@@ -12,11 +12,11 @@ namespace LetterBuilderWebAdmin.Controllers
 {
     public class TextBlockController : Controller
     {
-        private IDirectorySystemFacade _fileSystemRepository;
+        private IDirectorySystemFacade _directorySystemFacade;
 
-        public TextBlockController(IDirectorySystemFacade fileSystemRepository)
+        public TextBlockController(IDirectorySystemFacade directorySystemFacade)
         {
-            _fileSystemRepository = fileSystemRepository;
+            _directorySystemFacade = directorySystemFacade;
         }
 
         [HttpGet]
@@ -28,48 +28,41 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            return View(_fileSystemRepository.GetTextBlockById(id));
+            return View(_directorySystemFacade.GetTextBlockById(id));
         }
 
         [HttpGet]
         public IActionResult Update(int id)
         {
-            return View(_fileSystemRepository.GetTextBlockById(id));
+            return View(_directorySystemFacade.GetTextBlockById(id));
         }
 
         [HttpPost]
         public IActionResult AddTextBlock(TextBlock textBlock)
         {
-            _fileSystemRepository.Add(textBlock);
+            _directorySystemFacade.Add(textBlock);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult DeleteTextBlock(int id)
         {
-            TextBlock textBlock = _fileSystemRepository.GetTextBlockById(id);
-            _fileSystemRepository.DeleteTextBlock(id);
+            TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
+            _directorySystemFacade.DeleteTextBlock(id);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult UpdateTextBlock(TextBlock textBlock)
         {
-            _fileSystemRepository.UpdateValue(textBlock);
+            _directorySystemFacade.UpdateValue(textBlock);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
 
-        public IActionResult MoveUp(int id)
+        public IActionResult Move(int id, OrderAction action)
         {
-            TextBlock textBlock = _fileSystemRepository.GetTextBlockById(id);
-            _fileSystemRepository.UpdateOrder(textBlock, textBlock.OrderInParentCatalog - 1);
-            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
-        }
-
-        public IActionResult MoveDown(int id)
-        {
-            TextBlock textBlock = _fileSystemRepository.GetTextBlockById(id);
-            _fileSystemRepository.UpdateOrder(textBlock, textBlock.OrderInParentCatalog + 1);
+            TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
+            _directorySystemFacade.UpdateOrder(textBlock, action);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
     }

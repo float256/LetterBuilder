@@ -6,26 +6,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Configuration;
-using LetterBuilderWebAdmin.Services.DAO;
+using LetterBuilderWebAdmin.Services;
 
 namespace LetterBuilderWebAdmin.ViewComponents
 {
     public class DirectoryStructureViewComponent : ViewComponent
     {
-        private ICatalogDataAccess _catalogRepository;
+        private IDirectorySystemFacade _directoryFacade;
 
-        public DirectoryStructureViewComponent(ICatalogDataAccess catalogRepository)
+        public DirectoryStructureViewComponent(IDirectorySystemFacade catalogDataAccess)
         {
-            _catalogRepository = catalogRepository;
+            _directoryFacade = catalogDataAccess;
         }
+
         public IViewComponentResult Invoke(int id)
         {
-            List<Catalog> allCatalogs = _catalogRepository.GetAll();
             List<CatalogNode> topLevelCatalogNodes = new List<CatalogNode>();
             List<CatalogNode> catalogsOnCurrDepthLevel = new List<CatalogNode>();
 
             // Добавление каталогов, находящихся в корне файловой системы (такие элементы имеют ParentCatalogId = 0)
-            foreach (Catalog item in allCatalogs.FindAll(item => item.ParentCatalogId == 0))
+            foreach (Catalog item in _directoryFacade.GetSubcatalogs(0))
             {
                 topLevelCatalogNodes.Add(new CatalogNode
                 {
@@ -36,7 +36,6 @@ namespace LetterBuilderWebAdmin.ViewComponents
                     Order = item.OrderInParentCatalog
                 });
             }
-            topLevelCatalogNodes.Sort((a, b) => a.Order.CompareTo(b.Order));
 
             // Построение дерева каталогов
             catalogsOnCurrDepthLevel = topLevelCatalogNodes.ToList();
@@ -45,8 +44,7 @@ namespace LetterBuilderWebAdmin.ViewComponents
                 List<CatalogNode> catalogsOnNextDepthLevel = new List<CatalogNode>();
                 foreach (CatalogNode currParentCatalog in catalogsOnCurrDepthLevel)
                 {
-                    List<Catalog> allSubcatalogs = allCatalogs.FindAll(item => item.ParentCatalogId == currParentCatalog.Id);
-                    allSubcatalogs.Sort((a, b) => a.OrderInParentCatalog.CompareTo(b.OrderInParentCatalog));
+                    List<Catalog> allSubcatalogs = _directoryFacade.GetSubcatalogs(currParentCatalog.Id);
                     foreach (Catalog currSubcatalog in allSubcatalogs)
                     { 
                         CatalogNode node = new CatalogNode
