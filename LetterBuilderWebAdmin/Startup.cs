@@ -28,9 +28,9 @@ namespace LetterBuilderWebAdmin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
-            services.AddSingleton<ICatalogDataAccess, CatalogDataAccess>();
-            services.AddSingleton<ITextBlockDataAccess, TextBlockDataAccess>();
-            services.AddSingleton<IDirectorySystemFacade, DirectorySystemFacade>();
+            services.AddScoped<ICatalogDataAccess, CatalogDataAccess>();
+            services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>();
+            services.AddScoped<IDirectorySystemFacade, DirectorySystemFacade>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
