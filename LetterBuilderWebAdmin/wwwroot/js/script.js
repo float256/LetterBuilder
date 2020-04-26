@@ -4,7 +4,7 @@
     elem.setAttribute('data-is-open', attributeValue === 'true' ? 'false' : 'true');
 }
 
-function sortDirectoryElems() {
+function sortDirectoryElements() {
     let directoryElems = $('.folder-content').find('.row[data-order]');
     if (directoryElems.length > 0) {
         directoryElems.sort(function (a, b) {
@@ -25,7 +25,7 @@ function removeMoveButtonsFromEdgeElements() {
 }
 
 function run() {
-    sortDirectoryElems();
+    sortDirectoryElements();
     removeMoveButtonsFromEdgeElements();
     $('.all_directories').on('click', '.list_expansion_button', changeIsOpenAttribute);
 }

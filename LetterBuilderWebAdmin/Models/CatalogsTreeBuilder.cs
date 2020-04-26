@@ -15,7 +15,6 @@ namespace LetterBuilderWebAdmin.Models
             _directoryFacade = directorySystemFacade;
         }
 
-
         /// <summary>
         /// Данный метод строит дерево каталогов
         /// </summary>
