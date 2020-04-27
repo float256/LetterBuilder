@@ -7,7 +7,7 @@ function buildSidebarMenu(requestResult, parentElement) {
 }
 
 function buildTextBlockMenu(requestResult, parentElement) {
-;   $.each(requestResult['catalogAttachments'], function (_, textBlockInfo) {
+    $.each(requestResult['catalogAttachments'], function (_, textBlockInfo) {
         createMenuButton(textBlockInfo).appendTo(parentElement);
     });
     $.each(requestResult['childrenNodes'], function (_, catalogInfo) {
@@ -44,7 +44,7 @@ function createCatalogCollapse(catalogInfo) {
 
     $('<input>', {
         type: 'checkbox',
-        'class': 'custom-control-input',
+        'class': 'custom-control-input catalog-input',
         id: 'catalog-' + catalogInfo['id'] + '-switch',
         'data-toggle': 'collapse',
         'data-target': '#catalog-' + catalogInfo['id'] + '-collapse',
@@ -128,12 +128,27 @@ function writeTextInField() {
     });
 }
 
+function uncheckNestedCatalogItems(event) {
+    if (!event.currentTarget.checked) {
+        let id = event.currentTarget.id.split('-')[1];
+        $("#text-blocks-menu").unbind('change', '.menu-text-input');
+
+        $.each($('#catalog-' + id + '-collapse .menu-text-input'), function (_, text) {
+            text.checked = false
+        });
+        $("#text-blocks-menu").on('change', '.menu-text-input', writeTextInField);
+        writeTextInField();
+    }
+}
+
 function run() {
     drawNavbar();
     drawSidebar();
     $(window).on('popstate', function (e) {
         drawSidebar();
+        $('#text-field').empty();
     });
-    $("#text-blocks-menu").on('change', '.menu-text-input', writeTextInField);
+    $('#text-blocks-menu').on('change', '.menu-text-input', writeTextInField);
+    $('#text-blocks-menu').on('change', '.catalog-input', uncheckNestedCatalogItems)
 }
 $('document').ready(run);
