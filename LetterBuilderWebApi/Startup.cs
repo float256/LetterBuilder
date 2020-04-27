@@ -27,6 +27,8 @@ namespace LetterBuilderWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors();
             services.AddControllers();
             services.AddScoped<ICatalogDataAccess, CatalogDataAccess>();
             services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>();
@@ -46,6 +48,9 @@ namespace LetterBuilderWebApi
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(builder => builder.WithOrigins("http://localhost:52389", "https://localhost:44355",
+                "https://localhost:52389", "http://localhost:44355"));
 
             app.UseEndpoints(endpoints =>
             {

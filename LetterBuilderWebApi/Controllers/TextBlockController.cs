@@ -19,7 +19,7 @@ namespace LetterBuilderWebApi.Services.DAO
             _directoryFacade = directoryFacade;
         }
 
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public ActionResult<TextBlock> GetTextBlockInfo(int id)
         {
             return _directoryFacade.GetTextBlockById(id);

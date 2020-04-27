@@ -20,25 +20,25 @@ namespace LetterBuilderWebApi.Controllers
             _directoryFacade = directoryFacade;
         }
 
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public ActionResult<Catalog> GetCatalogInfo(int id)
         {
-            return _directoryFacade.GetCatalogById(id);
+            return Ok(_directoryFacade.GetCatalogById(id));
         }
 
-        [Route("subcatalogs/{id}")]
+        [HttpGet("subcatalogs/{id}")]
         public ActionResult<List<Catalog>> GetSubcatalogs(int parentCatalogId)
         {
-            return _directoryFacade.GetSubcatalogs(parentCatalogId);
+            return Ok(_directoryFacade.GetSubcatalogs(parentCatalogId));
         }
 
-        [Route("catalogattachments/{id}")]
+        [HttpGet("catalogattachments/{id}")]
         public ActionResult<List<TextBlock>> GetCatalogAttachments(int parentCatalogId)
         {
-            return _directoryFacade.GetCatalogAttachments(parentCatalogId);
+            return Ok(_directoryFacade.GetCatalogAttachments(parentCatalogId));
         }
 
-        [Route("firsttwonestinglevels/")]
+        [HttpGet("firsttwonestinglevels/")]
         public ActionResult<List<CatalogNode>> GetFirstTwoNestingLevels()
         {
             List<CatalogNode> topLevelCatalogNodes = new List<CatalogNode>();
@@ -62,10 +62,10 @@ namespace LetterBuilderWebApi.Controllers
                     currTopCatalogNode.ChildrenNodes.Add(currSubcatalogNode);
                 }
             }
-            return topLevelCatalogNodes;
+            return Ok(topLevelCatalogNodes);
         }
 
-        [Route("gettree/{id}")]
+        [HttpGet("gettree/{id}")]
         public ActionResult<CatalogNode> GetTree(int id)
         {
             CatalogsTreeBuilder tree = new CatalogsTreeBuilder(_directoryFacade);

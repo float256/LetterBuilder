@@ -39,7 +39,8 @@ namespace LetterBuilderWebAdmin.Models
                 {
                     Id = subcatalog.Id,
                     Name = subcatalog.Name,
-                    CatalogAttachments = _directoryFacade.GetCatalogAttachments(subcatalog.Id)
+                    CatalogAttachments = _directoryFacade.GetCatalogAttachments(subcatalog.Id),
+                    Order = subcatalog.OrderInParentCatalog
                 };
                 result.ChildrenNodes.Add(subcatalogNode);
             }
