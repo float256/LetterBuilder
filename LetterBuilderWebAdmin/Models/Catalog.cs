@@ -20,5 +20,9 @@ namespace LetterBuilderWebAdmin.Models
         [Required(ErrorMessage = "Данное поле является обязательным")]
         [Display(Name = "ID родительского каталога")]
         public int ParentCatalogId { get; set; }
+
+        [Required(ErrorMessage = "Данное поле является обязательным")]
+        [HiddenInput(DisplayValue = false)]
+        public int OrderInParentCatalog { get; set; }
     }
 }

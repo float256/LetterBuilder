@@ -6,29 +6,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Configuration;
+using LetterBuilderWebAdmin.Services;
 
 namespace LetterBuilderWebAdmin.ViewComponents
 {
     public class DirectoryStructureViewComponent : ViewComponent
     {
-        private string _connectionString ;
-        private TextBlockRepository _textBlockRepository;
-        private CatalogRepository _catalogRepository;
+        private IDirectorySystemFacade _directoryFacade;
 
-        public DirectoryStructureViewComponent(IConfiguration configuration)
+        public DirectoryStructureViewComponent(IDirectorySystemFacade directoryFacade)
         {
-            _connectionString = configuration.GetConnectionString("default");
-            _textBlockRepository = new TextBlockRepository(_connectionString);
-            _catalogRepository = new CatalogRepository(_connectionString);
+            _directoryFacade = directoryFacade;
         }
+
         public IViewComponentResult Invoke(int id)
         {
-            CatalogContent result = new CatalogContent
-            {
-                Catalogs = _catalogRepository.GetSubcatalogsByParentCatalogId(id),
-                TextBlocks = _textBlockRepository.GetTextBlocksByParentCatalogId(id)
-            };
-            return View(result);
+            CatalogsTreeBuilder treeBuilder = new CatalogsTreeBuilder(_directoryFacade);
+            return View(treeBuilder.BuildTree(id));
         }
     }
 }

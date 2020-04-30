@@ -1,26 +1,36 @@
-﻿@model CatalogContent;
+﻿@model List<CatalogNode>;
 
-@foreach (Catalog item in Model.Catalogs)
-{
-    <div class="folder pt-2 pl-2">
-        <a class="text-decoration-none text-dark" href=@Url.Action("Index", "Catalog", new { id = item.Id })>
-            <i class="fas fa-folder-open"></i>
-            @item.Name
-        </a>
-        <button class="btn shadow-none list_expansion_button" type="button" data-toggle="collapse" data-target="#catalog-@item.Id" aria-expanded="false">
-            <i class="fas fa-caret-left"></i>
-        </button>
-        <div class="collapse pl-4" id="catalog-@item.Id">
-            @await Component.InvokeAsync("DirectoryStructure", new { id = item.Id })
-        </div>
-    </div>
-}
-@foreach (TextBlock item in Model.TextBlocks)
-{
-    <div class="text pt-2 pl-2">
-        <p class="text-decoration-none text-dark">
-            <i class="fas fa-file-alt"></i>
-            @item.Name
-        </p>
-    </div>
+@{
+    BuildCatalogTree(Model);
+
+    void BuildCatalogTree(List<CatalogNode> catalogNodes)
+    {
+        foreach (CatalogNode catalogNode in catalogNodes)
+        {
+            <div class="folder pt-2 pl-2" id="catalog-@catalogNode.Id" data-order=@catalogNode.Order>
+                @if (catalogNode.ChildrenNodes.Count > 0)
+                {
+                    <button class="btn shadow-none list_expansion_button col-1 p-0" type="button" data-toggle="collapse" data-target="#catalog-@catalogNode.Id-content" aria-expanded="false" data-is-open=@(catalogNode.IsOpened ? "true" : "false")>
+                        <i class="fas fa-caret-right"></i>
+                    </button>
+                    <a class="text-decoration-none text-dark@(catalogNode.IsSelected ? " font-weight-bold" : "")" href=@Url.Action("Index", "Catalog", new { id = catalogNode.Id }) id="catalog-@catalogNode.Id-header">
+                        <i class="fas fa-folder-open"></i>
+                        @catalogNode.Name
+                    </a>
+                    <div class="@(catalogNode.IsOpened ? "collapse pl-4 show" : "collapse pl-4")" id="catalog-@catalogNode.Id-content">
+                        @{
+                            BuildCatalogTree(catalogNode.ChildrenNodes);
+                        }
+                    </div>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-dark@(catalogNode.IsSelected ? " font-weight-bold" : "") offset-1 pl-1" href=@Url.Action("Index", "Catalog", new { id = catalogNode.Id }) id="catalog-@catalogNode.Id-header">
+                        <i class="fas fa-folder-open"></i>
+                        @catalogNode.Name
+                    </a>
+                }
+            </div>
+        }
+    }
 }

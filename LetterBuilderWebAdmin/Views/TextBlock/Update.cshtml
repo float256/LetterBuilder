@@ -18,10 +18,11 @@
                 <span asp-validation-for="Text" class="text-danger mt-2 small" />
             </div>
             <div class="row justify-content-md-center my-5 pt-1">
-                <a href=@Url.Action("Index", "Catalog") class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Отмена</a>
+                <a href=@Url.Action("Index", "Catalog", new { id = Model.ParentCatalogId }) class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Отмена</a>
                 <button type="submit" class="btn col-2 rounded-0 pt-2 pb-2 btn-primary">Сохранить</button>
             </div>
             <input asp-for="Id" type="hidden" value="@Model.Id">
+            <input asp-for="ParentCatalogId" type="hidden" value="@Model.ParentCatalogId">
         </form>
     </div>
 </div>

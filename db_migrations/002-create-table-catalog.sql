@@ -3,7 +3,8 @@ BEGIN
 	CREATE TABLE [dbo].[catalog](
 		[id_catalog] [int] IDENTITY(1,1) NOT NULL,
 		[name] [nvarchar](max) NOT NULL,
-		[id_parent_catalog] [int] NOT NULL
+		[id_parent_catalog] [int] NOT NULL,
+		[order_in_parent_directory] [int] NOT NULL
 	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 END
 GO

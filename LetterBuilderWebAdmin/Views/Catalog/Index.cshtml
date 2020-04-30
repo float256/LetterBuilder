@@ -9,11 +9,11 @@
         <div class="folder-content mt-4 container">
             @foreach (Catalog item in Model.Catalogs)
             {
-                <div class="row">
+                <div class="row" data-order=@item.OrderInParentCatalog>
                     <div class="col-1 mt-auto mb-auto">
                         <i class="fas fa-folder-open"></i>
                     </div>
-                    <a href="/Catalog/Index/@item.Id" class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                    <a href=@Url.Action("Index", "Catalog", new { id = item.Id }) class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
                         @item.Name
                     </a>
                     <div class="dropleft ml-auto">
@@ -23,21 +23,29 @@
                         <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
                             <a class="dropdown-item" href="@Url.Action("Update", "Catalog", new { id = item.Id})">Редактировать</a>
                             <a class="dropdown-item" href="@Url.Action("Delete", "Catalog", new { id = item.Id})">Удалить</a>
-                            <a class="dropdown-item" href="@Url.Action("Add", "Catalog", new { id = item.Id})">Добавить каталог</a>
-                            <a class="dropdown-item" href="@Url.Action("Add", "TextBlock", new { id = item.Id})">Добавить текстовый файл</a>
+                            <form asp-action="Move" asp-controller="Catalog" class="order_up">
+                                <button class="dropdown-item">Вверх</button>
+                                <input type="hidden" value="@item.Id" name="id" />
+                                <input type="hidden" value="0" name="action" />
+                            </form>
+                            <form asp-action="Move" asp-controller="Catalog" class="order_down">
+                                <button class="dropdown-item">Вниз</button>
+                                <input type="hidden" value="@item.Id" name="id" />
+                                <input type="hidden" value="1" name="action" />
+                            </form>
                         </div>
                     </div>
                 </div>
             }
             @foreach (TextBlock item in Model.TextBlocks)
             {
-                <div class="row">
+                <div class="row" data-order=@item.OrderInParentCatalog>
                     <div class="col-1 mt-auto mb-auto">
                         <i class="fas fa-file-alt"></i>
                     </div>
-                    <p class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
+                    <a href=@Url.Action("Update", "TextBlock", new { id = item.Id }) class="col-10 text-decoration-none text-dark mt-auto mb-auto text-truncate">
                         @item.Name
-                    </p>
+                    </a>
                     <div class="dropleft ml-auto">
                         <button class="btn shadow-none mt-auto mb-auto" id="catalog1DropdownMenu" data-toggle="dropdown">
                             <i class="fas fa-ellipsis-v"></i>
@@ -45,6 +53,16 @@
                         <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
                             <a class="dropdown-item" href="@Url.Action("Update", "TextBlock", new { id = item.Id})">Редактировать</a>
                             <a class="dropdown-item" href="@Url.Action("Delete", "TextBlock", new { id = item.Id})">Удалить</a>
+                            <form asp-action="Move" asp-controller="TextBlock" class="order_up">
+                                <button class="dropdown-item">Вверх</button>
+                                <input type="hidden" value="@item.Id" name="id" />
+                                <input type="hidden" value="0" name="action" />
+                            </form>
+                            <form asp-action="Move" asp-controller="TextBlock" class="order_down">
+                                <button class="dropdown-item">Вниз</button>
+                                <input type="hidden" value="@item.Id" name="id" />
+                                <input type="hidden" value="1" name="action" />
+                            </form>
                         </div>
                     </div>
                 </div>

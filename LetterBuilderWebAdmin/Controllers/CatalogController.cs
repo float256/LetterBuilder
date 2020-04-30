@@ -5,20 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using LetterBuilderWebAdmin.Models;
+using LetterBuilderWebAdmin.Services;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
     public class CatalogController : Controller
     {
-        private string _connectionString;
-        private CatalogRepository _catalogRepository;
-        private TextBlockRepository _textBlockRepository;
+        private IDirectorySystemFacade _directorySystemFacade;
 
-        public CatalogController(IConfiguration configuration)
+        public CatalogController(IDirectorySystemFacade directorySystemFacade)
         {
-            _connectionString = configuration.GetConnectionString("default");
-            _catalogRepository = new CatalogRepository(_connectionString);
-            _textBlockRepository = new TextBlockRepository(_connectionString);
+            _directorySystemFacade = directorySystemFacade;
         }
 
         [HttpGet]
@@ -26,40 +23,58 @@ namespace LetterBuilderWebAdmin.Controllers
         {
             CatalogContent catalogContent = new CatalogContent
             {
-                Catalogs = _catalogRepository.GetSubcatalogsByParentCatalogId(id),
-                TextBlocks = _textBlockRepository.GetTextBlocksByParentCatalogId(id)
+                Catalogs = _directorySystemFacade.GetSubcatalogs(id),
+                TextBlocks = _directorySystemFacade.GetCatalogAttachments(id)
             };
             return View(catalogContent);
         }
 
         [HttpGet]
-        public IActionResult Add(int id) => View();
+        public IActionResult Add(int id)
+        {
+            return View(_directorySystemFacade.GetCatalogById(id));
+        }
 
         [HttpGet]
-        public IActionResult Delete(int id) => View(_catalogRepository.GetById(id));
+        public IActionResult Delete(int id)
+        {
+            return View(_directorySystemFacade.GetCatalogById(id));
+        }
 
         [HttpGet]
-        public IActionResult Update(int id) => View(_catalogRepository.GetById(id));
+        public IActionResult Update(int id)
+        {
+            return View(_directorySystemFacade.GetCatalogById(id));
+        }
 
         [HttpPost]
         public IActionResult AddCatalog(Catalog catalog)
         {
-            _catalogRepository.Add(catalog);
-            return RedirectToAction("Index");
+            _directorySystemFacade.Add(catalog);
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
 
         [HttpPost]
-        public IActionResult DeleteCatalog(Catalog catalog)
+        public IActionResult DeleteCatalog(int id)
         {
-            _catalogRepository.Delete(catalog.Id);
-            return RedirectToAction("Index");
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            _directorySystemFacade.DeleteCatalog(catalog.Id);
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
 
         [HttpPost]
         public IActionResult UpdateCatalog(Catalog catalog)
         {
-            _catalogRepository.Update(catalog);
-            return RedirectToAction("Index");
+            _directorySystemFacade.UpdateValue(catalog);
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
+        }
+
+        [HttpPost]
+        public IActionResult Move(int id, OrderAction action)
+        {
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            _directorySystemFacade.UpdateOrder(catalog, action);
+            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
     }
 }
