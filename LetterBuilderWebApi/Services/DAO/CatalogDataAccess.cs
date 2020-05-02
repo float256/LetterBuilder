@@ -13,9 +13,9 @@ namespace LetterBuilderWebAdmin.Services.DAO
     {
         private string _connectionString;
 
-        public CatalogDataAccess(IConfiguration config)
+        public CatalogDataAccess(string connectionString)
         {
-            _connectionString = config.GetConnectionString("default");
+            _connectionString = connectionString;
         }
 
         /// <summary>
@@ -29,20 +29,22 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection))
                 {
-                    Catalog currCatalog = new Catalog
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        ParentCatalogId = (int)reader.GetValue(2),
-                        OrderInParentCatalog = (int)reader.GetValue(3)
-                    };
-                    subcatalogs.Add(currCatalog);
+                        Catalog currCatalog = new Catalog
+                        {
+                            Id = (int)reader.GetValue(0),
+                            Name = (string)reader.GetValue(1),
+                            ParentCatalogId = (int)reader.GetValue(2),
+                            OrderInParentCatalog = (int)reader.GetValue(3)
+                        };
+                        subcatalogs.Add(currCatalog);
+                    }
                 }
             }
             return subcatalogs;
@@ -58,19 +60,21 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM catalog", connection);
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM catalog", connection))
                 {
-                    Catalog currCatalog = new Catalog
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.ExecuteNonQuery();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        ParentCatalogId = (int)reader.GetValue(2),
-                        OrderInParentCatalog = (int)reader.GetValue(3)
-                    };
-                    repositoryContent.Add(currCatalog);
+                        Catalog currCatalog = new Catalog
+                        {
+                            Id = (int)reader.GetValue(0),
+                            Name = (string)reader.GetValue(1),
+                            ParentCatalogId = (int)reader.GetValue(2),
+                            OrderInParentCatalog = (int)reader.GetValue(3)
+                        };
+                        repositoryContent.Add(currCatalog);
+                    }
                 }
             }
             return repositoryContent;

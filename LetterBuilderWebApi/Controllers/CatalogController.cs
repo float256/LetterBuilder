@@ -26,19 +26,19 @@ namespace LetterBuilderWebApi.Controllers
             return Ok(_directoryFacade.GetCatalogById(id));
         }
 
-        [HttpGet("subcatalogs/{id}")]
+        [HttpGet("SubCatalogs/{id}")]
         public ActionResult<List<Catalog>> GetSubcatalogs(int parentCatalogId)
         {
             return Ok(_directoryFacade.GetSubcatalogs(parentCatalogId));
         }
 
-        [HttpGet("catalogattachments/{id}")]
+        [HttpGet("CatalogAttachments/{id}")]
         public ActionResult<List<TextBlock>> GetCatalogAttachments(int parentCatalogId)
         {
             return Ok(_directoryFacade.GetCatalogAttachments(parentCatalogId));
         }
 
-        [HttpGet("firsttwonestinglevels/")]
+        [HttpGet("FirstTwoNestingLevels/")]
         public ActionResult<List<CatalogNode>> GetFirstTwoNestingLevels()
         {
             List<CatalogNode> topLevelCatalogNodes = new List<CatalogNode>();
@@ -65,7 +65,7 @@ namespace LetterBuilderWebApi.Controllers
             return Ok(topLevelCatalogNodes);
         }
 
-        [HttpGet("gettree/{id}")]
+        [HttpGet("GetTree/{id}")]
         public ActionResult<CatalogNode> GetTree(int id)
         {
             CatalogsTreeBuilder tree = new CatalogsTreeBuilder(_directoryFacade);

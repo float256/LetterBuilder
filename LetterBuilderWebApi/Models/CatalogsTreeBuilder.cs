@@ -10,11 +10,11 @@ namespace LetterBuilderWebAdmin.Models
     public class CatalogsTreeBuilder
     {
         private IDirectorySystemFacade _directoryFacade;
+
         public CatalogsTreeBuilder(IDirectorySystemFacade directorySystemFacade)
         {
             _directoryFacade = directorySystemFacade;
         }
-
 
         /// <summary>
         /// Данный метод строит дерево каталогов

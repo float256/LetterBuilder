@@ -1,4 +1,5 @@
 ﻿const WEB_API_ADDRESS = 'https://localhost:44341';
+let loaded_texts = {};
 
 function buildSidebarMenu(requestResult, parentElement) {
     parentElement.empty();
@@ -17,19 +18,19 @@ function buildTextBlockMenu(requestResult, parentElement) {
     })
 }
 
-function createMenuButton(textInfoArray) {
+function createMenuButton(textInfo) {
     let menuItem = $('<div/>', {
         'class': 'row custom-control custom-switch py-2 menu-item',
     });
     $('<input>', {
         type: 'checkbox',
         'class': 'custom-control-input menu-text-input',
-        id: 'text-block-' + textInfoArray['id']
+        id: 'text-block-' + textInfo['id']
     }).appendTo(menuItem);
     $('<label/>', {
-        text: textInfoArray['name'],
+        text: textInfo['name'],
         'class': 'custom-control-label text-label',
-        'for': 'text-block-' + textInfoArray['id']
+        'for': 'text-block-' + textInfo['id']
     }).appendTo(menuItem);
     return menuItem;
 }
@@ -90,41 +91,45 @@ function buildNavbarMenu(requestResult, parentElement) {
     });
 }
 
-function drawNavbar() {
+function loadNavbar() {
     $.ajax({
-        url: WEB_API_ADDRESS + '/api/catalog/firsttwonestinglevels/',
+        url: WEB_API_ADDRESS + '/api/catalog/FirstTwoNestingLevels/',
         success: (result) => buildNavbarMenu(result, $('#section-menu'))
     })
 }
 
 
-function drawSidebar() {
+function loadSidebar() {
     let urlParts = window.location.href.split('/').filter(item => item !== "");
     let parentCatalogId = 0;
     if ((urlParts.length > 0) && !isNaN(Number(urlParts[urlParts.length - 1]))) {
         parentCatalogId = urlParts[urlParts.length - 1];
     }
-
-    $.ajax({
-        url: WEB_API_ADDRESS + '/api/catalog/gettree/' + parentCatalogId,
-        success: (result) => buildSidebarMenu(result, $('#text-blocks-menu'))
-    })
+    if (parentCatalogId !== 0) {
+        $.ajax({
+            url: WEB_API_ADDRESS + '/api/catalog/GetTree/' + parentCatalogId,
+            success: (result) => buildSidebarMenu(result, $('#text-blocks-menu'))
+        })
+    }
 }
 
-function writeTextInField() {
+function updateMailText() {
     let checkedSwitches = $('.menu-text-input:checked');
     let textField = $('#text-field');
     textField.empty();
 
-    $.each(checkedSwitches, function (_, item) {
-        let index = item.id.split('-')[2];
-        $.ajax({
-            url: WEB_API_ADDRESS + '/api/textblock/' + index,
-            success: function (result) {
-                textField.append(result['text'] + '\n');
-            },
-            async: false
-        })
+    $.each(checkedSwitches, function (i, item) {
+        let elementIndex = item.id.split('-')[2];
+        if (!loaded_texts[elementIndex]) {
+            $.ajax({
+                url: WEB_API_ADDRESS + '/api/TextBlock/' + elementIndex,
+                success: function (result) {
+                    loaded_texts[elementIndex] = result['text'] + '\n\n';
+                },
+                async: false
+            })
+        }
+        textField.append(loaded_texts[elementIndex]);
     });
 }
 
@@ -136,19 +141,19 @@ function uncheckNestedCatalogItems(event) {
         $.each($('#catalog-' + id + '-collapse .menu-text-input'), function (_, text) {
             text.checked = false
         });
-        $("#text-blocks-menu").on('change', '.menu-text-input', writeTextInField);
-        writeTextInField();
+        $("#text-blocks-menu").on('change', '.menu-text-input', updateMailText);
+        updateMailText();
     }
 }
 
 function run() {
-    drawNavbar();
-    drawSidebar();
+    loadNavbar();
+    loadSidebar();
     $(window).on('popstate', function (e) {
-        drawSidebar();
+        loadSidebar();
         $('#text-field').empty();
     });
-    $('#text-blocks-menu').on('change', '.menu-text-input', writeTextInField);
+    $('#text-blocks-menu').on('change', '.menu-text-input', updateMailText);
     $('#text-blocks-menu').on('change', '.catalog-input', uncheckNestedCatalogItems)
 }
 $('document').ready(run);

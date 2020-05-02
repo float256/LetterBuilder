@@ -13,9 +13,9 @@ namespace LetterBuilderWebAdmin.Services.DAO
     {
         private string _connectionString;
 
-        public TextBlockDataAccess(IConfiguration config)
+        public TextBlockDataAccess(string connectionString)
         {
-            _connectionString = config.GetConnectionString("default");
+            _connectionString = connectionString;
         }
 
         /// <summary>
@@ -28,20 +28,22 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM text_block", connection);
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM text_block", connection))
                 {
-                    TextBlock currTextBlock = new TextBlock
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        Text = (string)reader.GetValue(2),
-                        ParentCatalogId = (int)reader.GetValue(3),
-                        OrderInParentCatalog = (int)reader.GetValue(4)
-                    };
-                    repositoryContent.Add(currTextBlock);
+                        TextBlock currTextBlock = new TextBlock
+                        {
+                            Id = (int)reader.GetValue(0),
+                            Name = (string)reader.GetValue(1),
+                            Text = (string)reader.GetValue(2),
+                            ParentCatalogId = (int)reader.GetValue(3),
+                            OrderInParentCatalog = (int)reader.GetValue(4)
+                        };
+                        repositoryContent.Add(currTextBlock);
+                    }
                 }
             }
             return repositoryContent;
@@ -89,21 +91,23 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_parent_catalog=@parentCatalogId", connection);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_parent_catalog=@parentCatalogId", connection))
                 {
-                    TextBlock currTextBlock = new TextBlock
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        Text = (string)reader.GetValue(2),
-                        ParentCatalogId = (int)reader.GetValue(3),
-                        OrderInParentCatalog = (int)reader.GetValue(4)
-                    };
-                    textBlocks.Add(currTextBlock);
+                        TextBlock currTextBlock = new TextBlock
+                        {
+                            Id = (int)reader.GetValue(0),
+                            Name = (string)reader.GetValue(1),
+                            Text = (string)reader.GetValue(2),
+                            ParentCatalogId = (int)reader.GetValue(3),
+                            OrderInParentCatalog = (int)reader.GetValue(4)
+                        };
+                        textBlocks.Add(currTextBlock);
+                    }
                 }
             }
             return textBlocks.FindAll(item => item.ParentCatalogId == parentCatalogId);

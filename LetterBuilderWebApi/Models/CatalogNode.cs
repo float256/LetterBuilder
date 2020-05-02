@@ -10,7 +10,12 @@ namespace LetterBuilderWebAdmin.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Order { get; set; }
-        public List<CatalogNode> ChildrenNodes { get; set; } = new List<CatalogNode>();
-        public List<TextBlock> CatalogAttachments { get; set; } = new List<TextBlock>();
+        public List<CatalogNode> ChildrenNodes { get; set; }
+        public List<TextBlock> CatalogAttachments { get; set; }
+        public CatalogNode()
+        {
+            ChildrenNodes = new List<CatalogNode>();
+            CatalogAttachments = new List<TextBlock>();
+        }
     }
 }
