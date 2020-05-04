@@ -1,0 +1,53 @@
+h1 {
+    font-size: 1.5rem;
+}
+
+textarea {
+    resize: none;
+}
+
+.navbar {
+    background-color: #3F51B5;
+}
+
+.navbar-section {
+    color: #b8b0c9;
+}
+
+.navbar-section:hover {
+    color: white;
+}
+
+.dropdown-item:active {
+    background-color: #3F51B5;
+}
+
+.btn-rounded {
+    border-radius: 10em;
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+    color: #FFF;
+    border-color: #3F51B5;
+    background-color: #3F51B5;
+}
+
+.menu-item {
+    margin: auto;
+}
+
+.texts_subsection {
+    margin-left: 2rem;
+}
+
+.text-field {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    min-height: 50vh;
+}
+
+.copy-button {
+    height: 3rem;
+}
