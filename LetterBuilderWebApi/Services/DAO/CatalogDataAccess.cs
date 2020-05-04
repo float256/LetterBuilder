@@ -93,18 +93,20 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_catalog = @id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                command.ExecuteNonQuery();
-
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
+                using (SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_catalog = @id", connection))
                 {
-                    reader.Read();
-                    catalog.Id = (int)reader.GetValue(0);
-                    catalog.Name = (string)reader.GetValue(1);
-                    catalog.ParentCatalogId = (int)reader.GetValue(2);
-                    catalog.OrderInParentCatalog = (int)reader.GetValue(3);
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.ExecuteNonQuery();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        catalog.Id = (int)reader.GetValue(0);
+                        catalog.Name = (string)reader.GetValue(1);
+                        catalog.ParentCatalogId = (int)reader.GetValue(2);
+                        catalog.OrderInParentCatalog = (int)reader.GetValue(3);
+                    }
                 }
             }
             return catalog;

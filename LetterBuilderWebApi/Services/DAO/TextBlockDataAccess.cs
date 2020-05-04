@@ -61,19 +61,21 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_text_block = @id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                command.ExecuteNonQuery();
-
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
+                using (SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_text_block = @id", connection))
                 {
-                    reader.Read();
-                    textBlock.Id = (int)reader.GetValue(0);
-                    textBlock.Name = (string)reader.GetValue(1);
-                    textBlock.Text = (string)reader.GetValue(2);
-                    textBlock.ParentCatalogId = (int)reader.GetValue(3);
-                    textBlock.OrderInParentCatalog = (int)reader.GetValue(4);
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.ExecuteNonQuery();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        textBlock.Id = (int)reader.GetValue(0);
+                        textBlock.Name = (string)reader.GetValue(1);
+                        textBlock.Text = (string)reader.GetValue(2);
+                        textBlock.ParentCatalogId = (int)reader.GetValue(3);
+                        textBlock.OrderInParentCatalog = (int)reader.GetValue(4);
+                    }
                 }
             }
             return textBlock;
