@@ -112,6 +112,31 @@ function loadSidebar() {
     }
 }
 
+function loadVariablesTable() {
+    $('#variables-table>tbody').text('')
+    var allVariables = $('#text-field').text().match(/{\w+}/g);
+    if (allVariables !== null) {
+        $('#variables-table').removeClass('d-none');
+        allVariables.forEach(function (item, i) {
+            allVariables[i] = item.slice(1, -1)
+        })
+        $.each(allVariables, function (i, variableName) {
+            if ($(`#variable-${variableName}-input`).length === 0) {
+                var tableRow = $('<tr/>', { id: `variable-${variableName}-input` }).appendTo($('#variables-table>tbody'));
+                $('<td/>', { text: variableName }).appendTo(tableRow);
+                var variableInputField = $('<td/>').appendTo(tableRow);
+                $('<input>', {
+                    type: 'text',
+                    class: 'p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field variable-input',
+                    id: 'variable-' + variableName
+                }).appendTo(variableInputField);
+            }
+        })
+    } else {
+        $('#variables-table').addClass('d-none');
+    }
+}
+
 function updateMailText() {
     let checkedSwitches = $('.menu-text-input:checked');
     let textField = $('#text-field');
@@ -123,7 +148,13 @@ function updateMailText() {
             $.ajax({
                 url: WEB_API_ADDRESS + '/api/TextBlock/' + elementIndex,
                 success: function (result) {
-                    loaded_texts[elementIndex] = result['text'] + '\n\n';
+                    let text = result['text'];
+                    text = text.replace(/{\w+}/g, function (variablePlaceholder) {
+                        let variableName = variablePlaceholder.slice(1, -1);
+                        return `<span name=${variableName}>${variablePlaceholder}<span/>`
+                    })
+                    loaded_texts[elementIndex] = text + '\n\n';
+
                 },
                 async: false
             })
@@ -145,10 +176,35 @@ function uncheckNestedCatalogItems(event) {
     }
 }
 
+function updateVariablePlaceholder(event) {
+    let variableName = event.currentTarget.id.split('-')[1];
+    let text = event.target.value;
+    if (text.trim() === '') {
+        text = `{${variableName}}`;
+    }
+    $(`span[name=${variableName}]`).text(text);
+}
+
 function copyFromTextField() {
-    $("#text-field").select();
+    var text = document.getElementById('text-field')
+    var range, selection;
+
+    if (document.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    }
+
+    else if (window.getSelection) {
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
     document.execCommand('copy');
-    alert('Текст скопирован в буфер обмена');
+    window.getSelection().removeAllRanges();
+    alert('Текст скопирован в буфер обмена')
 }
 
 function run(){
@@ -159,10 +215,13 @@ function run(){
     loadSidebar();
     $(window).on('popstate', function (e) {
         loadSidebar();
+        loadVariablesTable();
         $('#text-field').empty();
     });
     $('#text-blocks-menu').on('change', '.menu-text-input', updateMailText);
-    $('#text-blocks-menu').on('change', '.catalog-input', uncheckNestedCatalogItems)
+    $('#text-blocks-menu').on('change', '.menu-text-input', loadVariablesTable);
+    $('#text-blocks-menu').on('change', '.catalog-input', uncheckNestedCatalogItems);
+    $('#variables-table').on('input', '.variable-input', updateVariablePlaceholder);
 }
 
 $('document').ready(run);

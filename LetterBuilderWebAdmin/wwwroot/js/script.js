@@ -27,6 +27,7 @@ function removeMoveButtonsFromEdgeElements() {
 function run() {
     sortDirectoryElements();
     removeMoveButtonsFromEdgeElements();
+    CKEDITOR.replace('CatalogText');
     $('.all_directories').on('click', '.list_expansion_button', changeIsOpenAttribute);
 }
 

@@ -19,15 +19,27 @@
     </nav>
     <div class="row container-fluid m-0">
         <!-- Text Blocks Menu -->
-        <div class="col-4 p-3 pl-3">
+        <div class="col-4 p-3 pl-3 overflow-auto">
             <h1 class="pb-3 pt-4 border-bottom" id="section-name">
             </h1>
             <div class="mt-4" id="text-blocks-menu">
             </div>
+            
+            <!-- Variables Table -->
+            <table class="table mt-5 d-none" id="variables-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Переменная</th>
+                        <th scope="col">Значение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
         <div class="col-8 pl-auto mb-5 mx-0 row">
-            <textarea class="text-field px-4 py-3 mt-3 col-12" id="text-field" readonly>
-            </textarea>
+            <div class="text-field px-4 py-3 mt-3 col-12" id="text-field" readonly>
+            </div>
             <button type="submit" class="btn rounded-0 mt-3 copy-button btn-primary small ml-auto" id="copy-button">
                 СКОПИРОВАТЬ
             </button>
