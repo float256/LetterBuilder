@@ -76,5 +76,17 @@ namespace LetterBuilderWebAdmin.Controllers
             _directorySystemFacade.UpdateOrder(catalog, action);
             return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
         }
+        [HttpGet]
+        public IActionResult UpdateParentCatalog(int id)
+        {
+            return View(_directorySystemFacade.GetCatalogById(id));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCatalogParentCatalog(Catalog catalog)
+        {
+            _directorySystemFacade.UpdateParentCatalog(catalog);
+            return RedirectToAction("Index", "Catalog", new { id = catalog.ParentCatalogId });
+        }
     }
 }

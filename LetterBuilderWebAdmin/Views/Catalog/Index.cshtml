@@ -23,6 +23,7 @@
                         <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
                             <a class="dropdown-item" href="@Url.Action("Update", "Catalog", new { id = item.Id})">Редактировать</a>
                             <a class="dropdown-item" href="@Url.Action("Delete", "Catalog", new { id = item.Id})">Удалить</a>
+                            <a class="dropdown-item" href="@Url.Action("UpdateParentCatalog", "Catalog", new { id = item.Id })">Переместить</a>
                             <form asp-action="Move" asp-controller="Catalog" class="order_up">
                                 <button class="dropdown-item">Вверх</button>
                                 <input type="hidden" value="@item.Id" name="id" />
@@ -53,6 +54,7 @@
                         <div class="dropdown-menu rounded-0" aria-labelledby="catalog1DropdownMenu">
                             <a class="dropdown-item" href="@Url.Action("Update", "TextBlock", new { id = item.Id})">Редактировать</a>
                             <a class="dropdown-item" href="@Url.Action("Delete", "TextBlock", new { id = item.Id})">Удалить</a>
+                            <a class="dropdown-item" href="@Url.Action("UpdateParentCatalog", "TextBlock", new { id = item.Id })">Переместить</a>
                             <form asp-action="Move" asp-controller="TextBlock" class="order_up">
                                 <button class="dropdown-item">Вверх</button>
                                 <input type="hidden" value="@item.Id" name="id" />

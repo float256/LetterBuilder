@@ -23,3 +23,21 @@
 .list_expansion_button[data-is-open=true] {
     transform: rotate(90deg);
 }
+
+.h-0 {
+    height: 0;
+}
+
+.catalog_radio_buttons_menu {
+    max-height: 15rem;
+    overflow: auto;
+}
+
+input[type="radio"]:checked + label {
+    font-weight: bold;
+}
+
+input[type="radio"]:enabled + label:hover {
+    cursor: pointer;
+}
+

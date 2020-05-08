@@ -100,10 +100,19 @@ namespace LetterBuilderWebAdmin.Services
         /// <summary>
         /// Данный метод обновляет имя и содержание текстового файла в базе данных. Id записи берется из поля Id передаваемого объекта
         /// </summary>
-        /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи></param>
+        /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
         public void UpdateValue(TextBlock textBlock)
         {
             _textDataAccess.UpdateNameAndText(textBlock);
+        }
+
+        /// <summary>
+        /// Данный метод обновляет родительский каталог текстового файла в базе данных. Id записи берется из поля Id передаваемого объекта
+        /// </summary>
+        /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
+        public void UpdateParentCatalog(TextBlock textBlock)
+        {
+            _textDataAccess.UpdateParentCatalog(textBlock);
         }
 
         /// <summary>
@@ -113,6 +122,15 @@ namespace LetterBuilderWebAdmin.Services
         public void UpdateValue(Catalog catalog)
         {
             _catalogDataAccess.UpdateName(catalog);
+        }
+
+        /// <summary>
+        /// Данный метод обновляет родительский каталог каталога в базе данных. Id записи берется из поля Id передаваемого объекта
+        /// </summary>
+        /// <param name="catalog">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
+        public void UpdateParentCatalog(Catalog catalog)
+        {
+            _catalogDataAccess.UpdateParentCatalog(catalog);
         }
 
         /// <summary>

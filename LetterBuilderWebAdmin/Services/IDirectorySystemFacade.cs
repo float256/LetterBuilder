@@ -22,5 +22,7 @@ namespace LetterBuilderWebAdmin.Services
         void UpdateValue(Catalog catalog);
         void UpdateOrder(TextBlock textBlock, OrderAction orderAction);
         void UpdateOrder(Catalog catalog, OrderAction orderAction);
+        void UpdateParentCatalog(TextBlock textBlock);
+        void UpdateParentCatalog(Catalog catalog);
     }
 }

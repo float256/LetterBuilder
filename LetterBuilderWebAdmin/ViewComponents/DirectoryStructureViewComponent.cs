@@ -19,10 +19,29 @@ namespace LetterBuilderWebAdmin.ViewComponents
             _directoryFacade = directoryFacade;
         }
 
-        public IViewComponentResult Invoke(int id)
+        /// <summary>
+        /// Данная функция отстраивает дерево каталогов
+        /// </summary>
+        /// <param name="id">Id каталога, в котором находится пользователь</param>
+        /// <param name="isMoveElementsInRadioButtons">
+        /// Если true, то каждое имя каталога помещается в label.
+        /// Также создается radio button с name='catalog-radio'
+        /// </param>
+        public IViewComponentResult Invoke(int id, DirectoryStructureTypes structureType = DirectoryStructureTypes.MenuSidebar)
         {
             CatalogsTreeBuilder treeBuilder = new CatalogsTreeBuilder(_directoryFacade);
-            return View(treeBuilder.BuildTree(id));
+            if (structureType == DirectoryStructureTypes.TextBlockParentCatalogChangingMenu)
+            {
+                return View("TextBlockParentCatalogChangingMenu", treeBuilder.BuildTree(id));
+            }
+            else if (structureType == DirectoryStructureTypes.CatalogParentCatalogChangingMenu)
+            {
+                return View("CatalogParentCatalogChangingMenu", treeBuilder.BuildTree(id));
+            }
+            else
+            {
+                return View(treeBuilder.BuildTree(id));
+            }
         }
     }
 }

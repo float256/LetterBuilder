@@ -8,6 +8,7 @@ namespace LetterBuilderWebAdmin.Services.DAO
         void Add(Catalog entity);
         void UpdateName(Catalog entity);
         void UpdateOrder(Catalog entity);
+        void UpdateParentCatalog(Catalog entity);
         void Delete(int id);
         List<Catalog> GetSubcatalogsByParentCatalogId(int parentCatalogId);
         List<Catalog> GetAll();

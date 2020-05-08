@@ -26,7 +26,14 @@
     </nav>
     <div class="row container-fluid main-block">
         <div class="col-3 p-3 overflow-auto all_directories">
-            @await Component.InvokeAsync("DirectoryStructure", new { id = int.Parse(ViewContext.RouteData.Values["id"].ToString()) })
+            @if ("Catalog" == (string) ViewContext.RouteData.Values["controller"])
+            {
+                @await Component.InvokeAsync("DirectoryStructure", new { id = int.Parse(ViewContext.RouteData.Values["id"].ToString()) })
+            }
+            else
+            {
+                @await Component.InvokeAsync("DirectoryStructure", new { id = 0 })
+            }
             <div class="ml-3 my-2">
                 <a href="@Url.Action("Add", "Catalog", new { id = 0 })">+ Добавить корневой каталог</a>
             </div>
@@ -38,7 +45,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <script src="~/lib/ckeditor/ckeditor.js"></script>
     <script src="~/js/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,24 @@
+﻿@using LetterBuilderWebAdmin.ViewComponents;
+@model Catalog;
+@{
+    ViewData["Title"] = "Update Parent Catalog";
+}
+
+<div class="col-9 ml-auto mb-5">
+    <div class="folder-content pt-5 pb-4 px-5 mt-4 container">
+        <h1>Перемещение каталога</h1>
+        <form asp-action="UpdateCatalogParentCatalog" asp-controller="Catalog" method="post" class="p-0">
+            <div class="form-group p-0">
+                <label class="text-primary mt-2 mb-3">Выберите каталог</label>
+                <div class="all_directories catalog_radio_buttons_menu">
+                    @await Component.InvokeAsync("DirectoryStructure", new { id = Model.Id, structureType = DirectoryStructureTypes.CatalogParentCatalogChangingMenu })
+                </div>
+            </div>
+            <div class="row justify-content-md-center my-5 pt-1">
+                <a href=@Url.Action("Index", "Catalog", new { id = Model.ParentCatalogId }) class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Отмена</a>
+                <button type="submit" class="btn col-2 rounded-0 pt-2 pb-2 btn-primary">Сохранить</button>
+            </div>
+            <input name="Id" type="hidden" value="@Model.Id">
+        </form>
+    </div>
+</div>

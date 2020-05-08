@@ -70,6 +70,18 @@ namespace LetterBuilderWebAdmin.Services.DAO
             }
         }
 
+        public void UpdateParentCatalog(Catalog entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("UPDATE catalog SET id_parent_catalog=@parentCatalogId WHERE id_catalog=@id", connection);
+                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                command.ExecuteNonQuery();
+            }
+        }
+
         /// <summary>
         /// Данный метод удаляет каталог из базы данных, но он не удаляет записи о вложенных файлах и папках
         /// </summary>

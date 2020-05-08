@@ -72,6 +72,18 @@ namespace LetterBuilderWebAdmin.Services.DAO
             }
         }
 
+        public void UpdateParentCatalog(TextBlock entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("UPDATE text_block SET id_parent_catalog=@parentCatalogId WHERE id_text_block=@id", connection);
+                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                command.ExecuteNonQuery();
+            }
+        }
+
         /// <summary>
         ///  Данный метод удаляет текстовый файл из базы данных
         /// </summary>
