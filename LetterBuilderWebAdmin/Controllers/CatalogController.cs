@@ -100,6 +100,7 @@ namespace LetterBuilderWebAdmin.Controllers
                     maxOrder = item.OrderInParentCatalog;
                 }
             }
+            catalog.OrderInParentCatalog = maxOrder + 1;
             _directorySystemFacade.UpdateParentCatalog(catalog);
             _directorySystemFacade.UpdateOrder(catalog);
             return RedirectToAction("Index", "Catalog", new { id = catalog.ParentCatalogId });
