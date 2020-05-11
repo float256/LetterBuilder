@@ -112,13 +112,17 @@ function loadSidebar() {
     }
 }
 
+function getVariableName(rawVariableString) {
+    return rawVariableString.slice(1, -1);
+}
+
 function loadVariablesTable() {
     $('#variables-table>tbody').text('')
-    var allVariables = $('#text-field').text().match(/{\w+}/g);
+    let allVariables = $('#text-field').text().match(/{[а-яА-ЯёЁ\w]+}/g);
     if (allVariables !== null) {
         $('#variables-table').removeClass('d-none');
         allVariables.forEach(function (item, i) {
-            allVariables[i] = item.slice(1, -1)
+            allVariables[i] = getVariableName(item);
         })
         $.each(allVariables, function (i, variableName) {
             if ($(`#variable-${variableName}-input`).length === 0) {
@@ -149,12 +153,11 @@ function updateMailText() {
                 url: WEB_API_ADDRESS + '/api/TextBlock/' + elementIndex,
                 success: function (result) {
                     let text = result['text'];
-                    text = text.replace(/{\w+}/g, function (variablePlaceholder) {
+                    text = text.replace(/{[а-яА-ЯёЁ\w]+}/g, function (variablePlaceholder) {
                         let variableName = variablePlaceholder.slice(1, -1);
-                        return `<span name=${variableName}>${variablePlaceholder}<span/>`
+                        return `<span name=${variableName}>${variablePlaceholder}</span>`
                     })
                     loaded_texts[elementIndex] = text + '\n\n';
-
                 },
                 async: false
             })
@@ -194,7 +197,6 @@ function copyFromTextField() {
         range.moveToElementText(text);
         range.select();
     }
-
     else if (window.getSelection) {
         selection = window.getSelection();
         range = document.createRange();
@@ -207,7 +209,7 @@ function copyFromTextField() {
     alert('Текст скопирован в буфер обмена')
 }
 
-function run(){
+function run() {
     let copyButton = $('#copy-button');
     copyButton.on('click', copyFromTextField);
 

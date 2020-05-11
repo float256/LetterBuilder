@@ -85,7 +85,23 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpPost]
         public IActionResult UpdateCatalogParentCatalog(Catalog catalog)
         {
+            int maxOrder = 0;
+            foreach (TextBlock item in _directorySystemFacade.GetCatalogAttachments(catalog.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            foreach (Catalog item in _directorySystemFacade.GetSubcatalogs(catalog.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
             _directorySystemFacade.UpdateParentCatalog(catalog);
+            _directorySystemFacade.UpdateOrder(catalog);
             return RedirectToAction("Index", "Catalog", new { id = catalog.ParentCatalogId });
         }
     }

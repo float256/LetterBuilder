@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using LetterBuilderWebAdmin.Models;
 using Microsoft.VisualStudio.Web.CodeGeneration;
 using LetterBuilderWebAdmin.Services;
+using Microsoft.AspNetCore.Razor.Language;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
@@ -76,7 +77,24 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpPost]
         public IActionResult UpdateTextBlockParentCatalog(TextBlock textBlock)
         {
+            int maxOrder = 0;
+            foreach (TextBlock item in _directorySystemFacade.GetCatalogAttachments(textBlock.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            foreach (Catalog item in _directorySystemFacade.GetSubcatalogs(textBlock.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            textBlock.OrderInParentCatalog = maxOrder + 1;
             _directorySystemFacade.UpdateParentCatalog(textBlock);
+            _directorySystemFacade.UpdateOrder(textBlock);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
     }

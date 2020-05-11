@@ -187,11 +187,22 @@ namespace LetterBuilderWebAdmin.Services
         }
 
         /// <summary>
+        /// Данный метод обновляет порядок элемента. Но он не обновляет порядок элемента
+        /// имеющий такой же порядок и находящийся в том же каталоге, если такой существует
+        /// </summary>
+        /// <param name="textBlock">Объект типа TextBlock, который должен иметь Id и новый порядковый номер
+        /// элемента, у которого нужно сменить порядковый номер</param>
+        public void UpdateOrder(TextBlock textBlock)
+        {
+            _textDataAccess.UpdateOrder(textBlock);
+        }
+
+        /// <summary>
         /// Данный метод меняет порядок элемента. Если существует элемент, 
         /// имеющий такой же порядок и находящийся в том же каталоге, он меняется местами с входным элементом
         /// </summary>
         /// <param name="textBlock">Объект типа TextBlock, который должен иметь Id и Order элемента, у которого нужно сменить порядковый номер</param>
-        /// <param name="order">Новый порядковый номер элемента</param>
+        /// <param name="orderAction">Действие, которое нужно совершить: перемещение вверх или перемещение вни</param>
         public void UpdateOrder(TextBlock textBlock, OrderAction orderAction)
         {
 
@@ -245,6 +256,17 @@ namespace LetterBuilderWebAdmin.Services
                 _textDataAccess.UpdateOrder(textBlock);
                 scope.Complete();
             }
+        }
+
+        /// <summary>
+        /// Данный метод обновляет порядок элемента. Но он не обновляет порядок элемента
+        /// имеющий такой же порядок и находящийся в том же каталоге, если такой существует
+        /// </summary>
+        /// <param name="textBlock">Объект типа Catalog, который должен иметь Id и новый порядковый номер
+        /// элемента, у которого нужно сменить порядковый номер</param>
+        public void UpdateOrder(Catalog catalog)
+        {
+            _catalogDataAccess.UpdateOrder(catalog);
         }
 
         /// <summary>
