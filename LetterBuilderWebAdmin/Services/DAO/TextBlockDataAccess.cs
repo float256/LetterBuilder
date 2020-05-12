@@ -127,11 +127,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         TextBlock currTextBlock = new TextBlock
                         {
-                            Id = (int)reader.GetValue(0),
-                            Name = (string)reader.GetValue(1),
-                            Text = (string)reader.GetValue(2),
-                            ParentCatalogId = (int)reader.GetValue(3),
-                            OrderInParentCatalog = (int)reader.GetValue(4)
+                            Id = Convert.ToInt32(reader.GetValue(0)),
+                            Name = Convert.ToString(reader.GetValue(1)),
+                            Text = Convert.ToString(reader.GetValue(2)),
+                            ParentCatalogId = Convert.ToInt32(reader.GetValue(3)),
+                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(4))
                         };
                         repositoryContent.Add(currTextBlock);
                     }
@@ -161,11 +161,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     if (reader.HasRows)
                     {
                         reader.Read();
-                        textBlock.Id = (int)reader.GetValue(0);
-                        textBlock.Name = (string)reader.GetValue(1);
-                        textBlock.Text = (string)reader.GetValue(2);
-                        textBlock.ParentCatalogId = (int)reader.GetValue(3);
-                        textBlock.OrderInParentCatalog = (int)reader.GetValue(4);
+                        textBlock.Id = Convert.ToInt32(reader.GetValue(0));
+                        textBlock.Name = Convert.ToString(reader.GetValue(1));
+                        textBlock.Text = Convert.ToString(reader.GetValue(2));
+                        textBlock.ParentCatalogId = Convert.ToInt32(reader.GetValue(3));
+                        textBlock.OrderInParentCatalog = Convert.ToInt32(reader.GetValue(4));
                     }
                 }
             }
@@ -193,11 +193,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         TextBlock currTextBlock = new TextBlock
                         {
-                            Id = (int)reader.GetValue(0),
-                            Name = (string)reader.GetValue(1),
-                            Text = (string)reader.GetValue(2),
-                            ParentCatalogId = (int)reader.GetValue(3),
-                            OrderInParentCatalog = (int)reader.GetValue(4)
+                            Id = Convert.ToInt32(reader.GetValue(0)),
+                            Name = Convert.ToString(reader.GetValue(1)),
+                            Text = Convert.ToString(reader.GetValue(2)),
+                            ParentCatalogId = Convert.ToInt32(reader.GetValue(3)),
+                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(4))
                         };
                         textBlocks.Add(currTextBlock);
                     }

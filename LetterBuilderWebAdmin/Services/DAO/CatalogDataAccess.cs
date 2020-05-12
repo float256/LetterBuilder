@@ -127,10 +127,10 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         Catalog currCatalog = new Catalog
                         {
-                            Id = (int)reader.GetValue(0),
-                            Name = (string)reader.GetValue(1),
-                            ParentCatalogId = (int)reader.GetValue(2),
-                            OrderInParentCatalog = (int)reader.GetValue(3)
+                            Id = Convert.ToInt32(reader.GetValue(0)),
+                            Name = Convert.ToString(reader.GetValue(1)),
+                            ParentCatalogId = Convert.ToInt32(reader.GetValue(2)),
+                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(3))
                         };
                         subcatalogs.Add(currCatalog);
                     }
@@ -157,10 +157,10 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         Catalog currCatalog = new Catalog
                         {
-                            Id = (int)reader.GetValue(0),
-                            Name = (string)reader.GetValue(1),
-                            ParentCatalogId = (int)reader.GetValue(2),
-                            OrderInParentCatalog = (int)reader.GetValue(3)
+                            Id = Convert.ToInt32(reader.GetValue(0)),
+                            Name = Convert.ToString(reader.GetValue(1)),
+                            ParentCatalogId = Convert.ToInt32(reader.GetValue(2)),
+                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(3))
                         };
                         repositoryContent.Add(currCatalog);
                     }
@@ -191,10 +191,10 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     if (reader.HasRows)
                     {
                         reader.Read();
-                        catalog.Id = (int)reader.GetValue(0);
-                        catalog.Name = (string)reader.GetValue(1);
-                        catalog.ParentCatalogId = (int)reader.GetValue(2);
-                        catalog.OrderInParentCatalog = (int)reader.GetValue(3);
+                        catalog.Id = Convert.ToInt32(reader.GetValue(0));
+                        catalog.Name = Convert.ToString(reader.GetValue(1));
+                        catalog.ParentCatalogId = Convert.ToInt32(reader.GetValue(2));
+                        catalog.OrderInParentCatalog = Convert.ToInt32(reader.GetValue(3));
                     }
                 }
             }
