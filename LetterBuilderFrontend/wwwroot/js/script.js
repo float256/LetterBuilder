@@ -122,7 +122,7 @@ function loadVariablesTable() {
 
     $('#variables-table>tbody').text('')
     let allVariables = [];
-    $.each($('span'), function (index, item) {
+    $.each($('span[data-is-variable-placeholder="true"]'), function (index, item) {
         allVariables.push(item.getAttribute("name"));
     })
 
@@ -165,7 +165,7 @@ function updateMailText() {
                     let text = result['text'];
                     text = text.replace(/{[а-яА-ЯёЁ\w]+}/g, function (variablePlaceholder) {
                         let variableName = variablePlaceholder.slice(1, -1);
-                        return `<span name=${variableName}>${variablePlaceholder}</span>`
+                        return `<span name=${variableName} data-is-variable-placeholder="true">${variablePlaceholder}</span>`
                     })
                     loaded_texts[elementIndex] = text + '<br><br>';
                 },
