@@ -127,10 +127,10 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         Catalog currCatalog = new Catalog
                         {
-                            Id = Convert.ToInt32(reader.GetValue(0)),
-                            Name = Convert.ToString(reader.GetValue(1)),
-                            ParentCatalogId = Convert.ToInt32(reader.GetValue(2)),
-                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(3))
+                            Id = Convert.ToInt32(reader["id"]),
+                            Name = Convert.ToString(reader["name"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
                         };
                         subcatalogs.Add(currCatalog);
                     }
@@ -157,10 +157,10 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         Catalog currCatalog = new Catalog
                         {
-                            Id = Convert.ToInt32(reader.GetValue(0)),
-                            Name = Convert.ToString(reader.GetValue(1)),
-                            ParentCatalogId = Convert.ToInt32(reader.GetValue(2)),
-                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(3))
+                            Id = Convert.ToInt32(reader["id_catalog"]),
+                            Name = Convert.ToString(reader["name"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
                         };
                         repositoryContent.Add(currCatalog);
                     }
@@ -168,7 +168,6 @@ namespace LetterBuilderWebAdmin.Services.DAO
             }
             return repositoryContent;
         }
-
 
         /// <summary>
         /// Данный метод возвращает запись из базы данных по Id
@@ -191,10 +190,10 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     if (reader.HasRows)
                     {
                         reader.Read();
-                        catalog.Id = Convert.ToInt32(reader.GetValue(0));
-                        catalog.Name = Convert.ToString(reader.GetValue(1));
-                        catalog.ParentCatalogId = Convert.ToInt32(reader.GetValue(2));
-                        catalog.OrderInParentCatalog = Convert.ToInt32(reader.GetValue(3));
+                        catalog.Id = Convert.ToInt32(reader["id_catalog"]);
+                        catalog.Name = Convert.ToString(reader["name"]);
+                        catalog.ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]);
+                        catalog.OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"]);
                     }
                 }
             }

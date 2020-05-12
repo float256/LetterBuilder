@@ -127,11 +127,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         TextBlock currTextBlock = new TextBlock
                         {
-                            Id = Convert.ToInt32(reader.GetValue(0)),
-                            Name = Convert.ToString(reader.GetValue(1)),
-                            Text = Convert.ToString(reader.GetValue(2)),
-                            ParentCatalogId = Convert.ToInt32(reader.GetValue(3)),
-                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(4))
+                            Id = Convert.ToInt32(reader["id_text_block"]),
+                            Name = Convert.ToString(reader["name"]),
+                            Text = Convert.ToString(reader["text"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
                         };
                         repositoryContent.Add(currTextBlock);
                     }
@@ -161,11 +161,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     if (reader.HasRows)
                     {
                         reader.Read();
-                        textBlock.Id = Convert.ToInt32(reader.GetValue(0));
-                        textBlock.Name = Convert.ToString(reader.GetValue(1));
-                        textBlock.Text = Convert.ToString(reader.GetValue(2));
-                        textBlock.ParentCatalogId = Convert.ToInt32(reader.GetValue(3));
-                        textBlock.OrderInParentCatalog = Convert.ToInt32(reader.GetValue(4));
+                        textBlock.Id = Convert.ToInt32(reader["id_text_block"]);
+                        textBlock.Name = Convert.ToString(reader["name"]);
+                        textBlock.Text = Convert.ToString(reader["text"]);
+                        textBlock.ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]);
+                        textBlock.OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"]);
                     }
                 }
             }
@@ -193,11 +193,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         TextBlock currTextBlock = new TextBlock
                         {
-                            Id = Convert.ToInt32(reader.GetValue(0)),
-                            Name = Convert.ToString(reader.GetValue(1)),
-                            Text = Convert.ToString(reader.GetValue(2)),
-                            ParentCatalogId = Convert.ToInt32(reader.GetValue(3)),
-                            OrderInParentCatalog = Convert.ToInt32(reader.GetValue(4))
+                            Id = Convert.ToInt32(reader["id_text_block"]),
+                            Name = Convert.ToString(reader["name"]),
+                            Text = Convert.ToString(reader["text"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
                         };
                         textBlocks.Add(currTextBlock);
                     }
