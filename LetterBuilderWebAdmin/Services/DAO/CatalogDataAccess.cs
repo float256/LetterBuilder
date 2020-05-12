@@ -127,7 +127,7 @@ namespace LetterBuilderWebAdmin.Services.DAO
                     {
                         Catalog currCatalog = new Catalog
                         {
-                            Id = Convert.ToInt32(reader["id"]),
+                            Id = Convert.ToInt32(reader["id_catalog"]),
                             Name = Convert.ToString(reader["name"]),
                             ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
                             OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
