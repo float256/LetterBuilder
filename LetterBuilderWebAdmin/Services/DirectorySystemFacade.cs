@@ -107,12 +107,30 @@ namespace LetterBuilderWebAdmin.Services
         }
 
         /// <summary>
-        /// Данный метод обновляет родительский каталог текстового файла в базе данных. Id записи берется из поля Id передаваемого объекта
+        /// Данный метод обновляет родительский каталог текстового файла в базе данных. Id записи берется из поля
+        /// Id передаваемого объекта. Также в объекте должен быть указан новый ParentCatalogId
         /// </summary>
         /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
         public void UpdateParentCatalog(TextBlock textBlock)
         {
+            int maxOrder = 0;
+            foreach (TextBlock item in GetCatalogAttachments(textBlock.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            foreach (Catalog item in GetSubcatalogs(textBlock.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            textBlock.OrderInParentCatalog = maxOrder + 1;
             _textDataAccess.UpdateParentCatalog(textBlock);
+            _textDataAccess.UpdateOrder(textBlock);
         }
 
         /// <summary>
@@ -125,12 +143,30 @@ namespace LetterBuilderWebAdmin.Services
         }
 
         /// <summary>
-        /// Данный метод обновляет родительский каталог каталога в базе данных. Id записи берется из поля Id передаваемого объекта
+        /// Данный метод обновляет родительский каталог каталога в базе данных. Id записи берется из поля
+        /// Id передаваемого объекта. Также в объекте должен быть указан новый ParentCatalogId
         /// </summary>
         /// <param name="catalog">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
         public void UpdateParentCatalog(Catalog catalog)
         {
+            int maxOrder = 0;
+            foreach (TextBlock item in GetCatalogAttachments(catalog.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            foreach (Catalog item in GetSubcatalogs(catalog.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            catalog.OrderInParentCatalog = maxOrder + 1;
             _catalogDataAccess.UpdateParentCatalog(catalog);
+            _catalogDataAccess.UpdateOrder(catalog);
         }
 
         /// <summary>
@@ -184,17 +220,6 @@ namespace LetterBuilderWebAdmin.Services
 
             // Удаление каталога
             _catalogDataAccess.Delete(id);
-        }
-
-        /// <summary>
-        /// Данный метод обновляет порядок элемента. Но он не обновляет порядок элемента
-        /// имеющий такой же порядок и находящийся в том же каталоге, если такой существует
-        /// </summary>
-        /// <param name="textBlock">Объект типа TextBlock, который должен иметь Id и новый порядковый номер
-        /// элемента, у которого нужно сменить порядковый номер</param>
-        public void UpdateOrder(TextBlock textBlock)
-        {
-            _textDataAccess.UpdateOrder(textBlock);
         }
 
         /// <summary>

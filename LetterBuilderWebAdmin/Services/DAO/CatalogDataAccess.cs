@@ -27,11 +27,13 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId, @order) SELECT SCOPE_IDENTITY()", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
-                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
-                entity.Id = Convert.ToInt32(command.ExecuteScalar());
+                using (SqlCommand command = new SqlCommand("INSERT INTO catalog VALUES (@name, @parentCatalogId, @order) SELECT SCOPE_IDENTITY()", connection))
+                {
+                    command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                    command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
+                    entity.Id = Convert.ToInt32(command.ExecuteScalar());
+                }
             }
         }
 
@@ -44,10 +46,12 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("UPDATE catalog SET name=@name WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("UPDATE catalog SET name=@name WHERE id_catalog=@id", connection))
+                {
+                    command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -63,10 +67,12 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("UPDATE catalog SET order_in_parent_directory=@order WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("UPDATE catalog SET order_in_parent_directory=@order WHERE id_catalog=@id", connection))
+                {
+                    command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -75,10 +81,12 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("UPDATE catalog SET id_parent_catalog=@parentCatalogId WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("UPDATE catalog SET id_parent_catalog=@parentCatalogId WHERE id_catalog=@id", connection))
+                {
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -91,9 +99,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("DELETE FROM catalog WHERE id_catalog=@id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("DELETE FROM catalog WHERE id_catalog=@id", connection))
+                {
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -108,20 +118,22 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_parent_catalog=@parentCatalogId", connection))
                 {
-                    Catalog currCatalog = new Catalog
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        ParentCatalogId = (int)reader.GetValue(2),
-                        OrderInParentCatalog = (int)reader.GetValue(3)
-                    };
-                    subcatalogs.Add(currCatalog);
+                        Catalog currCatalog = new Catalog
+                        {
+                            Id = (int)reader.GetValue(0),
+                            Name = (string)reader.GetValue(1),
+                            ParentCatalogId = (int)reader.GetValue(2),
+                            OrderInParentCatalog = (int)reader.GetValue(3)
+                        };
+                        subcatalogs.Add(currCatalog);
+                    }
                 }
             }
             return subcatalogs;
@@ -137,19 +149,21 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM catalog", connection);
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM catalog", connection))
                 {
-                    Catalog currCatalog = new Catalog
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        ParentCatalogId = (int)reader.GetValue(2),
-                        OrderInParentCatalog = (int)reader.GetValue(3)
-                    };
-                    repositoryContent.Add(currCatalog);
+                        Catalog currCatalog = new Catalog
+                        {
+                            Id = (int)reader.GetValue(0),
+                            Name = (string)reader.GetValue(1),
+                            ParentCatalogId = (int)reader.GetValue(2),
+                            OrderInParentCatalog = (int)reader.GetValue(3)
+                        };
+                        repositoryContent.Add(currCatalog);
+                    }
                 }
             }
             return repositoryContent;
@@ -168,18 +182,20 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_catalog = @id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                command.ExecuteNonQuery();
-
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
+                using (SqlCommand command = new SqlCommand("SELECT * FROM catalog WHERE id_catalog = @id", connection))
                 {
-                    reader.Read();
-                    catalog.Id = (int)reader.GetValue(0);
-                    catalog.Name = (string)reader.GetValue(1);
-                    catalog.ParentCatalogId = (int)reader.GetValue(2);
-                    catalog.OrderInParentCatalog = (int)reader.GetValue(3);
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.ExecuteNonQuery();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        catalog.Id = (int)reader.GetValue(0);
+                        catalog.Name = (string)reader.GetValue(1);
+                        catalog.ParentCatalogId = (int)reader.GetValue(2);
+                        catalog.OrderInParentCatalog = (int)reader.GetValue(3);
+                    }
                 }
             }
             return catalog;

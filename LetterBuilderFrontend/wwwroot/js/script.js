@@ -112,28 +112,38 @@ function loadSidebar() {
     }
 }
 
-function getVariableName(rawVariableString) {
-    return rawVariableString.slice(1, -1);
-}
-
 function loadVariablesTable() {
+    let previousVariableValues = { };
+    $.each($('#variables-table>tbody>tr'), function (idx, item) {
+        let variableName = item.firstChild.innerText;
+        let variableValue = item.lastChild.firstChild.value
+        previousVariableValues[variableName] = variableValue;
+    });
+
     $('#variables-table>tbody').text('')
-    let allVariables = $('#text-field').text().match(/{[а-яА-ЯёЁ\w]+}/g);
-    if (allVariables !== null) {
+    let allVariables = [];
+    $.each($('span'), function (index, item) {
+        allVariables.push(item.getAttribute("name"));
+    })
+
+    if (allVariables.length !== 0) {
         $('#variables-table').removeClass('d-none');
-        allVariables.forEach(function (item, i) {
-            allVariables[i] = getVariableName(item);
-        })
         $.each(allVariables, function (i, variableName) {
             if ($(`#variable-${variableName}-input`).length === 0) {
-                var tableRow = $('<tr/>', { id: `variable-${variableName}-input` }).appendTo($('#variables-table>tbody'));
+                let tableRow = $('<tr/>', { id: `variable-${variableName}-input` }).appendTo($('#variables-table>tbody'));
                 $('<td/>', { text: variableName }).appendTo(tableRow);
-                var variableInputField = $('<td/>').appendTo(tableRow);
-                $('<input>', {
+                let variableInputTableCell = $('<td/>').appendTo(tableRow);
+                let variableInputField = $('<input>', {
                     type: 'text',
                     class: 'p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field variable-input',
                     id: 'variable-' + variableName
-                }).appendTo(variableInputField);
+                }).appendTo(variableInputTableCell);
+                if (typeof previousVariableValues[variableName] !== 'undefined') {
+                    variableInputField.val(previousVariableValues[variableName]);
+                    if (previousVariableValues[variableName].trim() !== '') {
+                        $(`span[name=${variableName}]`).text(previousVariableValues[variableName]);
+                    }
+                }
             }
         })
     } else {
@@ -157,13 +167,14 @@ function updateMailText() {
                         let variableName = variablePlaceholder.slice(1, -1);
                         return `<span name=${variableName}>${variablePlaceholder}</span>`
                     })
-                    loaded_texts[elementIndex] = text + '\n\n';
+                    loaded_texts[elementIndex] = text + '<br><br>';
                 },
                 async: false
             })
         }
         textField.append(loaded_texts[elementIndex]);
     });
+    loadVariablesTable();
 }
 
 function uncheckNestedCatalogItems(event) {
@@ -177,6 +188,7 @@ function uncheckNestedCatalogItems(event) {
         $("#text-blocks-menu").on('change', '.menu-text-input', updateMailText);
         updateMailText();
     }
+    loadVariablesTable();
 }
 
 function updateVariablePlaceholder(event) {
@@ -217,8 +229,8 @@ function run() {
     loadSidebar();
     $(window).on('popstate', function (e) {
         loadSidebar();
-        loadVariablesTable();
         $('#text-field').empty();
+        loadVariablesTable();
     });
     $('#text-blocks-menu').on('change', '.menu-text-input', updateMailText);
     $('#text-blocks-menu').on('change', '.menu-text-input', loadVariablesTable);
