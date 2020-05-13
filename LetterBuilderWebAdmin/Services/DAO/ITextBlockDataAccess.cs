@@ -11,6 +11,7 @@ namespace LetterBuilderWebAdmin.Services.DAO
         TextBlock GetById(int id);
         List<TextBlock> GetTextBlocksByParentCatalogId(int parentCatalogId);
         void UpdateNameAndText(TextBlock entity);
+        void UpdateParentCatalog(TextBlock entity);
         void UpdateOrder(TextBlock entity);
     }
 }

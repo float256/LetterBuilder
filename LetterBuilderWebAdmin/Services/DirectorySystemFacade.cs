@@ -100,10 +100,37 @@ namespace LetterBuilderWebAdmin.Services
         /// <summary>
         /// Данный метод обновляет имя и содержание текстового файла в базе данных. Id записи берется из поля Id передаваемого объекта
         /// </summary>
-        /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи></param>
+        /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
         public void UpdateValue(TextBlock textBlock)
         {
             _textDataAccess.UpdateNameAndText(textBlock);
+        }
+
+        /// <summary>
+        /// Данный метод обновляет родительский каталог текстового файла в базе данных. Id записи берется из поля
+        /// Id передаваемого объекта. Также в объекте должен быть указан новый ParentCatalogId
+        /// </summary>
+        /// <param name="textBlock">Объект класса TextBlock, значения которого будут использоваться для обновления записи</param>
+        public void UpdateParentCatalog(TextBlock textBlock)
+        {
+            int maxOrder = 0;
+            foreach (TextBlock item in GetCatalogAttachments(textBlock.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            foreach (Catalog item in GetSubcatalogs(textBlock.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            textBlock.OrderInParentCatalog = maxOrder + 1;
+            _textDataAccess.UpdateParentCatalog(textBlock);
+            _textDataAccess.UpdateOrder(textBlock);
         }
 
         /// <summary>
@@ -113,6 +140,33 @@ namespace LetterBuilderWebAdmin.Services
         public void UpdateValue(Catalog catalog)
         {
             _catalogDataAccess.UpdateName(catalog);
+        }
+
+        /// <summary>
+        /// Данный метод обновляет родительский каталог каталога в базе данных. Id записи берется из поля
+        /// Id передаваемого объекта. Также в объекте должен быть указан новый ParentCatalogId
+        /// </summary>
+        /// <param name="catalog">Объект класса Catalog, значения которого будут использоваться для обновления записи</param>
+        public void UpdateParentCatalog(Catalog catalog)
+        {
+            int maxOrder = 0;
+            foreach (TextBlock item in GetCatalogAttachments(catalog.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            foreach (Catalog item in GetSubcatalogs(catalog.ParentCatalogId))
+            {
+                if (maxOrder < item.OrderInParentCatalog)
+                {
+                    maxOrder = item.OrderInParentCatalog;
+                }
+            }
+            catalog.OrderInParentCatalog = maxOrder + 1;
+            _catalogDataAccess.UpdateParentCatalog(catalog);
+            _catalogDataAccess.UpdateOrder(catalog);
         }
 
         /// <summary>
@@ -173,7 +227,7 @@ namespace LetterBuilderWebAdmin.Services
         /// имеющий такой же порядок и находящийся в том же каталоге, он меняется местами с входным элементом
         /// </summary>
         /// <param name="textBlock">Объект типа TextBlock, который должен иметь Id и Order элемента, у которого нужно сменить порядковый номер</param>
-        /// <param name="order">Новый порядковый номер элемента</param>
+        /// <param name="orderAction">Действие, которое нужно совершить: перемещение вверх или перемещение вни</param>
         public void UpdateOrder(TextBlock textBlock, OrderAction orderAction)
         {
 

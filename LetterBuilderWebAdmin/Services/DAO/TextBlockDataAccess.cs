@@ -27,12 +27,14 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("INSERT INTO text_block VALUES (@name, @text, @parentCatalogId, @order) SELECT SCOPE_IDENTITY()", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
-                command.Parameters.Add("@text", SqlDbType.NVarChar).Value = entity.Text;
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
-                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
-                entity.Id = Convert.ToInt32(command.ExecuteScalar());
+                using (SqlCommand command = new SqlCommand("INSERT INTO text_block VALUES (@name, @text, @parentCatalogId, @order) SELECT SCOPE_IDENTITY()", connection))
+                {
+                    command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
+                    command.Parameters.Add("@text", SqlDbType.NVarChar).Value = entity.Text;
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                    command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
+                    entity.Id = Convert.ToInt32(command.ExecuteScalar());
+                }
             }
         }
 
@@ -45,11 +47,13 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("UPDATE text_block SET name=@name, text=@text WHERE id_text_block=@id", connection);
-                command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
-                command.Parameters.Add("@text", SqlDbType.NVarChar).Value = entity.Text;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("UPDATE text_block SET name=@name, text=@text WHERE id_text_block=@id", connection))
+                {
+                    command.Parameters.Add("@name", SqlDbType.NVarChar).Value = entity.Name;
+                    command.Parameters.Add("@text", SqlDbType.NVarChar).Value = entity.Text;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -65,10 +69,26 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("UPDATE text_block SET order_in_parent_directory=@order WHERE id_text_block=@id", connection);
-                command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("UPDATE text_block SET order_in_parent_directory=@order WHERE id_text_block=@id", connection))
+                {
+                    command.Parameters.Add("@order", SqlDbType.Int).Value = entity.OrderInParentCatalog;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateParentCatalog(TextBlock entity)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("UPDATE text_block SET id_parent_catalog=@parentCatalogId WHERE id_text_block=@id", connection))
+                {
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = entity.ParentCatalogId;
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = entity.Id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -81,9 +101,11 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("DELETE FROM text_block WHERE id_text_block=@id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand("DELETE FROM text_block WHERE id_text_block=@id", connection))
+                {
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -97,20 +119,22 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM text_block", connection);
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM text_block", connection))
                 {
-                    TextBlock currTextBlock = new TextBlock
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        Text = (string)reader.GetValue(2),
-                        ParentCatalogId = (int)reader.GetValue(3),
-                        OrderInParentCatalog = (int)reader.GetValue(4)
-                    };
-                    repositoryContent.Add(currTextBlock);
+                        TextBlock currTextBlock = new TextBlock
+                        {
+                            Id = Convert.ToInt32(reader["id_text_block"]),
+                            Name = Convert.ToString(reader["name"]),
+                            Text = Convert.ToString(reader["text"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
+                        };
+                        repositoryContent.Add(currTextBlock);
+                    }
                 }
             }
             return repositoryContent;
@@ -128,19 +152,21 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_text_block = @id", connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                command.ExecuteNonQuery();
-
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
+                using (SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_text_block = @id", connection))
                 {
-                    reader.Read();
-                    textBlock.Id = (int)reader.GetValue(0);
-                    textBlock.Name = (string)reader.GetValue(1);
-                    textBlock.Text = (string)reader.GetValue(2);
-                    textBlock.ParentCatalogId = (int)reader.GetValue(3);
-                    textBlock.OrderInParentCatalog = (int)reader.GetValue(4);
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.ExecuteNonQuery();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        textBlock.Id = Convert.ToInt32(reader["id_text_block"]);
+                        textBlock.Name = Convert.ToString(reader["name"]);
+                        textBlock.Text = Convert.ToString(reader["text"]);
+                        textBlock.ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]);
+                        textBlock.OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"]);
+                    }
                 }
             }
             return textBlock;
@@ -158,21 +184,23 @@ namespace LetterBuilderWebAdmin.Services.DAO
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_parent_catalog=@parentCatalogId", connection);
-                command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SqlCommand command = new SqlCommand("SELECT * FROM text_block WHERE id_parent_catalog=@parentCatalogId", connection))
                 {
-                    TextBlock currTextBlock = new TextBlock
+                    command.Parameters.Add("@parentCatalogId", SqlDbType.Int).Value = parentCatalogId;
+                    command.ExecuteNonQuery();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        Id = (int)reader.GetValue(0),
-                        Name = (string)reader.GetValue(1),
-                        Text = (string)reader.GetValue(2),
-                        ParentCatalogId = (int)reader.GetValue(3),
-                        OrderInParentCatalog = (int)reader.GetValue(4)
-                    };
-                    textBlocks.Add(currTextBlock);
+                        TextBlock currTextBlock = new TextBlock
+                        {
+                            Id = Convert.ToInt32(reader["id_text_block"]),
+                            Name = Convert.ToString(reader["name"]),
+                            Text = Convert.ToString(reader["text"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
+                        };
+                        textBlocks.Add(currTextBlock);
+                    }
                 }
             }
             return textBlocks.FindAll(item => item.ParentCatalogId == parentCatalogId);

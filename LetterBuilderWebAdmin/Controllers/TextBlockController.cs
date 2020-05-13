@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using LetterBuilderWebAdmin.Models;
 using Microsoft.VisualStudio.Web.CodeGeneration;
 using LetterBuilderWebAdmin.Services;
+using Microsoft.AspNetCore.Razor.Language;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
@@ -59,10 +60,24 @@ namespace LetterBuilderWebAdmin.Controllers
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
 
+        [HttpPost]
         public IActionResult Move(int id, OrderAction action)
         {
             TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
             _directorySystemFacade.UpdateOrder(textBlock, action);
+            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
+        }
+
+        [HttpGet]
+        public IActionResult UpdateParentCatalog(int id)
+        {
+            return View(_directorySystemFacade.GetTextBlockById(id));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTextBlockParentCatalog(TextBlock textBlock)
+        {
+            _directorySystemFacade.UpdateParentCatalog(textBlock);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
     }

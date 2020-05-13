@@ -112,6 +112,45 @@ function loadSidebar() {
     }
 }
 
+function loadVariablesTable() {
+    let previousVariableValues = { };
+    $.each($('#variables-table>tbody>tr'), function (idx, item) {
+        let variableName = item.firstChild.innerText;
+        let variableValue = item.lastChild.firstChild.value
+        previousVariableValues[variableName] = variableValue;
+    });
+
+    $('#variables-table>tbody').text('')
+    let allVariables = [];
+    $.each($('span[data-is-variable-placeholder="true"]'), function (index, item) {
+        allVariables.push(item.getAttribute("name"));
+    })
+
+    if (allVariables.length !== 0) {
+        $('#variables-table').removeClass('d-none');
+        $.each(allVariables, function (i, variableName) {
+            if ($(`#variable-${variableName}-input`).length === 0) {
+                let tableRow = $('<tr/>', { id: `variable-${variableName}-input` }).appendTo($('#variables-table>tbody'));
+                $('<td/>', { text: variableName }).appendTo(tableRow);
+                let variableInputTableCell = $('<td/>').appendTo(tableRow);
+                let variableInputField = $('<input>', {
+                    type: 'text',
+                    class: 'p-0 form-control rounded-0 border-top-0 border-left-0 border-right-0 shadow-none field variable-input',
+                    id: 'variable-' + variableName
+                }).appendTo(variableInputTableCell);
+                if (typeof previousVariableValues[variableName] !== 'undefined') {
+                    variableInputField.val(previousVariableValues[variableName]);
+                    if (previousVariableValues[variableName].trim() !== '') {
+                        $(`span[name=${variableName}]`).text(previousVariableValues[variableName]);
+                    }
+                }
+            }
+        })
+    } else {
+        $('#variables-table').addClass('d-none');
+    }
+}
+
 function updateMailText() {
     let checkedSwitches = $('.menu-text-input:checked');
     let textField = $('#text-field');
@@ -123,13 +162,19 @@ function updateMailText() {
             $.ajax({
                 url: WEB_API_ADDRESS + '/api/TextBlock/' + elementIndex,
                 success: function (result) {
-                    loaded_texts[elementIndex] = result['text'] + '\n\n';
+                    let text = result['text'];
+                    text = text.replace(/{[а-яА-ЯёЁ\w]+}/g, function (variablePlaceholder) {
+                        let variableName = variablePlaceholder.slice(1, -1);
+                        return `<span name=${variableName} data-is-variable-placeholder="true">${variablePlaceholder}</span>`
+                    })
+                    loaded_texts[elementIndex] = text + '<br><br>';
                 },
                 async: false
             })
         }
         textField.append(loaded_texts[elementIndex]);
     });
+    loadVariablesTable();
 }
 
 function uncheckNestedCatalogItems(event) {
@@ -143,15 +188,40 @@ function uncheckNestedCatalogItems(event) {
         $("#text-blocks-menu").on('change', '.menu-text-input', updateMailText);
         updateMailText();
     }
+    loadVariablesTable();
+}
+
+function updateVariablePlaceholder(event) {
+    let variableName = event.currentTarget.id.split('-')[1];
+    let text = event.target.value;
+    if (text.trim() === '') {
+        text = `{${variableName}}`;
+    }
+    $(`span[name=${variableName}]`).text(text);
 }
 
 function copyFromTextField() {
-    $("#text-field").select();
+    var text = document.getElementById('text-field')
+    var range, selection;
+
+    if (document.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    }
+    else if (window.getSelection) {
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
     document.execCommand('copy');
-    alert('Текст скопирован в буфер обмена');
+    window.getSelection().removeAllRanges();
+    alert('Текст скопирован в буфер обмена')
 }
 
-function run(){
+function run() {
     let copyButton = $('#copy-button');
     copyButton.on('click', copyFromTextField);
 
@@ -160,9 +230,12 @@ function run(){
     $(window).on('popstate', function (e) {
         loadSidebar();
         $('#text-field').empty();
+        loadVariablesTable();
     });
     $('#text-blocks-menu').on('change', '.menu-text-input', updateMailText);
-    $('#text-blocks-menu').on('change', '.catalog-input', uncheckNestedCatalogItems)
+    $('#text-blocks-menu').on('change', '.menu-text-input', loadVariablesTable);
+    $('#text-blocks-menu').on('change', '.catalog-input', uncheckNestedCatalogItems);
+    $('#variables-table').on('input', '.variable-input', updateVariablePlaceholder);
 }
 
 $('document').ready(run);

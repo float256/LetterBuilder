@@ -24,9 +24,23 @@ function removeMoveButtonsFromEdgeElements() {
     }
 }
 
+function loadTextEditor() {
+    CKEDITOR.replace('CatalogText');
+    CKEDITOR.instances.CatalogText.on('change', function () {
+        $('#CatalogText').val(CKEDITOR.instances.CatalogText.getData());
+        $('#CatalogText').text(null);
+    });
+
+    $('#CatalogText').removeAttr('class');
+    $('#CatalogText').addClass('d-block invisible h-0');
+}
+
 function run() {
     sortDirectoryElements();
     removeMoveButtonsFromEdgeElements();
+    if ((typeof CKEDITOR !== 'undefined') && ($('#CatalogText').length > 0)) {
+        loadTextEditor();
+    }
     $('.all_directories').on('click', '.list_expansion_button', changeIsOpenAttribute);
 }
 
