@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using LetterBuilderWebAdmin.Models;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Services;
+using LetterBuilderCore.Models;
 
 namespace LetterBuilderWebAdmin.Controllers
 {

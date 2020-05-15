@@ -1,9 +1,11 @@
-﻿using LetterBuilderWebAdmin.Models;
+﻿using LetterBuilderCore.Models;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace LetterBuilderWebAdmin.Services.DAO
+namespace LetterBuilderCore.Services.DAO
 {
-    public interface ICatalogDataAccess
+    public interface ICatalogReadDataAccess
     {
         List<Catalog> GetSubcatalogsByParentCatalogId(int parentCatalogId);
         List<Catalog> GetAll();

@@ -1,4 +1,4 @@
-﻿using LetterBuilderWebAdmin.Models;
+﻿using LetterBuilderCore.Models;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -7,15 +7,15 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetterBuilderWebAdmin.Services.DAO
+namespace LetterBuilderCore.Services.DAO
 {
     public class TextBlockDataAccess : ITextBlockDataAccess
     {
         private string _connectionString;
 
-        public TextBlockDataAccess(IConfiguration config)
+        public TextBlockDataAccess(string connectionString)
         {
-            _connectionString = config.GetConnectionString("default");
+            _connectionString = connectionString;
         }
 
         /// <summary>

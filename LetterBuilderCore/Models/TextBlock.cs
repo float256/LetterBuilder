@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetterBuilderWebAdmin.Models
+namespace LetterBuilderCore.Models
 {
     public class TextBlock
     {

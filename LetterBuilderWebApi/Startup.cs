@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetterBuilderWebAdmin.Services;
-using LetterBuilderWebAdmin.Services.DAO;
+using LetterBuilderCore.Services;
+using LetterBuilderCore.Services.DAO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,7 +31,7 @@ namespace LetterBuilderWebApi
             services.AddControllers();
             services.AddScoped<ICatalogDataAccess, CatalogDataAccess>(x => new CatalogDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>(x => new TextBlockDataAccess(Configuration.GetConnectionString("default")));
-            services.AddScoped<IDirectorySystemFacade, DirectorySystemFacade>();
+            services.AddScoped<IDirectorySystemReadFacade, DirectorySystemFacade>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +49,7 @@ namespace LetterBuilderWebApi
             app.UseAuthorization();
 
             app.UseCors(builder => builder.WithOrigins("http://localhost:52389", "https://localhost:44355",
-                "https://localhost:52389", "http://localhost:44355"));
+                "https://localhost:52389", "http://localhost:44355", "http://letterbuilder.local"));
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,12 +1,11 @@
-﻿using LetterBuilderWebAdmin.Models;
+﻿using LetterBuilderCore.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace LetterBuilderWebAdmin.Services
+namespace LetterBuilderCore.Services
 {
-    public interface IDirectorySystemFacade
+    public interface IDirectorySystemReadFacade
     {
         List<Catalog> GetAllCatalogs();
         List<TextBlock> GetAllTextBlocks();

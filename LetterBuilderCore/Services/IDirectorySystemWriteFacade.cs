@@ -1,19 +1,12 @@
-﻿using LetterBuilderWebAdmin.Models;
+﻿using LetterBuilderCore.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace LetterBuilderWebAdmin.Services
+namespace LetterBuilderCore.Services
 {
-    public interface IDirectorySystemFacade
+    public interface IDirectorySystemWriteFacade
     {
-        List<Catalog> GetAllCatalogs();
-        List<TextBlock> GetAllTextBlocks();
-        TextBlock GetTextBlockById(int id);
-        Catalog GetCatalogById(int id);
-        List<Catalog> GetSubcatalogs(int id);
-        List<TextBlock> GetCatalogAttachments(int id);
         void Add(Catalog catalog);
         void Add(TextBlock catalog);
         void DeleteTextBlock(int id);

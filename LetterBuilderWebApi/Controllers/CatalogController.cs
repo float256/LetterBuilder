@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetterBuilderWebAdmin.Models;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Models;
+using LetterBuilderCore.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +13,9 @@ namespace LetterBuilderWebApi.Controllers
     [ApiController]
     public class CatalogController : ControllerBase
     {
-        private IDirectorySystemFacade _directoryFacade;
+        private IDirectorySystemReadFacade _directoryFacade;
 
-        public CatalogController(IDirectorySystemFacade directoryFacade)
+        public CatalogController(IDirectorySystemReadFacade directoryFacade)
         {
             _directoryFacade = directoryFacade;
         }
@@ -68,8 +68,8 @@ namespace LetterBuilderWebApi.Controllers
         [HttpGet("GetTree/{id}")]
         public ActionResult<CatalogNode> GetTree(int id)
         {
-            CatalogsTreeBuilder tree = new CatalogsTreeBuilder(_directoryFacade);
-            return tree.BuildTree(id);
+            CatalogsTreeBuilder<CatalogNode> tree = new CatalogsTreeBuilder<CatalogNode>(_directoryFacade);
+            return Ok(tree.BuildTree(id));
         }
     }
 }

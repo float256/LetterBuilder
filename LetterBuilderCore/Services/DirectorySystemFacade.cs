@@ -1,12 +1,12 @@
-﻿using LetterBuilderWebAdmin.Models;
-using LetterBuilderWebAdmin.Services.DAO;
+﻿using LetterBuilderCore.Models;
+using LetterBuilderCore.Services.DAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace LetterBuilderWebAdmin.Services
+namespace LetterBuilderCore.Services
 {
     public class DirectorySystemFacade : IDirectorySystemFacade
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace LetterBuilderWebAdmin.Models
+namespace LetterBuilderCore.Models
 {
     public class ErrorViewModel
     {

@@ -1,9 +1,11 @@
-﻿using LetterBuilderWebAdmin.Models;
+﻿using LetterBuilderCore.Models;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace LetterBuilderWebAdmin.Services.DAO
+namespace LetterBuilderCore.Services.DAO
 {
-    public interface ITextBlockDataAccess
+    public interface ITextBlockReadDataAccess
     {
         List<TextBlock> GetAll();
         TextBlock GetById(int id);

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using LetterBuilderWebAdmin.Models;
-using Microsoft.VisualStudio.Web.CodeGeneration;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Services;
+using LetterBuilderCore.Models;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace LetterBuilderWebAdmin.Controllers
@@ -48,7 +47,7 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpPost]
         public IActionResult DeleteTextBlock(int id)
         {
-            TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
+            LetterBuilderCore.Models.TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
             _directorySystemFacade.DeleteTextBlock(id);
             return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
         }
