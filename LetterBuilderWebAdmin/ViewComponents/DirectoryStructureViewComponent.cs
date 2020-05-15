@@ -39,7 +39,7 @@ namespace LetterBuilderWebAdmin.ViewComponents
             }
             else
             {
-                return View(treeBuilder.BuildTree(id, true).ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
+                return View(treeBuilder.BuildTree(id, true, true).ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
         }
     }

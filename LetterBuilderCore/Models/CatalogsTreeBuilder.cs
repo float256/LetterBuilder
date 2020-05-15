@@ -21,19 +21,27 @@ namespace LetterBuilderCore.Models
         /// Данный метод строит дерево каталогов
         /// </summary>
         /// <param name="id">Id каталога, с которого нужно начинать строить дерево</param>
-        /// <param name="isShowAllCatalogs">Если true, то в дереве будут все каталоги, 
+        /// <param name="isAddAllCatalogs">Если true, то в дереве будут все каталоги, 
         /// иначе построение дерева начнется с каталога, id которого равен переданному id</param>
-        /// <returns>Объект типа ICatalogNode, который является начальным каталогом</returns>
-        public NodeType BuildTree(int id, bool isShowAllCatalogs = false)
+        /// <param name="isAddTextBlocks">Если true, то в дерево будут добавлены текстовые файлы</param>
+        /// <returns>Объект типа NodeType, который является начальным каталогом</returns>
+        public NodeType BuildTree(int id, bool isAddAllCatalogs = false, bool isAddTextBlocks = false)
         {
-            int initialId = isShowAllCatalogs ? 0 : id;
+            int initialId = isAddAllCatalogs ? 0 : id;
             Catalog initalCatalog = _directoryFacade.GetCatalogById(initialId);
             NodeType result = CreateNode(initalCatalog, id);
 
             // Получение подкаталогов и файлов, находящихся в изначальном каталоге
             foreach (Catalog subcatalog in _directoryFacade.GetSubcatalogs(initialId))
             {
-                result.ChildrenNodes.Add(CreateNode(subcatalog, id));
+                result.ChildrenNodes.Add(CreateNode(subcatalog, id, result));
+            }
+            if (isAddTextBlocks)
+            {
+                foreach (TextBlock textBlock in _directoryFacade.GetCatalogAttachments(initialId))
+                {
+                    result.CatalogAttachments.Add(textBlock);
+                }
             }
 
             // Построение дерева
@@ -46,9 +54,17 @@ namespace LetterBuilderCore.Models
                     List<Catalog> allSubcatalogs = _directoryFacade.GetSubcatalogs(currParentCatalog.Id);
                     foreach (Catalog currSubcatalog in allSubcatalogs)
                     {
-                        NodeType node = CreateNode(currSubcatalog, id);
+                        NodeType node = CreateNode(currSubcatalog, id, currParentCatalog);
                         currParentCatalog.ChildrenNodes.Add(node);
                         catalogsOnNextDepthLevel.Add(node);
+                    }
+
+                    if (isAddTextBlocks)
+                    {
+                        foreach (TextBlock textBlock in _directoryFacade.GetCatalogAttachments(currParentCatalog.Id))
+                        {
+                            currParentCatalog.CatalogAttachments.Add(textBlock);
+                        }
                     }
                 }
                 catalogsOnCurrDepthLevel = catalogsOnNextDepthLevel;
@@ -56,14 +72,14 @@ namespace LetterBuilderCore.Models
             return result;
         }
 
-        protected virtual NodeType CreateNode(Catalog catalog, int id)
+        protected virtual NodeType CreateNode(Catalog catalog, int id, NodeType parentNode = default(NodeType))
         {
             return new NodeType
             {
                 Id = catalog.Id,
                 Name = catalog.Name,
                 Order = catalog.OrderInParentCatalog,
-                CatalogAttachments = _directoryFacade.GetCatalogAttachments(catalog.Id)
+                ParentCatalog = null
             };
         }
     }

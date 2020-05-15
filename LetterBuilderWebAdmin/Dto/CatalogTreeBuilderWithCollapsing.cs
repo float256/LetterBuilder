@@ -15,14 +15,14 @@ namespace LetterBuilderWebAdmin.Dto
             _directoryFacade = directorySystemFacade;
         }
 
-        protected override CatalogNodeWithCollapsing CreateNode(Catalog catalog, int id)
+        protected override CatalogNodeWithCollapsing CreateNode(Catalog catalog, int id, CatalogNodeWithCollapsing parentNode = default(CatalogNodeWithCollapsing))
         {
             CatalogNodeWithCollapsing catalogNode = new CatalogNodeWithCollapsing
             {
                 Id = catalog.Id,
                 Name = catalog.Name,
                 Order = catalog.OrderInParentCatalog,
-                CatalogAttachments = _directoryFacade.GetCatalogAttachments(catalog.Id)
+                ParentCatalog = parentNode
             };
 
             // Выставление флагов IsSelected и IsOpened в true у родительских каталогов, если
@@ -31,11 +31,11 @@ namespace LetterBuilderWebAdmin.Dto
             if (catalogNode.Id == id)
             {
                 catalogNode.IsOpened = catalogNode.IsSelected = true;
-                CatalogNodeWithCollapsing parentNode = (CatalogNodeWithCollapsing) catalogNode.ParentCatalog;
-                while (parentNode != null)
+                CatalogNodeWithCollapsing currParentNode = (CatalogNodeWithCollapsing) catalogNode.ParentCatalog;
+                while (currParentNode != null)
                 {
-                    parentNode.IsOpened = true;
-                    parentNode = (CatalogNodeWithCollapsing) catalogNode.ParentCatalog;
+                    currParentNode.IsOpened = true;
+                    currParentNode = (CatalogNodeWithCollapsing) currParentNode.ParentCatalog;
                 }
             }
             return catalogNode;

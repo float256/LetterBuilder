@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetterBuilderFrontend", "Le
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetterBuilderWebApi", "LetterBuilderWebApi\LetterBuilderWebApi.csproj", "{A9D5E2C0-0DCC-48CD-A4F7-8BC16661F518}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetterBuilderCore", "LetterBuilderCore\LetterBuilderCore.csproj", "{250D404E-899B-4450-8661-89D7C18E5EEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetterBuilderCore", "LetterBuilderCore\LetterBuilderCore.csproj", "{250D404E-899B-4450-8661-89D7C18E5EEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetterBuilderCore.Tests", "LetterBuilderCore.Tests\LetterBuilderCore.Tests.csproj", "{1398B431-413C-4BAC-8984-A88D10079047}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{250D404E-899B-4450-8661-89D7C18E5EEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{250D404E-899B-4450-8661-89D7C18E5EEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{250D404E-899B-4450-8661-89D7C18E5EEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1398B431-413C-4BAC-8984-A88D10079047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1398B431-413C-4BAC-8984-A88D10079047}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1398B431-413C-4BAC-8984-A88D10079047}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1398B431-413C-4BAC-8984-A88D10079047}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -68,8 +68,9 @@ namespace LetterBuilderWebApi.Controllers
         [HttpGet("GetTree/{id}")]
         public ActionResult<CatalogNode> GetTree(int id)
         {
-            CatalogsTreeBuilder<CatalogNode> tree = new CatalogsTreeBuilder<CatalogNode>(_directoryFacade);
-            return Ok(tree.BuildTree(id));
+            CatalogsTreeBuilder<CatalogNode> treeBuilder = new CatalogsTreeBuilder<CatalogNode>(_directoryFacade);
+            var tree = treeBuilder.BuildTree(id, isAddTextBlocks: true);
+            return Ok(tree);
         }
     }
 }
