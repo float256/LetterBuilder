@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetterBuilderCore.Models;
 using LetterBuilderCore.Services;
+using LetterBuilderWebApi.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,9 +21,16 @@ namespace LetterBuilderWebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<TextBlock> GetTextBlockInfo(int id)
+        public ActionResult<TextBlockDto> GetTextBlockInfo(int id)
         {
-            return Ok(_directoryFacade.GetTextBlockById(id));
+            TextBlock textBlock = _directoryFacade.GetTextBlockById(id);
+            return Ok(new TextBlockDto
+            { 
+                Id = textBlock.Id,
+                Text = textBlock.Text,
+                Name = textBlock.Name,
+                OrderInParentCatalog = textBlock.OrderInParentCatalog
+            });
         }
     }
 }

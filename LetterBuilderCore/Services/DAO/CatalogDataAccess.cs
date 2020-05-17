@@ -178,11 +178,11 @@ namespace LetterBuilderCore.Services.DAO
         /// Если записи нет, то возвращается null</returns>
         public Catalog GetById(int id)
         {
-            if (id == 0)
+            if (id == Constants.RootCatalogId)
             {
                 return new Catalog { Id = 0 };
             }
-            Catalog catalog = new Catalog { Id = -1 };
+            Catalog catalog = default;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -195,21 +195,17 @@ namespace LetterBuilderCore.Services.DAO
                     if (reader.HasRows)
                     {
                         reader.Read();
-                        catalog.Id = Convert.ToInt32(reader["id_catalog"]);
-                        catalog.Name = Convert.ToString(reader["name"]);
-                        catalog.ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]);
-                        catalog.OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"]);
+                        catalog = new Catalog
+                        {
+                            Id = Convert.ToInt32(reader["id_catalog"]),
+                            Name = Convert.ToString(reader["name"]),
+                            ParentCatalogId = Convert.ToInt32(reader["id_parent_catalog"]),
+                            OrderInParentCatalog = Convert.ToInt32(reader["order_in_parent_directory"])
+                        };
                     }
                 }
             }
-            if (catalog.Id == -1)
-            {
-                return null;
-            }
-            else
-            {
-                return catalog;
-            }
+            return catalog;
         }
     }
 }

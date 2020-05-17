@@ -16,7 +16,6 @@ namespace LetterBuilderCore.Tests
 
             Mock<IDirectorySystemFacade> mockDirectorySystemFacade = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
             mockDirectorySystemFacade.Setup(m => m.GetSubcatalogs(It.IsAny<int>())).Returns<int>(x => new List<Catalog>());
-            mockDirectorySystemFacade.Setup(m => m.GetCatalogById(It.IsAny<int>())).Returns<int>(x => new Catalog());
 
             // Act
 
@@ -27,7 +26,7 @@ namespace LetterBuilderCore.Tests
 
             Assert.Empty(tree.ChildrenNodes);
             Assert.Empty(tree.CatalogAttachments);
-            Mock.VerifyAll();
+            mockDirectorySystemFacade.VerifyAll();
         }
 
         [Fact]
@@ -43,8 +42,7 @@ namespace LetterBuilderCore.Tests
                 new Catalog{ Id = 4, Name = "SubCatalog2", ParentCatalogId = 1, OrderInParentCatalog = 2 },
                 new Catalog{ Id = 5, Name = "SubSubCatalog1", ParentCatalogId = 3, OrderInParentCatalog = 1 }
             };
-            Mock<IDirectorySystemFacade> mock = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
-            mock.Setup(m => m.GetCatalogAttachments(It.IsAny<int>())).Returns<int>(x => new List<TextBlock>());
+            Mock<IDirectorySystemFacade> mockDirectorySystemFacade = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
             foreach (Catalog catalog in catalogs)
             {
                 List<Catalog> currSubcatalogs = new List<Catalog>();
@@ -52,11 +50,9 @@ namespace LetterBuilderCore.Tests
                 {
                     currSubcatalogs.Add(subcatalog);
                 }
-                mock.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => currSubcatalogs);
-                mock.Setup(m => m.GetCatalogById(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => catalog);
+                mockDirectorySystemFacade.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => currSubcatalogs);
             }
-            mock.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id > 5))).Returns<int>(x => new List<Catalog>());
-            mock.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == 0)))
+            mockDirectorySystemFacade.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == 0)))
                 .Returns<int>(x => catalogs.FindAll(catalog => catalog.ParentCatalogId == 0));
 
             // Act
@@ -96,7 +92,7 @@ namespace LetterBuilderCore.Tests
                     }
                 }
             };
-            CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mock.Object);
+            CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mockDirectorySystemFacade.Object);
             CatalogNode tree = catalogsTreeBuilder.BuildTree();
 
             // Assert
@@ -122,7 +118,7 @@ namespace LetterBuilderCore.Tests
                 expectedNodesOnCurrDepthLevel = expectedNodesOnNextDepthLevel;
                 actualNodesOnCurrDepthLevel = actualNodesOnNextDepthLevel;
             }
-            Mock.VerifyAll();
+            mockDirectorySystemFacade.VerifyAll();
         }
 
         [Fact]
@@ -145,7 +141,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 3, Name = "TextBlock3", Text = "Text3", ParentCatalogId = 3, OrderInParentCatalog = 2},
                 new TextBlock{ Id = 4, Name = "TextBlock4", Text = "Text4", ParentCatalogId = 4, OrderInParentCatalog = 1}
             };
-            Mock<IDirectorySystemFacade> mock = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
+            Mock<IDirectorySystemFacade> mockDirectorySystemFacade = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
             foreach (Catalog catalog in allCatalogs)
             {
                 List<Catalog> currSubcatalogs = new List<Catalog>();
@@ -158,16 +154,13 @@ namespace LetterBuilderCore.Tests
                 {
                     currTextBlocks.Add(textBlock);
                 }
-                mock.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => currSubcatalogs);
-                mock.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => currTextBlocks);
-                mock.Setup(m => m.GetCatalogById(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => catalog);
+                mockDirectorySystemFacade.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => currSubcatalogs);
+                mockDirectorySystemFacade.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id == catalog.Id))).Returns<int>(x => currTextBlocks);
             }
-            mock.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == 0)))
+            mockDirectorySystemFacade.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id == 0)))
                 .Returns<int>(x => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == 0));
-            mock.Setup(m => m.GetSubcatalogs(It.Is<int>(id => id > 5))).Returns<int>(x => new List<Catalog>());
 
-            mock.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id > 4))).Returns<int>(x => new List<TextBlock>());
-            mock.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id == 0)))
+            mockDirectorySystemFacade.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id == 0)))
                 .Returns<int>(x => allTextBlocks.FindAll(textBlock => textBlock.ParentCatalogId == 0));
 
             // Act
@@ -223,7 +216,7 @@ namespace LetterBuilderCore.Tests
                     new TextBlock{ Id = 1, Name = "TextBlock1", Text = "Text1", ParentCatalogId = 0, OrderInParentCatalog = 3}
                 }
             };
-            CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mock.Object);
+            CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mockDirectorySystemFacade.Object);
             CatalogNode tree = catalogsTreeBuilder.BuildTree(isAddTextBlocks: true);
 
             // Assert
@@ -264,7 +257,7 @@ namespace LetterBuilderCore.Tests
                 expectedNodesOnCurrDepthLevel = expectedNodesOnNextDepthLevel;
                 actualNodesOnCurrDepthLevel = actualNodesOnNextDepthLevel;
             }
-            Mock.VerifyAll();
+            mockDirectorySystemFacade.VerifyAll();
         }
 
         [Fact]
@@ -279,19 +272,17 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 3, Name = "TextBlock3", Text = "Text3", ParentCatalogId = 0, OrderInParentCatalog = 3},
                 new TextBlock{ Id = 4, Name = "TextBlock4", Text = "Text4", ParentCatalogId = 0, OrderInParentCatalog = 4}
             };
-            Mock<IDirectorySystemFacade> mock = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
+            Mock<IDirectorySystemFacade> mockDirectorySystemFacade = new Mock<IDirectorySystemFacade>(MockBehavior.Strict);
 
-            mock.Setup(m => m.GetCatalogById(It.IsAny<int>())).Returns<int>(x => new Catalog());
-            mock.Setup(m => m.GetSubcatalogs(It.IsAny<int>())).Returns<int>(x => new List<Catalog>());
+            mockDirectorySystemFacade.Setup(m => m.GetSubcatalogs(It.IsAny<int>())).Returns<int>(x => new List<Catalog>());
 
-            mock.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id != 0))).Returns<int>(x => new List<TextBlock>());
-            mock.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id == 0)))
+            mockDirectorySystemFacade.Setup(m => m.GetCatalogAttachments(It.Is<int>(id => id == 0)))
                 .Returns<int>(x => allTextBlocks);
 
             // Act
 
             CatalogNode expectedTree = new CatalogNode { CatalogAttachments = allTextBlocks };
-            CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mock.Object);
+            CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mockDirectorySystemFacade.Object);
             CatalogNode tree = catalogsTreeBuilder.BuildTree(isAddTextBlocks: true);
 
             // Assert
@@ -308,7 +299,7 @@ namespace LetterBuilderCore.Tests
                 Assert.Equal(currentExpectedTextBlock.ParentCatalogId, currentActualTextBlock.ParentCatalogId);
                 Assert.Equal(currentExpectedTextBlock.Text, currentActualTextBlock.Text);
             }
-            Mock.VerifyAll();
+            mockDirectorySystemFacade.VerifyAll();
         }
     }
 }

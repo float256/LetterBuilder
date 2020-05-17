@@ -63,7 +63,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -118,7 +119,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertTextBlock(expectedTextBlocks[i], allTextBlocks[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -150,10 +152,6 @@ namespace LetterBuilderCore.Tests
             Mock<ITextBlockDataAccess> textDataAccessMock = new Mock<ITextBlockDataAccess>();
             textDataAccessMock.Setup(m => m.GetTextBlocksByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allTextBlocks.FindAll(textBlock => textBlock.ParentCatalogId == id));
-            textDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<TextBlock>()))
-                .Callback((TextBlock textBlock) => allTextBlocks.Find(x => x.Id == textBlock.Id).OrderInParentCatalog = textBlock.OrderInParentCatalog);
-            textDataAccessMock.Setup(m => m.UpdateParentCatalog(It.IsAny<TextBlock>()))
-                .Callback((TextBlock textBlock) => allTextBlocks.Find(x => x.Id == textBlock.Id).ParentCatalogId = textBlock.ParentCatalogId);
 
             // Act
 
@@ -179,7 +177,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -203,10 +202,6 @@ namespace LetterBuilderCore.Tests
             Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
-            catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
-                .Callback((Catalog catalog) => allCatalogs.Find(x => x.Id == catalog.Id).OrderInParentCatalog = catalog.OrderInParentCatalog);
-            catalogDataAccessMock.Setup(m => m.UpdateParentCatalog(It.IsAny<Catalog>()))
-                .Callback((Catalog catalog) => allCatalogs.Find(x => x.Id == catalog.Id).ParentCatalogId = catalog.ParentCatalogId);
 
             Mock<ITextBlockDataAccess> textDataAccessMock = new Mock<ITextBlockDataAccess>();
             textDataAccessMock.Setup(m => m.GetTextBlocksByParentCatalogId(It.IsAny<int>()))
@@ -239,7 +234,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertTextBlock(exprectedTextBlocks[i], allTextBlocks[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -308,7 +304,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -377,7 +374,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -446,7 +444,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         [Fact]
@@ -515,7 +514,8 @@ namespace LetterBuilderCore.Tests
             {
                 AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
-            Mock.VerifyAll();
+            catalogDataAccessMock.VerifyAll();
+            textDataAccessMock.VerifyAll();
         }
 
         private void AssertTextBlock(TextBlock expectedTextBlock, TextBlock actualTextBlock)

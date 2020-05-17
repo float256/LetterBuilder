@@ -8,7 +8,7 @@ using LetterBuilderCore.Models;
 
 namespace LetterBuilderWebAdmin.Dto
 {
-    public class CatalogWithFieldVerifying
+    public class CatalogDto
     {
         [Required(ErrorMessage = "Данное поле является обязательным")]
         [HiddenInput(DisplayValue = false)]

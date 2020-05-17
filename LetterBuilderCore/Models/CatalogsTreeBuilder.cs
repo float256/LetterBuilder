@@ -25,7 +25,7 @@ namespace LetterBuilderCore.Models
         public NodeType BuildTree(int initialCatalogId = Constants.RootCatalogId, bool isAddTextBlocks = false)
         {
             Catalog initialCatalog;
-            if (initialCatalogId == 0)
+            if (initialCatalogId == Constants.RootCatalogId)
             {
                 initialCatalog = new Catalog { Id = 0 };
             }
@@ -34,7 +34,7 @@ namespace LetterBuilderCore.Models
                 initialCatalog = _directoryFacade.GetCatalogById(initialCatalogId);
                 if (initialCatalog == null)
                 {
-                    return new NodeType();
+                    throw new CatalogNotFoundException();
                 }
             }
             NodeType result = CreateNode(initialCatalog);

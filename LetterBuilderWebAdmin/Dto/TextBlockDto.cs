@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LetterBuilderWebAdmin.Dto
 {
-    public class TextBlockWithFieldVerifying
+    public class TextBlockDto
     {
         [Required(ErrorMessage = "Данное поле является обязательным")]
         [HiddenInput(DisplayValue = false)]

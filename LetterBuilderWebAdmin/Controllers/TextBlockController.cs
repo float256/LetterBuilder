@@ -23,14 +23,14 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult Add(int id)
         {
-            return View(new TextBlockWithFieldVerifying { ParentCatalogId = id });
+            return View(new TextBlockDto { ParentCatalogId = id });
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
             TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
-            return View(new TextBlockWithFieldVerifying
+            return View(new TextBlockDto
             {
                 Id = textBlock.Id,
                 Name = textBlock.Name,
@@ -44,7 +44,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult Update(int id)
         {
             TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
-            return View(new TextBlockWithFieldVerifying
+            return View(new TextBlockDto
             { 
                 Id = textBlock.Id,
                 Name = textBlock.Name,
@@ -55,7 +55,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTextBlock(TextBlockWithFieldVerifying textBlockWithFieldVerifying)
+        public IActionResult AddTextBlock(TextBlockDto textBlockWithFieldVerifying)
         {
             _directorySystemFacade.Add(new TextBlock
             {
@@ -77,7 +77,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateTextBlock(TextBlockWithFieldVerifying textBlockWithFieldVerifying)
+        public IActionResult UpdateTextBlock(TextBlockDto textBlockWithFieldVerifying)
         {
             _directorySystemFacade.UpdateValue(new TextBlock
             {
@@ -102,7 +102,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult UpdateParentCatalog(int id)
         {
             TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
-            return View(new TextBlockWithFieldVerifying
+            return View(new TextBlockDto
             {
                 Id = textBlock.Id,
                 Name = textBlock.Name,
@@ -113,7 +113,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateTextBlockParentCatalog(TextBlockWithFieldVerifying textBlockWithFieldVerifying)
+        public IActionResult UpdateTextBlockParentCatalog(TextBlockDto textBlockWithFieldVerifying)
         {
             _directorySystemFacade.UpdateParentCatalog(new TextBlock
             {

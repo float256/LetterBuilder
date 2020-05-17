@@ -25,7 +25,7 @@ namespace LetterBuilderWebAdmin.Controllers
             CatalogContent catalogContent = new CatalogContent
             {
                 Catalogs = _directorySystemFacade.GetSubcatalogs(id).Select(
-                    x => new CatalogWithFieldVerifying
+                    x => new CatalogDto
                     {
                         Id = x.Id,
                         Name = x.Name,
@@ -33,7 +33,7 @@ namespace LetterBuilderWebAdmin.Controllers
                         ParentCatalogId = x.ParentCatalogId
                     }).ToList(),
                 TextBlocks = _directorySystemFacade.GetCatalogAttachments(id).Select(
-                    x => new TextBlockWithFieldVerifying
+                    x => new TextBlockDto
                     {
                         Id = x.Id,
                         Name = x.Name,
@@ -49,7 +49,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult Add(int id)
         {
             Catalog catalog = _directorySystemFacade.GetCatalogById(id);
-            return View(new CatalogWithFieldVerifying
+            return View(new CatalogDto
             {
                 Id = catalog.Id,
                 Name = catalog.Name,
@@ -62,7 +62,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult Delete(int id)
         {
             Catalog catalog = _directorySystemFacade.GetCatalogById(id);
-            return View(new CatalogWithFieldVerifying
+            return View(new CatalogDto
             {
                 Id = catalog.Id,
                 Name = catalog.Name,
@@ -75,7 +75,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult Update(int id)
         {
             Catalog catalog = _directorySystemFacade.GetCatalogById(id);
-            return View(new CatalogWithFieldVerifying
+            return View(new CatalogDto
             {
                 Id = catalog.Id,
                 Name = catalog.Name,
@@ -85,7 +85,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCatalog(CatalogWithFieldVerifying catalogWithFieldVerifying)
+        public IActionResult AddCatalog(CatalogDto catalogWithFieldVerifying)
         {
             _directorySystemFacade.Add(new Catalog
             {
@@ -106,7 +106,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateCatalog(CatalogWithFieldVerifying catalogWithFieldVerifying)
+        public IActionResult UpdateCatalog(CatalogDto catalogWithFieldVerifying)
         {
             _directorySystemFacade.UpdateValue(new Catalog
             {
@@ -129,7 +129,7 @@ namespace LetterBuilderWebAdmin.Controllers
         public IActionResult UpdateParentCatalog(int id)
         {
             Catalog catalog = _directorySystemFacade.GetCatalogById(id);
-            return View(new CatalogWithFieldVerifying
+            return View(new CatalogDto
             {
                 Id = catalog.Id,
                 Name = catalog.Name,
@@ -139,7 +139,7 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateCatalogParentCatalog(CatalogWithFieldVerifying catalogWithFieldVerifying)
+        public IActionResult UpdateCatalogParentCatalog(CatalogDto catalogWithFieldVerifying)
         {
             _directorySystemFacade.UpdateParentCatalog(new Catalog
             {

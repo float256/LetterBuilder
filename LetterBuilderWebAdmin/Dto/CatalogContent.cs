@@ -8,7 +8,7 @@ namespace LetterBuilderWebAdmin.Dto
 {
     public class CatalogContent
     {
-        public List<CatalogWithFieldVerifying> Catalogs { get; set; }
-        public List<TextBlockWithFieldVerifying> TextBlocks { get; set; }
+        public List<CatalogDto> Catalogs { get; set; }
+        public List<TextBlockDto> TextBlocks { get; set; }
     }
 }

@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using LetterBuilderCore.Models;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 
-namespace LetterBuilderCore.Models
+namespace LetterBuilderWebApi.Dto
 {
-    public class CatalogNode : ICatalogNode
+    public class CatalogNodeDto : ICatalogNode
     {
         public int Id { get; set; }
         
@@ -15,9 +17,10 @@ namespace LetterBuilderCore.Models
         
         public List<TextBlock> CatalogAttachments { get; set; }
 
+        [JsonIgnore]
         public ICatalogNode ParentCatalog { get; set; }
         
-        public CatalogNode()
+        public CatalogNodeDto()
         {
             ChildrenNodes = new List<ICatalogNode>();
             CatalogAttachments = new List<TextBlock>();
