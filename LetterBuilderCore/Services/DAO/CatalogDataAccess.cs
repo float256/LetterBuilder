@@ -174,10 +174,15 @@ namespace LetterBuilderCore.Services.DAO
         /// </summary>
         /// <param name="id">Id записи</param>
         /// <returns>Объект класса Catalog, содержащий значения для указанного
-        /// каталога из базы данных. Если записи нет, то возвращается объект со значениями по-умолчанию</returns>
+        /// каталога из базы данных. Если id == 0, то возвращается объект с значениями по-умолчанию.
+        /// Если записи нет, то возвращается null</returns>
         public Catalog GetById(int id)
         {
-            Catalog catalog = new Catalog();
+            if (id == 0)
+            {
+                return new Catalog { Id = 0 };
+            }
+            Catalog catalog = new Catalog { Id = -1 };
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -197,7 +202,14 @@ namespace LetterBuilderCore.Services.DAO
                     }
                 }
             }
-            return catalog;
+            if (catalog.Id == -1)
+            {
+                return null;
+            }
+            else
+            {
+                return catalog;
+            }
         }
     }
 }

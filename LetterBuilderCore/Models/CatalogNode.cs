@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
 
 namespace LetterBuilderCore.Models
 {
@@ -17,7 +14,7 @@ namespace LetterBuilderCore.Models
         public List<ICatalogNode> ChildrenNodes { get; set; }
         
         public List<TextBlock> CatalogAttachments { get; set; }
-        
+
         public ICatalogNode ParentCatalog { get; set; }
         
         public CatalogNode()

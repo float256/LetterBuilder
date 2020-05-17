@@ -28,7 +28,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 7, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.Add(It.IsAny<Catalog>()))
@@ -61,11 +61,9 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(expectedCatalogs.Count, allCatalogs.Count);
             for (int i = 0; i < expectedCatalogs.Count; i++)
             {
-                Assert.Equal(expectedCatalogs[i].Id, allCatalogs[i].Id);
-                Assert.Equal(expectedCatalogs[i].Name, allCatalogs[i].Name);
-                Assert.Equal(expectedCatalogs[i].OrderInParentCatalog, allCatalogs[i].OrderInParentCatalog);
-                Assert.Equal(expectedCatalogs[i].ParentCatalogId, allCatalogs[i].ParentCatalogId);
+                AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -86,7 +84,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 7, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
 
@@ -118,12 +116,9 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(expectedTextBlocks.Count, allTextBlocks.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(expectedTextBlocks[i].Id, allTextBlocks[i].Id);
-                Assert.Equal(expectedTextBlocks[i].Name, allTextBlocks[i].Name);
-                Assert.Equal(expectedTextBlocks[i].Text, allTextBlocks[i].Text);
-                Assert.Equal(expectedTextBlocks[i].OrderInParentCatalog, allTextBlocks[i].OrderInParentCatalog);
-                Assert.Equal(expectedTextBlocks[i].ParentCatalogId, allTextBlocks[i].ParentCatalogId);
+                AssertTextBlock(expectedTextBlocks[i], allTextBlocks[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -144,7 +139,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 7, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
@@ -182,11 +177,9 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(expectedCatalogs.Count, allCatalogs.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(expectedCatalogs[i].Id, allCatalogs[i].Id);
-                Assert.Equal(expectedCatalogs[i].Name, allCatalogs[i].Name);
-                Assert.Equal(expectedCatalogs[i].OrderInParentCatalog, allCatalogs[i].OrderInParentCatalog);
-                Assert.Equal(expectedCatalogs[i].ParentCatalogId, allCatalogs[i].ParentCatalogId);
+                AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -207,7 +200,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 6, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
@@ -244,12 +237,9 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(exprectedTextBlocks.Count, allTextBlocks.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(exprectedTextBlocks[i].Id, allTextBlocks[i].Id);
-                Assert.Equal(exprectedTextBlocks[i].Name, allTextBlocks[i].Name);
-                Assert.Equal(exprectedTextBlocks[i].Text, allTextBlocks[i].Text);
-                Assert.Equal(exprectedTextBlocks[i].OrderInParentCatalog, allTextBlocks[i].OrderInParentCatalog);
-                Assert.Equal(exprectedTextBlocks[i].ParentCatalogId, allTextBlocks[i].ParentCatalogId);
+                AssertTextBlock(exprectedTextBlocks[i], allTextBlocks[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -270,7 +260,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 6, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
@@ -311,20 +301,14 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(exprectedTextBlocks.Count, allTextBlocks.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(exprectedTextBlocks[i].Id, allTextBlocks[i].Id);
-                Assert.Equal(exprectedTextBlocks[i].Name, allTextBlocks[i].Name);
-                Assert.Equal(exprectedTextBlocks[i].Text, allTextBlocks[i].Text);
-                Assert.Equal(exprectedTextBlocks[i].OrderInParentCatalog, allTextBlocks[i].OrderInParentCatalog);
-                Assert.Equal(exprectedTextBlocks[i].ParentCatalogId, allTextBlocks[i].ParentCatalogId);
+                AssertTextBlock(exprectedTextBlocks[i], allTextBlocks[i]);
             }
             Assert.Equal(expectedCatalogs.Count, allCatalogs.Count);
-            for (int i = 0; i < allTextBlocks.Count; i++)
+            for (int i = 0; i < allCatalogs.Count; i++)
             {
-                Assert.Equal(expectedCatalogs[i].Id, allCatalogs[i].Id);
-                Assert.Equal(expectedCatalogs[i].Name, allCatalogs[i].Name);
-                Assert.Equal(expectedCatalogs[i].OrderInParentCatalog, allCatalogs[i].OrderInParentCatalog);
-                Assert.Equal(expectedCatalogs[i].ParentCatalogId, allCatalogs[i].ParentCatalogId);
+                AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -345,7 +329,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 6, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
@@ -386,20 +370,14 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(exprectedTextBlocks.Count, allTextBlocks.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(exprectedTextBlocks[i].Id, allTextBlocks[i].Id);
-                Assert.Equal(exprectedTextBlocks[i].Name, allTextBlocks[i].Name);
-                Assert.Equal(exprectedTextBlocks[i].Text, allTextBlocks[i].Text);
-                Assert.Equal(exprectedTextBlocks[i].OrderInParentCatalog, allTextBlocks[i].OrderInParentCatalog);
-                Assert.Equal(exprectedTextBlocks[i].ParentCatalogId, allTextBlocks[i].ParentCatalogId);
+                AssertTextBlock(exprectedTextBlocks[i], allTextBlocks[i]);
             }
             Assert.Equal(expectedCatalogs.Count, allCatalogs.Count);
-            for (int i = 0; i < allTextBlocks.Count; i++)
+            for (int i = 0; i < allCatalogs.Count; i++)
             {
-                Assert.Equal(expectedCatalogs[i].Id, allCatalogs[i].Id);
-                Assert.Equal(expectedCatalogs[i].Name, allCatalogs[i].Name);
-                Assert.Equal(expectedCatalogs[i].OrderInParentCatalog, allCatalogs[i].OrderInParentCatalog);
-                Assert.Equal(expectedCatalogs[i].ParentCatalogId, allCatalogs[i].ParentCatalogId);
+                AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -420,7 +398,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 6, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
@@ -461,20 +439,14 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(exprectedTextBlocks.Count, allTextBlocks.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(exprectedTextBlocks[i].Id, allTextBlocks[i].Id);
-                Assert.Equal(exprectedTextBlocks[i].Name, allTextBlocks[i].Name);
-                Assert.Equal(exprectedTextBlocks[i].Text, allTextBlocks[i].Text);
-                Assert.Equal(exprectedTextBlocks[i].OrderInParentCatalog, allTextBlocks[i].OrderInParentCatalog);
-                Assert.Equal(exprectedTextBlocks[i].ParentCatalogId, allTextBlocks[i].ParentCatalogId);
+                AssertTextBlock(exprectedTextBlocks[i], allTextBlocks[i]);
             }
             Assert.Equal(expectedCatalogs.Count, allCatalogs.Count);
-            for (int i = 0; i < allTextBlocks.Count; i++)
+            for (int i = 0; i < allCatalogs.Count; i++)
             {
-                Assert.Equal(expectedCatalogs[i].Id, allCatalogs[i].Id);
-                Assert.Equal(expectedCatalogs[i].Name, allCatalogs[i].Name);
-                Assert.Equal(expectedCatalogs[i].OrderInParentCatalog, allCatalogs[i].OrderInParentCatalog);
-                Assert.Equal(expectedCatalogs[i].ParentCatalogId, allCatalogs[i].ParentCatalogId);
+                AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
+            Mock.VerifyAll();
         }
 
         [Fact]
@@ -495,7 +467,7 @@ namespace LetterBuilderCore.Tests
                 new TextBlock{ Id = 4, Name = "TextBlock2", OrderInParentCatalog = 3, ParentCatalogId = 100, Text = "Text2"},
                 new TextBlock{ Id = 7, Name = "TextBlock3", OrderInParentCatalog = 6, ParentCatalogId = 100, Text = "Text3"}
             };
-            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>();
+            Mock<ICatalogDataAccess> catalogDataAccessMock = new Mock<ICatalogDataAccess>(MockBehavior.Strict);
             catalogDataAccessMock.Setup(m => m.GetSubcatalogsByParentCatalogId(It.IsAny<int>()))
                 .Returns<int>(id => allCatalogs.FindAll(catalog => catalog.ParentCatalogId == id));
             catalogDataAccessMock.Setup(m => m.UpdateOrder(It.IsAny<Catalog>()))
@@ -536,20 +508,31 @@ namespace LetterBuilderCore.Tests
             Assert.Equal(exprectedTextBlocks.Count, allTextBlocks.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(exprectedTextBlocks[i].Id, allTextBlocks[i].Id);
-                Assert.Equal(exprectedTextBlocks[i].Name, allTextBlocks[i].Name);
-                Assert.Equal(exprectedTextBlocks[i].Text, allTextBlocks[i].Text);
-                Assert.Equal(exprectedTextBlocks[i].OrderInParentCatalog, allTextBlocks[i].OrderInParentCatalog);
-                Assert.Equal(exprectedTextBlocks[i].ParentCatalogId, allTextBlocks[i].ParentCatalogId);
+                AssertTextBlock(exprectedTextBlocks[i], allTextBlocks[i]);
             }
             Assert.Equal(expectedCatalogs.Count, allCatalogs.Count);
             for (int i = 0; i < allTextBlocks.Count; i++)
             {
-                Assert.Equal(expectedCatalogs[i].Id, allCatalogs[i].Id);
-                Assert.Equal(expectedCatalogs[i].Name, allCatalogs[i].Name);
-                Assert.Equal(expectedCatalogs[i].OrderInParentCatalog, allCatalogs[i].OrderInParentCatalog);
-                Assert.Equal(expectedCatalogs[i].ParentCatalogId, allCatalogs[i].ParentCatalogId);
+                AssertCatalog(expectedCatalogs[i], allCatalogs[i]);
             }
+            Mock.VerifyAll();
+        }
+
+        private void AssertTextBlock(TextBlock expectedTextBlock, TextBlock actualTextBlock)
+        {
+            Assert.Equal(expectedTextBlock.Id, actualTextBlock.Id);
+            Assert.Equal(expectedTextBlock.Name, actualTextBlock.Name);
+            Assert.Equal(expectedTextBlock.Text, actualTextBlock.Text);
+            Assert.Equal(expectedTextBlock.OrderInParentCatalog, actualTextBlock.OrderInParentCatalog);
+            Assert.Equal(expectedTextBlock.ParentCatalogId, actualTextBlock.ParentCatalogId);
+        }
+
+        private void AssertCatalog(Catalog expectedCatalog, Catalog actualCatalog)
+        {
+            Assert.Equal(expectedCatalog.Id, actualCatalog.Id);
+            Assert.Equal(expectedCatalog.Name, actualCatalog.Name);
+            Assert.Equal(expectedCatalog.OrderInParentCatalog, actualCatalog.OrderInParentCatalog);
+            Assert.Equal(expectedCatalog.ParentCatalogId, actualCatalog.ParentCatalogId);
         }
     }
 }

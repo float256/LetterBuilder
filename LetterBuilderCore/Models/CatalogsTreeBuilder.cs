@@ -28,8 +28,20 @@ namespace LetterBuilderCore.Models
         public NodeType BuildTree(int id, bool isAddAllCatalogs = false, bool isAddTextBlocks = false)
         {
             int initialId = isAddAllCatalogs ? 0 : id;
-            Catalog initalCatalog = _directoryFacade.GetCatalogById(initialId);
-            NodeType result = CreateNode(initalCatalog, id);
+            Catalog initialCatalog;
+            if (initialId == 0)
+            {
+                initialCatalog = new Catalog { Id = 0 };
+            }
+            else
+            {
+                initialCatalog = _directoryFacade.GetCatalogById(initialId);
+                if (initialCatalog == null)
+                {
+                    return new NodeType();
+                }
+            }
+            NodeType result = CreateNode(initialCatalog, id);
 
             // Получение подкаталогов и файлов, находящихся в изначальном каталоге
             foreach (Catalog subcatalog in _directoryFacade.GetSubcatalogs(initialId))

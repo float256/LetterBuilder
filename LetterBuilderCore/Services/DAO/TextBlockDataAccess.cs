@@ -145,10 +145,10 @@ namespace LetterBuilderCore.Services.DAO
         /// </summary>
         /// <param name="id">Id записи</param>
         /// <returns>Объект класса TextBlock, содержащий значения для указанного
-        /// текстового файла из базы данных. Если записи нет, то возвращается объект со значениями по-умолчанию</returns>
+        /// текстового файла из базы данных. Если записи нет, то возвращается null</returns>
         public TextBlock GetById(int id)
         {
-            TextBlock textBlock = new TextBlock();
+            TextBlock textBlock = new TextBlock { Id = -1 };
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -169,7 +169,14 @@ namespace LetterBuilderCore.Services.DAO
                     }
                 }
             }
-            return textBlock;
+            if (textBlock.Id == -1)
+            {
+                return null;
+            }
+            else
+            {
+                return textBlock;
+            }
         }
 
         /// <summary>

@@ -48,9 +48,6 @@ namespace LetterBuilderWebApi
 
             app.UseAuthorization();
 
-            app.UseCors(builder => builder.WithOrigins("http://localhost:52389", "https://localhost:44355",
-                "https://localhost:52389", "http://localhost:44355", "http://letterbuilder.local"));
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

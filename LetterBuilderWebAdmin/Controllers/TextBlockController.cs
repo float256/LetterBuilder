@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using LetterBuilderCore.Services;
 using LetterBuilderCore.Models;
 using Microsoft.AspNetCore.Razor.Language;
+using LetterBuilderWebAdmin.Dto;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
@@ -22,26 +23,49 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult Add(int id)
         {
-            return View(new TextBlock { ParentCatalogId = id });
+            return View(new TextBlockWithFieldVerifying { ParentCatalogId = id });
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            return View(_directorySystemFacade.GetTextBlockById(id));
+            TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
+            return View(new TextBlockWithFieldVerifying
+            {
+                Id = textBlock.Id,
+                Name = textBlock.Name,
+                OrderInParentCatalog = textBlock.OrderInParentCatalog,
+                ParentCatalogId = textBlock.ParentCatalogId,
+                Text = textBlock.Text
+            });
         }
 
         [HttpGet]
         public IActionResult Update(int id)
         {
-            return View(_directorySystemFacade.GetTextBlockById(id));
+            TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
+            return View(new TextBlockWithFieldVerifying
+            { 
+                Id = textBlock.Id,
+                Name = textBlock.Name,
+                OrderInParentCatalog = textBlock.OrderInParentCatalog,
+                ParentCatalogId = textBlock.ParentCatalogId,
+                Text = textBlock.Text
+            });
         }
 
         [HttpPost]
-        public IActionResult AddTextBlock(TextBlock textBlock)
+        public IActionResult AddTextBlock(TextBlockWithFieldVerifying textBlockWithFieldVerifying)
         {
-            _directorySystemFacade.Add(textBlock);
-            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
+            _directorySystemFacade.Add(new TextBlock
+            {
+                Id = textBlockWithFieldVerifying.Id,
+                Name = textBlockWithFieldVerifying.Name,
+                OrderInParentCatalog = textBlockWithFieldVerifying.OrderInParentCatalog,
+                ParentCatalogId = textBlockWithFieldVerifying.ParentCatalogId,
+                Text = textBlockWithFieldVerifying.Text
+            });
+            return RedirectToAction("Index", "Catalog", new { id = textBlockWithFieldVerifying.ParentCatalogId });
         }
 
         [HttpPost]
@@ -53,10 +77,17 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateTextBlock(TextBlock textBlock)
+        public IActionResult UpdateTextBlock(TextBlockWithFieldVerifying textBlockWithFieldVerifying)
         {
-            _directorySystemFacade.UpdateValue(textBlock);
-            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
+            _directorySystemFacade.UpdateValue(new TextBlock
+            {
+                Id = textBlockWithFieldVerifying.Id,
+                Name = textBlockWithFieldVerifying.Name,
+                OrderInParentCatalog = textBlockWithFieldVerifying.OrderInParentCatalog,
+                ParentCatalogId = textBlockWithFieldVerifying.ParentCatalogId,
+                Text = textBlockWithFieldVerifying.Text
+            });
+            return RedirectToAction("Index", "Catalog", new { id = textBlockWithFieldVerifying.ParentCatalogId });
         }
 
         [HttpPost]
@@ -74,10 +105,17 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateTextBlockParentCatalog(TextBlock textBlock)
+        public IActionResult UpdateTextBlockParentCatalog(TextBlockWithFieldVerifying textBlockWithFieldVerifying)
         {
-            _directorySystemFacade.UpdateParentCatalog(textBlock);
-            return RedirectToAction("Index", "Catalog", new { id = textBlock.ParentCatalogId });
+            _directorySystemFacade.UpdateParentCatalog(new TextBlock
+            {
+                Id = textBlockWithFieldVerifying.Id,
+                Name = textBlockWithFieldVerifying.Name,
+                OrderInParentCatalog = textBlockWithFieldVerifying.OrderInParentCatalog,
+                ParentCatalogId = textBlockWithFieldVerifying.ParentCatalogId,
+                Text = textBlockWithFieldVerifying.Text
+            });
+            return RedirectToAction("Index", "Catalog", new { id = textBlockWithFieldVerifying.ParentCatalogId });
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿const WEB_API_ADDRESS = 'https://localhost:44341';
-let loaded_texts = {};
+﻿let loaded_texts = {};
 
 function buildSidebarMenu(requestResult, parentElement) {
     parentElement.empty();
@@ -93,7 +92,7 @@ function buildNavbarMenu(requestResult, parentElement) {
 
 function loadNavbar() {
     $.ajax({
-        url: WEB_API_ADDRESS + '/api/catalog/FirstTwoNestingLevels/',
+        url: '/api/catalog/FirstTwoNestingLevels/',
         success: (result) => buildNavbarMenu(result, $('#section-menu'))
     })
 }
@@ -106,7 +105,7 @@ function loadSidebar() {
     }
     if (parentCatalogId !== 0) {
         $.ajax({
-            url: WEB_API_ADDRESS + '/api/catalog/GetTree/' + parentCatalogId,
+            url: '/api/catalog/GetTree/' + parentCatalogId,
             success: (result) => buildSidebarMenu(result, $('#text-blocks-menu'))
         })
     }
@@ -160,7 +159,7 @@ function updateMailText() {
         let elementIndex = item.id.split('-')[2];
         if (!loaded_texts[elementIndex]) {
             $.ajax({
-                url: WEB_API_ADDRESS + '/api/TextBlock/' + elementIndex,
+                url: '/api/TextBlock/' + elementIndex,
                 success: function (result) {
                     let text = result['text'];
                     text = text.replace(/{[а-яА-ЯёЁ\w]+}/g, function (variablePlaceholder) {
