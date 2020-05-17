@@ -7,15 +7,17 @@ using LetterBuilderCore.Services;
 
 namespace LetterBuilderWebAdmin.Dto
 {
-    public class CatalogTreeBuilderWithCollapsing : CatalogsTreeBuilder<CatalogNodeWithCollapsing>
+    public class CatalogsTreeBuilderWithCollapsing : CatalogsTreeBuilder<CatalogNodeWithCollapsing>
     {
         private IDirectorySystemReadFacade _directoryFacade;
-        public CatalogTreeBuilderWithCollapsing(IDirectorySystemReadFacade directorySystemFacade) : base(directorySystemFacade)
+        public int SelectedCatalogId { get; set; }
+        public CatalogsTreeBuilderWithCollapsing(IDirectorySystemReadFacade directorySystemFacade, int selectedCatalogId) : base(directorySystemFacade)
         {
             _directoryFacade = directorySystemFacade;
+            SelectedCatalogId = selectedCatalogId;
         }
 
-        protected override CatalogNodeWithCollapsing CreateNode(Catalog catalog, int id, CatalogNodeWithCollapsing parentNode = default(CatalogNodeWithCollapsing))
+        protected override CatalogNodeWithCollapsing CreateNode(Catalog catalog, CatalogNodeWithCollapsing parentNode = default(CatalogNodeWithCollapsing))
         {
             CatalogNodeWithCollapsing catalogNode = new CatalogNodeWithCollapsing
             {
@@ -28,7 +30,7 @@ namespace LetterBuilderWebAdmin.Dto
             // Выставление флагов IsSelected и IsOpened в true у родительских каталогов, если
             // текущий рассматриваемый каталог является
             // каталогом, в котором в данный момент находится пользователь
-            if (catalogNode.Id == id)
+            if (catalogNode.Id == SelectedCatalogId)
             {
                 catalogNode.IsOpened = catalogNode.IsSelected = true;
                 CatalogNodeWithCollapsing currParentNode = (CatalogNodeWithCollapsing) catalogNode.ParentCatalog;

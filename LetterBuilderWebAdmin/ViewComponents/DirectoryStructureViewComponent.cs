@@ -28,18 +28,18 @@ namespace LetterBuilderWebAdmin.ViewComponents
         /// <returns></returns>
         public IViewComponentResult Invoke(int id, DirectoryStructureTypes structureType = DirectoryStructureTypes.MenuSidebar)
         {
-            CatalogTreeBuilderWithCollapsing treeBuilder = new CatalogTreeBuilderWithCollapsing(_directoryFacade);
+            CatalogsTreeBuilderWithCollapsing treeBuilder = new CatalogsTreeBuilderWithCollapsing(_directoryFacade, id);
             if (structureType == DirectoryStructureTypes.TextBlockParentCatalogChangingMenu)
             {
-                return View("TextBlockParentCatalogChangingMenu", treeBuilder.BuildTree(id, true).ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
+                return View("TextBlockParentCatalogChangingMenu", treeBuilder.BuildTree().ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
             else if (structureType == DirectoryStructureTypes.CatalogParentCatalogChangingMenu)
             {
-                return View("CatalogParentCatalogChangingMenu", treeBuilder.BuildTree(id, true).ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
+                return View("CatalogParentCatalogChangingMenu", treeBuilder.BuildTree().ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
             else
             {
-                return View(treeBuilder.BuildTree(id, true, true).ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
+                return View(treeBuilder.BuildTree().ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
         }
     }

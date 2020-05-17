@@ -128,7 +128,14 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult UpdateParentCatalog(int id)
         {
-            return View(_directorySystemFacade.GetCatalogById(id));
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            return View(new CatalogWithFieldVerifying
+            {
+                Id = catalog.Id,
+                Name = catalog.Name,
+                OrderInParentCatalog = catalog.OrderInParentCatalog,
+                ParentCatalogId = catalog.ParentCatalogId
+            });
         }
 
         [HttpPost]

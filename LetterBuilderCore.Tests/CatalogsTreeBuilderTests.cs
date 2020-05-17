@@ -21,7 +21,7 @@ namespace LetterBuilderCore.Tests
             // Act
 
             CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mockDirectorySystemFacade.Object);
-            CatalogNode tree = catalogsTreeBuilder.BuildTree(0);
+            CatalogNode tree = catalogsTreeBuilder.BuildTree();
 
             // Assert
 
@@ -97,7 +97,7 @@ namespace LetterBuilderCore.Tests
                 }
             };
             CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mock.Object);
-            CatalogNode tree = catalogsTreeBuilder.BuildTree(0, true, false);
+            CatalogNode tree = catalogsTreeBuilder.BuildTree();
 
             // Assert
 
@@ -224,7 +224,7 @@ namespace LetterBuilderCore.Tests
                 }
             };
             CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mock.Object);
-            CatalogNode tree = catalogsTreeBuilder.BuildTree(0, true, true);
+            CatalogNode tree = catalogsTreeBuilder.BuildTree(isAddTextBlocks: true);
 
             // Assert
 
@@ -292,7 +292,7 @@ namespace LetterBuilderCore.Tests
 
             CatalogNode expectedTree = new CatalogNode { CatalogAttachments = allTextBlocks };
             CatalogsTreeBuilder<CatalogNode> catalogsTreeBuilder = new CatalogsTreeBuilder<CatalogNode>(mock.Object);
-            CatalogNode tree = catalogsTreeBuilder.BuildTree(0, true, true);
+            CatalogNode tree = catalogsTreeBuilder.BuildTree(isAddTextBlocks: true);
 
             // Assert
 

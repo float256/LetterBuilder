@@ -11,7 +11,6 @@ namespace LetterBuilderCore.Models
     public class CatalogsTreeBuilder<NodeType> where NodeType: ICatalogNode, new()
     {
         private IDirectorySystemReadFacade _directoryFacade;
-
         public CatalogsTreeBuilder(IDirectorySystemReadFacade directorySystemFacade)
         {
             _directoryFacade = directorySystemFacade;
@@ -20,37 +19,34 @@ namespace LetterBuilderCore.Models
         /// <summary>
         /// Данный метод строит дерево каталогов
         /// </summary>
-        /// <param name="id">Id каталога, с которого нужно начинать строить дерево</param>
-        /// <param name="isAddAllCatalogs">Если true, то в дереве будут все каталоги, 
-        /// иначе построение дерева начнется с каталога, id которого равен переданному id</param>
+        /// <param name="initialCatalogId">Id каталога, с которого нужно начинать строить дерево</param>
         /// <param name="isAddTextBlocks">Если true, то в дерево будут добавлены текстовые файлы</param>
         /// <returns>Объект типа NodeType, который является начальным каталогом</returns>
-        public NodeType BuildTree(int id, bool isAddAllCatalogs = false, bool isAddTextBlocks = false)
+        public NodeType BuildTree(int initialCatalogId = Constants.RootCatalogId, bool isAddTextBlocks = false)
         {
-            int initialId = isAddAllCatalogs ? 0 : id;
             Catalog initialCatalog;
-            if (initialId == 0)
+            if (initialCatalogId == 0)
             {
                 initialCatalog = new Catalog { Id = 0 };
             }
             else
             {
-                initialCatalog = _directoryFacade.GetCatalogById(initialId);
+                initialCatalog = _directoryFacade.GetCatalogById(initialCatalogId);
                 if (initialCatalog == null)
                 {
                     return new NodeType();
                 }
             }
-            NodeType result = CreateNode(initialCatalog, id);
+            NodeType result = CreateNode(initialCatalog);
 
             // Получение подкаталогов и файлов, находящихся в изначальном каталоге
-            foreach (Catalog subcatalog in _directoryFacade.GetSubcatalogs(initialId))
+            foreach (Catalog subcatalog in _directoryFacade.GetSubcatalogs(initialCatalogId))
             {
-                result.ChildrenNodes.Add(CreateNode(subcatalog, id, result));
+                result.ChildrenNodes.Add(CreateNode(subcatalog, result));
             }
             if (isAddTextBlocks)
             {
-                foreach (TextBlock textBlock in _directoryFacade.GetCatalogAttachments(initialId))
+                foreach (TextBlock textBlock in _directoryFacade.GetCatalogAttachments(initialCatalogId))
                 {
                     result.CatalogAttachments.Add(textBlock);
                 }
@@ -66,7 +62,7 @@ namespace LetterBuilderCore.Models
                     List<Catalog> allSubcatalogs = _directoryFacade.GetSubcatalogs(currParentCatalog.Id);
                     foreach (Catalog currSubcatalog in allSubcatalogs)
                     {
-                        NodeType node = CreateNode(currSubcatalog, id, currParentCatalog);
+                        NodeType node = CreateNode(currSubcatalog, currParentCatalog);
                         currParentCatalog.ChildrenNodes.Add(node);
                         catalogsOnNextDepthLevel.Add(node);
                     }
@@ -84,7 +80,7 @@ namespace LetterBuilderCore.Models
             return result;
         }
 
-        protected virtual NodeType CreateNode(Catalog catalog, int id, NodeType parentNode = default(NodeType))
+        protected virtual NodeType CreateNode(Catalog catalog, NodeType parentNode = default(NodeType))
         {
             return new NodeType
             {

@@ -13,13 +13,17 @@ function buildTextBlockMenu(requestResult, parentElement) {
     $.each(requestResult['childrenNodes'], function (_, catalogInfo) {
         let catalog = createCatalogCollapse(catalogInfo).appendTo(parentElement);
         let id = '#catalog-' + catalogInfo['id'] + '-collapse';
-        buildTextBlockMenu(catalogInfo, $(id))
-    })
+        buildTextBlockMenu(catalogInfo, $(id));
+    });
+    parentElement.children().sort(function (a, b) {
+        return (a.dataset.order - b.dataset.order)
+    }).appendTo(parentElement);
 }
 
 function createMenuButton(textInfo) {
     let menuItem = $('<div/>', {
         'class': 'row custom-control custom-switch py-2 menu-item',
+        'data-order': textInfo['orderInParentCatalog']
     });
     $('<input>', {
         type: 'checkbox',
@@ -36,7 +40,8 @@ function createMenuButton(textInfo) {
 
 function createCatalogCollapse(catalogInfo) {
     let menuCollapseItem = $('<div/>', {
-        id: 'catalog-' + catalogInfo['id']
+        id: 'catalog-' + catalogInfo['id'],
+        'data-order': catalogInfo['order']
     })
     let menuItem = $('<div/>', {
         'class': 'row custom-control custom-switch py-2 menu-item',

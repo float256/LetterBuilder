@@ -101,7 +101,15 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult UpdateParentCatalog(int id)
         {
-            return View(_directorySystemFacade.GetTextBlockById(id));
+            TextBlock textBlock = _directorySystemFacade.GetTextBlockById(id);
+            return View(new TextBlockWithFieldVerifying
+            {
+                Id = textBlock.Id,
+                Name = textBlock.Name,
+                OrderInParentCatalog = textBlock.OrderInParentCatalog,
+                ParentCatalogId = textBlock.ParentCatalogId,
+                Text = textBlock.Text
+            });
         }
 
         [HttpPost]
