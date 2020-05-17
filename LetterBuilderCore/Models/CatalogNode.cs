@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 
 namespace LetterBuilderCore.Models
@@ -15,6 +16,7 @@ namespace LetterBuilderCore.Models
         
         public List<TextBlock> CatalogAttachments { get; set; }
 
+        [JsonIgnore]
         public ICatalogNode ParentCatalog { get; set; }
         
         public CatalogNode()

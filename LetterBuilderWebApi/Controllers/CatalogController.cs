@@ -70,7 +70,7 @@ namespace LetterBuilderWebApi.Controllers
         {
             CatalogsTreeBuilder<CatalogNode> treeBuilder = new CatalogsTreeBuilder<CatalogNode>(_directoryFacade);
             var tree = treeBuilder.BuildTree(id, isAddTextBlocks: true);
-            return Ok(tree);
+            return tree;
         }
     }
 }

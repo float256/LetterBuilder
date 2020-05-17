@@ -87,7 +87,7 @@ namespace LetterBuilderCore.Models
                 Id = catalog.Id,
                 Name = catalog.Name,
                 Order = catalog.OrderInParentCatalog,
-                ParentCatalog = null
+                ParentCatalog = parentNode
             };
         }
     }
