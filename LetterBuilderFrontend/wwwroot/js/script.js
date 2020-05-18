@@ -1,5 +1,4 @@
-﻿const WEB_API_ADDRESS = 'https://localhost:44341';
-let loaded_texts = {};
+﻿let loaded_texts = {};
 
 function buildSidebarMenu(requestResult, parentElement) {
     parentElement.empty();
@@ -14,13 +13,17 @@ function buildTextBlockMenu(requestResult, parentElement) {
     $.each(requestResult['childrenNodes'], function (_, catalogInfo) {
         let catalog = createCatalogCollapse(catalogInfo).appendTo(parentElement);
         let id = '#catalog-' + catalogInfo['id'] + '-collapse';
-        buildTextBlockMenu(catalogInfo, $(id))
-    })
+        buildTextBlockMenu(catalogInfo, $(id));
+    });
+    parentElement.children().sort(function (a, b) {
+        return (a.dataset.order - b.dataset.order)
+    }).appendTo(parentElement);
 }
 
 function createMenuButton(textInfo) {
     let menuItem = $('<div/>', {
         'class': 'row custom-control custom-switch py-2 menu-item',
+        'data-order': textInfo['orderInParentCatalog']
     });
     $('<input>', {
         type: 'checkbox',
@@ -37,7 +40,8 @@ function createMenuButton(textInfo) {
 
 function createCatalogCollapse(catalogInfo) {
     let menuCollapseItem = $('<div/>', {
-        id: 'catalog-' + catalogInfo['id']
+        id: 'catalog-' + catalogInfo['id'],
+        'data-order': catalogInfo['order']
     })
     let menuItem = $('<div/>', {
         'class': 'row custom-control custom-switch py-2 menu-item',
@@ -93,7 +97,7 @@ function buildNavbarMenu(requestResult, parentElement) {
 
 function loadNavbar() {
     $.ajax({
-        url: WEB_API_ADDRESS + '/api/catalog/FirstTwoNestingLevels/',
+        url: '/api/catalog/FirstTwoNestingLevels/',
         success: (result) => buildNavbarMenu(result, $('#section-menu'))
     })
 }
@@ -106,7 +110,7 @@ function loadSidebar() {
     }
     if (parentCatalogId !== 0) {
         $.ajax({
-            url: WEB_API_ADDRESS + '/api/catalog/GetTree/' + parentCatalogId,
+            url: '/api/catalog/GetTree/' + parentCatalogId,
             success: (result) => buildSidebarMenu(result, $('#text-blocks-menu'))
         })
     }
@@ -160,7 +164,7 @@ function updateMailText() {
         let elementIndex = item.id.split('-')[2];
         if (!loaded_texts[elementIndex]) {
             $.ajax({
-                url: WEB_API_ADDRESS + '/api/TextBlock/' + elementIndex,
+                url: '/api/TextBlock/' + elementIndex,
                 success: function (result) {
                     let text = result['text'];
                     text = text.replace(/{[а-яА-ЯёЁ\w]+}/g, function (variablePlaceholder) {

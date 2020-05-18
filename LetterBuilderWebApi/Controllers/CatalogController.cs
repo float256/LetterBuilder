@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetterBuilderWebAdmin.Models;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Models;
+using LetterBuilderCore.Services;
+using LetterBuilderWebApi.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,38 +14,57 @@ namespace LetterBuilderWebApi.Controllers
     [ApiController]
     public class CatalogController : ControllerBase
     {
-        private IDirectorySystemFacade _directoryFacade;
+        private IDirectorySystemReadFacade _directoryFacade;
 
-        public CatalogController(IDirectorySystemFacade directoryFacade)
+        public CatalogController(IDirectorySystemReadFacade directoryFacade)
         {
             _directoryFacade = directoryFacade;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Catalog> GetCatalogInfo(int id)
+        public ActionResult<CatalogDto> GetCatalogInfo(int id)
         {
-            return Ok(_directoryFacade.GetCatalogById(id));
+            Catalog catalog = _directoryFacade.GetCatalogById(id);
+            return Ok(new CatalogDto
+            {
+                Id = catalog.Id,
+                Name = catalog.Name,
+                OrderInParentCatalog = catalog.OrderInParentCatalog
+            });
         }
 
         [HttpGet("SubCatalogs/{id}")]
-        public ActionResult<List<Catalog>> GetSubcatalogs(int parentCatalogId)
+        public ActionResult<List<CatalogDto>> GetSubcatalogs(int parentCatalogId)
         {
-            return Ok(_directoryFacade.GetSubcatalogs(parentCatalogId));
+            List<Catalog> catalogs = _directoryFacade.GetSubcatalogs(parentCatalogId);
+            return Ok(catalogs.Select(x => new CatalogDto 
+            {
+                Id = x.Id,
+                Name = x.Name,
+                OrderInParentCatalog = x.OrderInParentCatalog
+            }).ToList());
         }
 
         [HttpGet("CatalogAttachments/{id}")]
-        public ActionResult<List<TextBlock>> GetCatalogAttachments(int parentCatalogId)
+        public ActionResult<List<TextBlockDto>> GetCatalogAttachments(int parentCatalogId)
         {
-            return Ok(_directoryFacade.GetCatalogAttachments(parentCatalogId));
+            List<TextBlock> textBlocks = _directoryFacade.GetCatalogAttachments(parentCatalogId);
+            return Ok(textBlocks.Select(x => new TextBlockDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                OrderInParentCatalog = x.OrderInParentCatalog,
+                Text = x.Text
+            }).ToList());
         }
 
         [HttpGet("FirstTwoNestingLevels/")]
-        public ActionResult<List<CatalogNode>> GetFirstTwoNestingLevels()
+        public ActionResult<List<CatalogNodeDto>> GetFirstTwoNestingLevels()
         {
-            List<CatalogNode> topLevelCatalogNodes = new List<CatalogNode>();
+            List<CatalogNodeDto> topLevelCatalogNodes = new List<CatalogNodeDto>();
             foreach (Catalog currTopCatalog in _directoryFacade.GetSubcatalogs(0))
             {
-                CatalogNode currTopCatalogNode = new CatalogNode
+                CatalogNodeDto currTopCatalogNode = new CatalogNodeDto
                 {
                     Id = currTopCatalog.Id,
                     Name = currTopCatalog.Name,
@@ -53,7 +73,7 @@ namespace LetterBuilderWebApi.Controllers
                 topLevelCatalogNodes.Add(currTopCatalogNode);
                 foreach (Catalog currSubcatalog in _directoryFacade.GetSubcatalogs(currTopCatalog.Id))
                 {
-                    CatalogNode currSubcatalogNode = new CatalogNode
+                    CatalogNodeDto currSubcatalogNode = new CatalogNodeDto
                     {
                         Id = currSubcatalog.Id,
                         Name = currSubcatalog.Name,
@@ -66,10 +86,11 @@ namespace LetterBuilderWebApi.Controllers
         }
 
         [HttpGet("GetTree/{id}")]
-        public ActionResult<CatalogNode> GetTree(int id)
+        public ActionResult<CatalogNodeDto> GetTree(int id)
         {
-            CatalogsTreeBuilder tree = new CatalogsTreeBuilder(_directoryFacade);
-            return tree.BuildTree(id);
+            CatalogsTreeBuilder<CatalogNodeDto> treeBuilder = new CatalogsTreeBuilder<CatalogNodeDto>(_directoryFacade);
+            var tree = treeBuilder.BuildTree(id, isAddTextBlocks: true);
+            return tree;
         }
     }
 }

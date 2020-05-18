@@ -1,11 +1,11 @@
-﻿@model List<CatalogNode>;
+﻿@model List<CatalogNodeWithCollapsing>;
 
 @{
     BuildCatalogTree(Model);
 
-    void BuildCatalogTree(List<CatalogNode> catalogNodes)
+    void BuildCatalogTree(List<CatalogNodeWithCollapsing> catalogNodes)
     {
-        foreach (CatalogNode catalogNode in catalogNodes)
+        foreach (CatalogNodeWithCollapsing catalogNode in catalogNodes)
         {
             <div class="folder pt-2 pl-2" id="catalog-@catalogNode.Id" data-order=@catalogNode.Order>
                 @if (catalogNode.ChildrenNodes.Count > 0)
@@ -27,7 +27,7 @@
                     </label>
                     <div class="@(catalogNode.IsOpened ? "collapse pl-4 show" : "collapse pl-4")" id="catalog-@catalogNode.Id-input-content">
                         @{
-                            BuildCatalogTree(catalogNode.ChildrenNodes);
+                            BuildCatalogTree(catalogNode.ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
                         }
                     </div>
                 }

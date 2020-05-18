@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using LetterBuilderWebAdmin.Models;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Services;
+using LetterBuilderCore.Models;
+using LetterBuilderWebAdmin.Dto;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
@@ -23,8 +24,23 @@ namespace LetterBuilderWebAdmin.Controllers
         {
             CatalogContent catalogContent = new CatalogContent
             {
-                Catalogs = _directorySystemFacade.GetSubcatalogs(id),
-                TextBlocks = _directorySystemFacade.GetCatalogAttachments(id)
+                Catalogs = _directorySystemFacade.GetSubcatalogs(id).Select(
+                    x => new CatalogDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        OrderInParentCatalog = x.OrderInParentCatalog,
+                        ParentCatalogId = x.ParentCatalogId
+                    }).ToList(),
+                TextBlocks = _directorySystemFacade.GetCatalogAttachments(id).Select(
+                    x => new TextBlockDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        OrderInParentCatalog = x.OrderInParentCatalog,
+                        ParentCatalogId = x.ParentCatalogId,
+                        Text = x.Text
+                    }).ToList()
             };
             return View(catalogContent);
         }
@@ -32,26 +48,53 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult Add(int id)
         {
-            return View(_directorySystemFacade.GetCatalogById(id));
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            return View(new CatalogDto
+            {
+                Id = catalog.Id,
+                Name = catalog.Name,
+                OrderInParentCatalog = catalog.OrderInParentCatalog,
+                ParentCatalogId = catalog.ParentCatalogId
+            });
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            return View(_directorySystemFacade.GetCatalogById(id));
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            return View(new CatalogDto
+            {
+                Id = catalog.Id,
+                Name = catalog.Name,
+                OrderInParentCatalog = catalog.OrderInParentCatalog,
+                ParentCatalogId = catalog.ParentCatalogId
+            });
         }
 
         [HttpGet]
         public IActionResult Update(int id)
         {
-            return View(_directorySystemFacade.GetCatalogById(id));
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            return View(new CatalogDto
+            {
+                Id = catalog.Id,
+                Name = catalog.Name,
+                OrderInParentCatalog = catalog.OrderInParentCatalog,
+                ParentCatalogId = catalog.ParentCatalogId
+            });
         }
 
         [HttpPost]
-        public IActionResult AddCatalog(Catalog catalog)
+        public IActionResult AddCatalog(CatalogDto catalogWithFieldVerifying)
         {
-            _directorySystemFacade.Add(catalog);
-            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
+            _directorySystemFacade.Add(new Catalog
+            {
+                Id = catalogWithFieldVerifying.Id,
+                Name = catalogWithFieldVerifying.Name,
+                OrderInParentCatalog = catalogWithFieldVerifying.OrderInParentCatalog,
+                ParentCatalogId = catalogWithFieldVerifying.ParentCatalogId
+            });
+            return RedirectToAction("Index", new { id = catalogWithFieldVerifying.ParentCatalogId });
         }
 
         [HttpPost]
@@ -63,10 +106,16 @@ namespace LetterBuilderWebAdmin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateCatalog(Catalog catalog)
+        public IActionResult UpdateCatalog(CatalogDto catalogWithFieldVerifying)
         {
-            _directorySystemFacade.UpdateValue(catalog);
-            return RedirectToAction("Index", new { id = catalog.ParentCatalogId });
+            _directorySystemFacade.UpdateValue(new Catalog
+            {
+                Id = catalogWithFieldVerifying.Id,
+                Name = catalogWithFieldVerifying.Name,
+                OrderInParentCatalog = catalogWithFieldVerifying.OrderInParentCatalog,
+                ParentCatalogId = catalogWithFieldVerifying.ParentCatalogId
+            });
+            return RedirectToAction("Index", new { id = catalogWithFieldVerifying.ParentCatalogId });
         }
 
         [HttpPost]
@@ -79,14 +128,27 @@ namespace LetterBuilderWebAdmin.Controllers
         [HttpGet]
         public IActionResult UpdateParentCatalog(int id)
         {
-            return View(_directorySystemFacade.GetCatalogById(id));
+            Catalog catalog = _directorySystemFacade.GetCatalogById(id);
+            return View(new CatalogDto
+            {
+                Id = catalog.Id,
+                Name = catalog.Name,
+                OrderInParentCatalog = catalog.OrderInParentCatalog,
+                ParentCatalogId = catalog.ParentCatalogId
+            });
         }
 
         [HttpPost]
-        public IActionResult UpdateCatalogParentCatalog(Catalog catalog)
+        public IActionResult UpdateCatalogParentCatalog(CatalogDto catalogWithFieldVerifying)
         {
-            _directorySystemFacade.UpdateParentCatalog(catalog);
-            return RedirectToAction("Index", "Catalog", new { id = catalog.ParentCatalogId });
+            _directorySystemFacade.UpdateParentCatalog(new Catalog
+            {
+                Id = catalogWithFieldVerifying.Id,
+                Name = catalogWithFieldVerifying.Name,
+                OrderInParentCatalog = catalogWithFieldVerifying.OrderInParentCatalog,
+                ParentCatalogId = catalogWithFieldVerifying.ParentCatalogId
+            });
+            return RedirectToAction("Index", "Catalog", new { id = catalogWithFieldVerifying.ParentCatalogId });
         }
     }
 }

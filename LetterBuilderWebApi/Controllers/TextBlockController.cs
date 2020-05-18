@@ -2,27 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetterBuilderWebAdmin.Models;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Models;
+using LetterBuilderCore.Services;
+using LetterBuilderWebApi.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LetterBuilderWebApi.Services.DAO
+namespace LetterBuilderWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class TextBlockController : ControllerBase
     {
-        private IDirectorySystemFacade _directoryFacade;
-        public TextBlockController(IDirectorySystemFacade directoryFacade)
+        private IDirectorySystemReadFacade _directoryFacade;
+        public TextBlockController(IDirectorySystemReadFacade directoryFacade)
         {
             _directoryFacade = directoryFacade;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<TextBlock> GetTextBlockInfo(int id)
+        public ActionResult<TextBlockDto> GetTextBlockInfo(int id)
         {
-            return _directoryFacade.GetTextBlockById(id);
+            TextBlock textBlock = _directoryFacade.GetTextBlockById(id);
+            return Ok(new TextBlockDto
+            { 
+                Id = textBlock.Id,
+                Text = textBlock.Text,
+                Name = textBlock.Name,
+                OrderInParentCatalog = textBlock.OrderInParentCatalog
+            });
         }
     }
 }

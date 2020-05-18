@@ -1,4 +1,4 @@
-﻿using LetterBuilderWebAdmin.Models;
+﻿using LetterBuilderCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Configuration;
-using LetterBuilderWebAdmin.Services;
+using LetterBuilderCore.Models;
+using LetterBuilderWebAdmin.Dto;
 
 namespace LetterBuilderWebAdmin.ViewComponents
 {
@@ -27,18 +28,18 @@ namespace LetterBuilderWebAdmin.ViewComponents
         /// <returns></returns>
         public IViewComponentResult Invoke(int id, DirectoryStructureTypes structureType = DirectoryStructureTypes.MenuSidebar)
         {
-            CatalogsTreeBuilder treeBuilder = new CatalogsTreeBuilder(_directoryFacade);
+            CatalogsTreeBuilderWithCollapsing treeBuilder = new CatalogsTreeBuilderWithCollapsing(_directoryFacade, id);
             if (structureType == DirectoryStructureTypes.TextBlockParentCatalogChangingMenu)
             {
-                return View("TextBlockParentCatalogChangingMenu", treeBuilder.BuildTree(id));
+                return View("TextBlockParentCatalogChangingMenu", treeBuilder.BuildTree().ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
             else if (structureType == DirectoryStructureTypes.CatalogParentCatalogChangingMenu)
             {
-                return View("CatalogParentCatalogChangingMenu", treeBuilder.BuildTree(id));
+                return View("CatalogParentCatalogChangingMenu", treeBuilder.BuildTree().ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
             else
             {
-                return View(treeBuilder.BuildTree(id));
+                return View(treeBuilder.BuildTree().ChildrenNodes.Select(x => (CatalogNodeWithCollapsing)x).ToList());
             }
         }
     }

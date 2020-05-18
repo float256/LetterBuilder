@@ -7,7 +7,7 @@
     @if (Model.Catalogs.Count > 0 || Model.TextBlocks.Count > 0)
     {
         <div class="folder-content mt-4 container">
-            @foreach (Catalog item in Model.Catalogs)
+            @foreach (CatalogDto item in Model.Catalogs)
             {
                 <div class="row" data-order=@item.OrderInParentCatalog>
                     <div class="col-1 mt-auto mb-auto">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             }
-            @foreach (TextBlock item in Model.TextBlocks)
+            @foreach (TextBlockDto item in Model.TextBlocks)
             {
                 <div class="row" data-order=@item.OrderInParentCatalog>
                     <div class="col-1 mt-auto mb-auto">

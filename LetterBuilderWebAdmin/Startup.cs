@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LetterBuilderWebAdmin.Services;
-using LetterBuilderWebAdmin.Services.DAO;
+using LetterBuilderCore.Services;
+using LetterBuilderCore.Services.DAO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace LetterBuilderWebAdmin
@@ -19,7 +22,6 @@ namespace LetterBuilderWebAdmin
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
         }
 
         public IConfiguration Configuration { get; }
@@ -28,8 +30,8 @@ namespace LetterBuilderWebAdmin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
-            services.AddScoped<ICatalogDataAccess, CatalogDataAccess>();
-            services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>();
+            services.AddScoped<ICatalogDataAccess, CatalogDataAccess>(x => new CatalogDataAccess(Configuration.GetConnectionString("default")));
+            services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>(x => new TextBlockDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<IDirectorySystemFacade, DirectorySystemFacade>();
         }
 
@@ -47,7 +49,11 @@ namespace LetterBuilderWebAdmin
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\")),
+                RequestPath = new PathString("/Admin")
+            });
 
             app.UseRouting();
 
@@ -57,7 +63,7 @@ namespace LetterBuilderWebAdmin
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Catalog}/{action=Index}/{id=0}");
+                    pattern: "Admin/{controller=Catalog}/{action=Index}/{id=0}");
             });
         }
     }
