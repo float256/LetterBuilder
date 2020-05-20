@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using LetterBuilderCore.Services;
 using LetterBuilderCore.Models;
 using LetterBuilderWebAdmin.Dto;
+using LetterBuilderWebAdmin.Models;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
@@ -149,6 +150,21 @@ namespace LetterBuilderWebAdmin.Controllers
                 ParentCatalogId = catalogWithFieldVerifying.ParentCatalogId
             });
             return RedirectToAction("Index", "Catalog", new { id = catalogWithFieldVerifying.ParentCatalogId });
+        }
+
+        [HttpGet]
+        public IActionResult CatalogParser(int id)
+        {
+            return View(id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddParseCatalogs([FromBody] CatalogParserNodeDto catalogNode)
+        {
+            ParsedCatalogsSaver catalogSaver = new ParsedCatalogsSaver(_directorySystemFacade);
+            catalogSaver.AddCatalogTree(catalogNode);
+            return RedirectToAction("Index", "Catalog", new { id = catalogNode.Id });
         }
     }
 }

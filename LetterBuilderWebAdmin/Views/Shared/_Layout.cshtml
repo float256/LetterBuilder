@@ -21,6 +21,7 @@
             <div class="dropdown-menu rounded-0 dropdown-menu-right" aria-labelledby="MainDropdownMenu">
                 <a class="dropdown-item" href=@Url.Action("Add", "Catalog", new { id = @ViewContext.RouteData.Values["id"] })>Добавить каталог</a>
                 <a class="dropdown-item" href=@Url.Action("Add", "TextBlock", new { id = @ViewContext.RouteData.Values["id"] })>Добавить текст</a>
+                <a class="dropdown-item" href="@Url.Action("CatalogParser", "Catalog", new { id = @ViewContext.RouteData.Values["id"] })">Импортировать каталоги</a>
             </div>
         </div>
     </nav>
@@ -40,7 +41,7 @@
         </div>
         @RenderBody()
     </div>
-    <script src="~/Admin/lib/jquery/jquery.slim.min.js"></script>
+    <script src="~/Admin/lib/jquery/jquery.min.js"></script>
     <script src="~/Admin/lib/popper.js/dist/umd/popper.min.js"></script>
     <script src="~/Admin/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/Admin/lib/jquery-validate/jquery.validate.min.js"></script>

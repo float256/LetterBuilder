@@ -1,0 +1,22 @@
+﻿@model int;
+@{
+    ViewData["Title"] = "CatalogParser";
+}
+
+<div class="col-9 ml-auto mb-5">
+    <div class="folder-content pt-5 pb-4 px-5 mt-4 container">
+        <h1>Импорт каталогов</h1>
+        <form method="post" class="p-0">
+            <div class="form-group p-0">
+                <label class="text-primary mt-2 mb-3">Текст</label>
+                <textarea class="p-0 form-control rounded-0 shadow-none field" rows="10" id="catalogParserTextBlock"></textarea>
+                <span class="text-danger mt-2 small" id="parseErrorSpan"/>
+            </div>
+            <div class="row justify-content-md-center my-5 pt-1">
+                <a href=@Url.Action("Index", "Catalog", new { id = Model }) class="btn col-2 rounded-0 pt-2 pb-2 mr-2 btn-outline-secondary">Отмена</a>
+                <button type="button" class="btn col-2 rounded-0 pt-2 pb-2 btn-primary" id="buildTreeButton">Сохранить</button>
+            </div>
+            <input name="ParentCatalogId" type="hidden" value="@ViewContext.RouteData.Values["id"]">
+        </form>
+    </div>
+</div>
