@@ -95,6 +95,8 @@ function checkParseTextStructure(parseStr) {
 }
 
 function parseTreeFromString(parseStr) {
+    const untitledTextTitleLength = 50;
+
     let headingBlocks = parseStr.match(/{if.*?}|{\/if.*?}/g);
     let catalogIndex = Number(window.location.href.split('/').slice(-1)[0]);
     if (isNaN(catalogIndex)) {
@@ -120,7 +122,7 @@ function parseTreeFromString(parseStr) {
             if (currNestedPart !== "") {
                 let currTextBlock = {
                     id: 0,
-                    name: (currNestedPart.length > 50) ? currNestedPart.substring(0, 50) : currNestedPart,
+                    name: (currNestedPart.length > untitledTextTitleLength) ? currNestedPart.substring(0, untitledTextTitleLength) : currNestedPart,
                     text: currNestedPart,
                     parentCatalogId: 0,
                     orderInParentCatalog: nestingOrderStack[0].catalogAttachments.length + nestingOrderStack[0].childrenNodes.length + 1

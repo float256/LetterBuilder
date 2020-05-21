@@ -1,20 +1,23 @@
 ﻿using LetterBuilderCore.Models;
 using LetterBuilderCore.Services;
+using LetterBuilderCore.Services.DAO;
 using LetterBuilderWebAdmin.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetterBuilderWebAdmin.Models
+namespace LetterBuilderWebAdmin.Services
 {
-    public class ParsedCatalogsSaver
+    public class ParsedCatalogsSaver : IParsedCatalogsSaver
     {
-        private IDirectorySystemFacade _directorySystemFacade;
+        private ICatalogDataAccess _catalogDataAccess;
+        private ITextBlockDataAccess _textBlockDataAccess;
 
-        public ParsedCatalogsSaver(IDirectorySystemFacade directorySystemFacade)
+        public ParsedCatalogsSaver(ICatalogDataAccess catalogDataAccess, ITextBlockDataAccess textBlockDataAccess)
         {
-            _directorySystemFacade = directorySystemFacade;
+            _catalogDataAccess = catalogDataAccess;
+            _textBlockDataAccess = textBlockDataAccess;
         }
 
         /// <summary>
@@ -32,7 +35,7 @@ namespace LetterBuilderWebAdmin.Models
             foreach (TextBlock item in catalogNode.CatalogAttachments)
             {
                 item.ParentCatalogId = catalogNode.Id;
-                _directorySystemFacade.Add(item);
+                _textBlockDataAccess.Add(item);
             }
             while (catalogsOnCurrentDepthLevel.Count > 0)
             {
@@ -45,7 +48,7 @@ namespace LetterBuilderWebAdmin.Models
                         OrderInParentCatalog = node.Order,
                         ParentCatalogId = node.ParentCatalogId
                     };
-                    _directorySystemFacade.Add(catalog);
+                    _catalogDataAccess.Add(catalog);
                     node.Id = catalog.Id;
                     foreach (CatalogParserNodeDto item in node.ChildrenNodes)
                     {
@@ -55,7 +58,7 @@ namespace LetterBuilderWebAdmin.Models
                     foreach (TextBlock item in node.CatalogAttachments)
                     {
                         item.ParentCatalogId = node.Id;
-                        _directorySystemFacade.Add(item);
+                        _textBlockDataAccess.Add(item);
                     }
                 }
                 catalogsOnCurrentDepthLevel = catalogsOnNextDepthLevel;
