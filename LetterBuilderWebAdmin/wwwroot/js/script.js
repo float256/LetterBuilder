@@ -42,11 +42,10 @@ function buildTree() {
         $('#parseErrorSpan').text(parseErrors);
     } else {
         let treeStructure = parseTreeFromString(text);
-        let catalogIndex = Number(window.location.href.match(/\d+/));
-        if (catalogIndex === null) {
+        let catalogIndex = Number(window.location.href.split('/').slice(-1)[0]);
+        if (isNaN(catalogIndex)) {
             catalogIndex = 0;
         }
-        console.log(treeStructure);
         $.ajax({
             type: 'POST',
             dataType: 'JSON',
@@ -67,7 +66,7 @@ function checkParseTextStructure(parseStr) {
     if (parseStr.trim() === '') {
         return 'Поле не заполнено'
     }
-    let headingBlocks = parseStr.match(/{if[а-яА-ЯёЁ\w\s]*}|{\/if[а-яА-ЯёЁ\w\s]*}/g);
+    let headingBlocks = parseStr.match(/{if.*?}|{\/if.*?}/g);
     let nestingOrderStack = [];
     let depthLevel = 0;
     let errorText = "";
@@ -83,7 +82,6 @@ function checkParseTextStructure(parseStr) {
                 errorText = `В тексте есть лишний закрывающий if '${currName}'`;
                 return false;
             } else if (currName != nestingOrderStack[0]) {
-                nestingOrderStack[0] + '12';
                 errorText = `Обнаружен незакрытый if '${nestingOrderStack[0]}'`;
                 return false;
             }
@@ -97,9 +95,13 @@ function checkParseTextStructure(parseStr) {
 }
 
 function parseTreeFromString(parseStr) {
-    let headingBlocks = parseStr.match(/{if[а-яА-ЯёЁ\w\s]*}|{\/if[а-яА-ЯёЁ\w\s]*}/g);
+    let headingBlocks = parseStr.match(/{if.*?}|{\/if.*?}/g);
+    let catalogIndex = Number(window.location.href.split('/').slice(-1)[0]);
+    if (isNaN(catalogIndex)) {
+        catalogIndex = 0;
+    }
     let result = {
-        id: Number(window.location.href.match(/\d+/)),
+        id: catalogIndex,
         name: "",
         order: 0,
         childrenNodes: [],
@@ -110,12 +112,11 @@ function parseTreeFromString(parseStr) {
         let currBlockName = getBlockName(headingBlocks[i]);
         let currNestedPart = parseStr.split(headingBlocks[i])[0].trim();
         let blockType = getBlockType(headingBlocks[i]);
-        parseStr = parseStr.split(headingBlocks[i]).splice(1).join("");
+        parseStr = parseStr.substring(parseStr.indexOf(headingBlocks[i]) + headingBlocks[i].length);
 
         // Обработка необрамленных текстов
         if (((i !== 0) && !(getBlockType(headingBlocks[i - 1]) == "OpeningBlock" &&
-            getBlockType(headingBlocks[i]) == "ClosingBlock")) || i == 0)
-        {
+            getBlockType(headingBlocks[i]) == "ClosingBlock")) || i == 0) {
             if (currNestedPart !== "") {
                 let currTextBlock = {
                     id: 0,
@@ -127,7 +128,6 @@ function parseTreeFromString(parseStr) {
                 nestingOrderStack[0].catalogAttachments.push(currTextBlock);
             }
         }
-
         if (blockType === "OpeningBlock") {
 
             // Если текущий if относится к блоку каталога
@@ -145,8 +145,7 @@ function parseTreeFromString(parseStr) {
         } else {
 
             // Если текущий if относится к блоку текстового файла
-            if ((getBlockName(headingBlocks[i - 1]) === currBlockName) && (getBlockType(headingBlocks[i]) === "ClosingBlock") &&
-                (getBlockType(headingBlocks[i - 1]) === "OpeningBlock")) {
+            if ((getBlockName(headingBlocks[i - 1]) === currBlockName) && (getBlockType(headingBlocks[i - 1]) === "OpeningBlock")) {
                 let currTextBlock = {
                     id: 0,
                     name: currBlockName,
