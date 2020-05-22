@@ -34,6 +34,7 @@
                                 <input type="hidden" value="@item.Id" name="id" />
                                 <input type="hidden" value="1" name="action" />
                             </form>
+                            <a class="dropdown-item" href="@Url.Action("CatalogParser", "Catalog", new { id = item.Id })">Импортировать каталоги</a>
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetterBuilderCore.Services;
 using LetterBuilderCore.Services.DAO;
+using LetterBuilderWebAdmin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,7 @@ namespace LetterBuilderWebAdmin
             services.AddScoped<ICatalogDataAccess, CatalogDataAccess>(x => new CatalogDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>(x => new TextBlockDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<IDirectorySystemFacade, DirectorySystemFacade>();
+            services.AddScoped<IParsedCatalogsSaver, ParsedCatalogsSaver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

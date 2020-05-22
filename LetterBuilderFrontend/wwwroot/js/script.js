@@ -46,7 +46,6 @@ function createCatalogCollapse(catalogInfo) {
     let menuItem = $('<div/>', {
         'class': 'row custom-control custom-switch py-2 menu-item',
     }).appendTo(menuCollapseItem);
-
     $('<input>', {
         type: 'checkbox',
         'class': 'custom-control-input catalog-input',
@@ -84,7 +83,6 @@ function buildNavbarMenu(requestResult, parentElement) {
             'class': 'dropdown-menu rounded-0',
             'aria-labelledby': 'navbar-section-' + catalogInfo['id']
         }).appendTo(navbarSection);
-
         $.each(catalogInfo['childrenNodes'], function (_, subcatalogInfo) {
             $('<a/>', {
                 text: subcatalogInfo['name'].toUpperCase(),

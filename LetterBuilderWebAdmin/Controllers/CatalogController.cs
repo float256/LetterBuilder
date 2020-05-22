@@ -7,16 +7,19 @@ using Microsoft.Extensions.Configuration;
 using LetterBuilderCore.Services;
 using LetterBuilderCore.Models;
 using LetterBuilderWebAdmin.Dto;
+using LetterBuilderWebAdmin.Services;
 
 namespace LetterBuilderWebAdmin.Controllers
 {
     public class CatalogController : Controller
     {
         private IDirectorySystemFacade _directorySystemFacade;
+        private IParsedCatalogsSaver _parsedCatalogsSaver;
 
-        public CatalogController(IDirectorySystemFacade directorySystemFacade)
+        public CatalogController(IDirectorySystemFacade directorySystemFacade, IParsedCatalogsSaver parsedCatalogsSaver)
         {
             _directorySystemFacade = directorySystemFacade;
+            _parsedCatalogsSaver = parsedCatalogsSaver;
         }
 
         [HttpGet]
@@ -149,6 +152,20 @@ namespace LetterBuilderWebAdmin.Controllers
                 ParentCatalogId = catalogWithFieldVerifying.ParentCatalogId
             });
             return RedirectToAction("Index", "Catalog", new { id = catalogWithFieldVerifying.ParentCatalogId });
+        }
+
+        [HttpGet]
+        public IActionResult CatalogParser(int id)
+        {
+            return View(id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddParseCatalogs([FromBody] CatalogParserNodeDto catalogNode)
+        {
+            _parsedCatalogsSaver.AddCatalogTree(catalogNode);
+            return RedirectToAction("Index", "Catalog", new { id = catalogNode.Id });
         }
     }
 }
