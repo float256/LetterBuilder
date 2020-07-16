@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "LetterBuilder": {
-      "commandName": "Project",
-      "commandLineArgs": "--showtree"
-    }
-  }
-}
