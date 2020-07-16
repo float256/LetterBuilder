@@ -2,9 +2,9 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.10\build\Microsoft.VisualStudio.Azure.Fabric.Application.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.10\build\Microsoft.VisualStudio.Azure.Fabric.Application.props')" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>34e67456-65ca-45b2-b46a-4513a17d253d</ProjectGuid>
+    <ProjectGuid>1c088f50-d8f7-4fb8-baa9-0a4fdef697c2</ProjectGuid>
     <ProjectVersion>2.5</ProjectVersion>
-    <MinToolsVersion>2.1</MinToolsVersion>
+    <MinToolsVersion>1.5</MinToolsVersion>
     <SupportedMSBuildNuGetPackageVersion>1.6.10</SupportedMSBuildNuGetPackageVersion>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
@@ -33,10 +33,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LetterBuilderFrontend\LetterBuilderFrontend.csproj">
-      <ServiceLaunchUrl>http://{ContainerIpAddress}:{ContainerPort}/</ServiceLaunchUrl>
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
+    </ProjectReference>
+    <ProjectReference Include="..\LetterBuilderWebAdmin\LetterBuilderWebAdmin.csproj">
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
     </ProjectReference>
     <ProjectReference Include="..\LetterBuilderWebApi\LetterBuilderWebApi.csproj">
-      <ServiceLaunchUrl>http://{ContainerIpAddress}:{ContainerPort}/api/catalog/subcatalogs/0</ServiceLaunchUrl>
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/</ServiceLaunchUrl>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
