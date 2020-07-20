@@ -7,7 +7,7 @@ $dbSettings = @{
         "connStrName"   = "default";
         "dir"           = "db-migrations";
         "path"          = "sf-package\LetterBuilderWebAdminPkg\Code";
-        "localPath"     = "LetterBuilderWebApi";
+        "localPath"     = "LetterBuilderWebAdmin";
     };
 };
 
