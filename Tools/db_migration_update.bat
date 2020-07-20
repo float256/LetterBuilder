@@ -4,19 +4,9 @@ SET ENV=%1
 IF '%ENV%'=='' (GOTO usage)
 
 ECHO --------------------------------
-ECHO   Updating PmsStorage DB
+ECHO   Updating LetterBuilderWebAdmin DB
 ECHO --------------------------------
-call db_migration %ENV% update PmsStorage
-
-ECHO --------------------------------
-ECHO   Updating PmsStorageRawReservations DB
-ECHO --------------------------------
-call db_migration %ENV% update PmsStorageRawReservations
-
-ECHO --------------------------------
-ECHO   Updating PmsStorageSync DB
-ECHO --------------------------------
-call db_migration %ENV% update PmsStorageSync
+call db_migration %ENV% update LetterBuilderWebAdmin
 
 pause
 

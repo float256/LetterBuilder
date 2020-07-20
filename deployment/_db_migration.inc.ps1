@@ -11,14 +11,14 @@ $dbSettings = @{
     };
 };
 
-function GetUtilParams($settingsName) {
+function GetUtilParams($env, $settingsName) {
     $connStrName    = $dbSettings[$settingsName].connStrName;
     $dir            = $dbSettings[$settingsName].dir;
     $path           = $dbSettings[$settingsName].path;
 
-    $file = Get-ChildItem -Path ($basePath + "\" + $path) | where-object { $_.Name -eq "appsettings.json"}
+    $file = Get-ChildItem -Path ($basePath + "\" + $path) | where-object { $_.Name -eq "appsettings." + $env + ".json"}
     if ( -not $file ) {
-        $file = Get-ChildItem -Path ($basePath + "\" + $path) | where-object { $_.Name -eq "sharedSettings.json"}
+        $file = Get-ChildItem -Path ($basePath + "\" + $path) | where-object { $_.Name -eq "sharedSettings." + $env +".json"}
     }
     $file = $basePath + "\" + $path + "\" + $file
     if ( -not $file ) {
@@ -42,8 +42,8 @@ function GetUtilParams($settingsName) {
     };
 }
 
-function ExecDbUpdate($settingsName, $prePost) {
-    $utilParams = GetUtilParams $settingsName;
+function ExecDbUpdate($env, $settingsName, $prePost) {
+    $utilParams = GetUtilParams $env $settingsName;
 
     $connStr = $utilParams["connStr"];
     $dir     = $utilParams["dir"];
@@ -56,8 +56,8 @@ function ExecDbUpdate($settingsName, $prePost) {
     }
 }
 
-function ExecMigrationInfo($settingsName) {
-    $utilParams = GetUtilParams $settingsName;
+function ExecMigrationInfo($env, $settingsName) {
+    $utilParams = GetUtilParams $env $settingsName;
 
     $connStr = $utilParams["connStr"];
     $dir     = $utilParams["dir"];
@@ -70,8 +70,8 @@ function ExecMigrationInfo($settingsName) {
     }
 }
 
-function ExecMark($settingsName, $file) {
-    $utilParams = GetUtilParams $settingsName;
+function ExecMark($env, $settingsName, $file) {
+    $utilParams = GetUtilParams $env $settingsName;
 
     $connStr = $utilParams["connStr"];
     $dir     = $utilParams["dir"];

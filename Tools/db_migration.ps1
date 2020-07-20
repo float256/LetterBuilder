@@ -10,7 +10,7 @@ param(
         [String]
         $Command,
         [Parameter(Mandatory=$True)]
-        [ValidateSet('PmsStorage','PmsStorageRawReservations','PmsStorageSync')]
+        [ValidateSet('LetterBuilderWebAdmin')]
         [String]
         $SettingsName,
         [Parameter(Mandatory=$False)]
@@ -24,7 +24,7 @@ $currDir = Split-Path $MyInvocation.MyCommand.Path -Parent
 function GetUtilParams($env, $settingsName) {
     $connStrName    = $dbSettings[$settingsName].connStrName;
     $dir            = $dbSettings[$settingsName].dir;
-    $path           = $dbSettings[$settingsName].localPath;
+    $path           = $dbSettings[$settingsName].path;
 
     $appEnvConfigurationFilePath = "$basePath\$path\appsettings.$env.json";
     $sharedEnvConfigurationFilePath = "$basePath\SharedConfiguration\sharedSettings.$env.json";

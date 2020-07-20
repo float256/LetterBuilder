@@ -21,6 +21,12 @@ $visualStudioVersion = "15.0";
 $nugetSource = "https://www.nuget.org/api/v2/"
 
 function CreatePackage {
+    $build = "$basePath/.nuget/nuget restore $basePath  -source $nugetSource"
+    cmd.exe /c $build
+
+    if ($LASTEXITCODE -ne "0") {
+        throw $LASTEXITCODE
+    }
 
     $build = "dotnet restore $basePath --packages $basePath\packages\ --source $nugetSource"
     cmd.exe /c $build
