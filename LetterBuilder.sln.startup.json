@@ -1,0 +1,21 @@
+{
+  "Version": 3,
+  "ListAllProjects": false,
+  "MultiProjectConfigurations": {
+    "Run All Projects": {
+      "Projects": {
+        "LetterBuilderWebAdmin": {
+          "StartProject": "true"
+        },
+        "LetterBuilderWebApi": {
+          "StartProject": "true"
+        },
+        "LetterBuilderFrontend": {
+          "StartProject": "true"
+        }
+      },
+      "SolutionConfiguration": "Debug",
+      "SolutionPlatform": "x64"
+    }
+  }
+}

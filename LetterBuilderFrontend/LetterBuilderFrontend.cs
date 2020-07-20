@@ -11,6 +11,7 @@ using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace LetterBuilderFrontend
 {
@@ -41,6 +42,10 @@ namespace LetterBuilderFrontend
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext))
+                                    .ConfigureAppConfiguration((builderContext, config) =>
+                                    {
+                                        config.AddJsonFile($"appsettings.{builderContext.HostingEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+                                    })
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
