@@ -5,12 +5,14 @@
 }
 
 function sortDirectoryElements() {
-    let directoryElems = $('.folder-content').find('.row[data-order]');
+    let folderContent = $('.folder-content');
+    let directoryElems = folderContent.find('.row[data-order]');
     if (directoryElems.length > 0) {
         directoryElems.sort(function (a, b) {
             return +a.dataset.order - +b.dataset.order;
         }).appendTo($('.folder-content'));
     }
+    folderContent.removeClass('d-none');
 }
 
 function removeMoveButtonsFromEdgeElements() {
@@ -30,7 +32,6 @@ function loadTextEditor() {
         $('#CatalogText').val(CKEDITOR.instances.CatalogText.getData());
         $('#CatalogText').text(null);
     });
-
     $('#CatalogText').removeAttr('class');
     $('#CatalogText').addClass('d-block invisible h-0');
 }

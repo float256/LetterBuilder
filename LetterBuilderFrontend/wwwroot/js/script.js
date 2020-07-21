@@ -2,8 +2,10 @@
 
 function buildSidebarMenu(requestResult, parentElement) {
     parentElement.empty();
+    parentElement.hide();
     $('#section-name').text(requestResult['name']);
     buildTextBlockMenu(requestResult, parentElement);
+    parentElement.show();
 }
 
 function buildTextBlockMenu(requestResult, parentElement) {
