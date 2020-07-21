@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System;
 using System.Diagnostics;
@@ -11,7 +13,20 @@ namespace LetterBuilderWebApi
         /// <summary>
         /// This is the entry point of the service host process.
         /// </summary>
-        private static void Main()
+        private static void Main(string[] args)
+        {
+            string appWorkingMode = Environment.GetEnvironmentVariable("APP_WORKING_MODE");
+            if (appWorkingMode == "Console")
+            {
+                StartWebHost(args);
+            }
+            else
+            {
+                StartService();
+            }
+        }
+
+        private static void StartService()
         {
             try
             {
@@ -33,6 +48,16 @@ namespace LetterBuilderWebApi
                 ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
                 throw;
             }
+        }
+
+        private static void StartWebHost(string[] args)
+        {
+            IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+            hostBuilder.Build().Run();
         }
     }
 }

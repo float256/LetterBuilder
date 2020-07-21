@@ -44,7 +44,7 @@ namespace LetterBuilderWebApi
                                             .AddSingleton<StatelessServiceContext>(serviceContext))
                                     .ConfigureAppConfiguration((builderContext, config) =>
                                     {
-                                        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                                        config.AddJsonFile($"appsettings.{builderContext.HostingEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true);
                                     })
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
