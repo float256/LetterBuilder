@@ -6,7 +6,7 @@
 <div class="col-9 mb-5">
     @if (Model.Catalogs.Count > 0 || Model.TextBlocks.Count > 0)
     {
-        <div class="folder-content mt-4 container">
+        <div class="folder-content mt-4 container d-none">
             @foreach (CatalogDto item in Model.Catalogs)
             {
                 <div class="row" data-order=@item.OrderInParentCatalog>
