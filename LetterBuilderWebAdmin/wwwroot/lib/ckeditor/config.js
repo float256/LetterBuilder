@@ -9,5 +9,6 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.uiColor = '#AADC6E';
 
 	config.removeButtons = 'Underline,JustifyCenter,Form,Checkbox,Radio,TextField,Textarea,Select,ImageButton,Button,HiddenField,Language,Flash';
-	config.language = 'en';
+	config.language = 'ru';
+	config.extraPlugins = 'textindent';
 };
