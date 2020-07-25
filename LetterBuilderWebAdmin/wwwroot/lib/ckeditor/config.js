@@ -3,6 +3,10 @@
  * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
  */
 
+function getRequestVerificationToken() {
+	return $('[name=__RequestVerificationToken]')[0].value
+}
+
 CKEDITOR.editorConfig = function( config ) {
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
@@ -10,5 +14,9 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.removeButtons = 'Underline,JustifyCenter,Form,Checkbox,Radio,TextField,Textarea,Select,ImageButton,Button,HiddenField,Language,Flash';
 	config.language = 'ru';
-	config.extraPlugins = 'textindent';
+	config.extraPlugins = 'textindent,uploadimage';
+	config.uploadUrl = '/Admin/Picture/Upload';
+	config.fileTools_requestHeaders = {
+		'RequestVerificationToken': getRequestVerificationToken()
+    }
 };
