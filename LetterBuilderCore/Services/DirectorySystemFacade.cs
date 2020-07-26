@@ -114,35 +114,15 @@ namespace LetterBuilderCore.Services
         }
 
         /// <summary>
-        /// Метод добавляет в базу данных изображений с указанными в textBlock значениями. 
+        /// Метод добавляет в базу данных изображение с указанными в textBlock значениями. 
         /// Порядковый номер элемента вычисляется внутри метода
         /// </summary>
         /// <param name="picture">Объект типа Picture</param>
         public void Add(Picture picture)
         {
-            ResizePicture(picture);
+            PictureResizer pictureResizer = new PictureResizer();
+            pictureResizer.ResizePicture(picture);
             _pictureDataAccess.Add(picture);
-        }
-
-        private void ResizePicture(Picture picture)
-        {
-            Bitmap initialPicture;
-            using (var memoryStream = new MemoryStream(picture.BinaryData))
-            {
-                initialPicture = new Bitmap(memoryStream);
-            }
-            while (picture.BinaryData.Length > Constants.ImageMaxSize)
-            {
-                Bitmap resizedPicture = new Bitmap(initialPicture, 
-                        Convert.ToInt32(initialPicture.Width * Constants.ScaleFactor),
-                        Convert.ToInt32(initialPicture.Height * Constants.ScaleFactor));
-                using (var memoryStream = new MemoryStream())
-                {
-                    resizedPicture.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    picture.BinaryData = memoryStream.ToArray();
-                }
-                initialPicture = resizedPicture;
-            }
         }
 
         /// <summary>
@@ -248,8 +228,7 @@ namespace LetterBuilderCore.Services
         }
 
         /// <summary>
-        /// Данный метод удаляет изобра из базы данных.
-        /// значение OrderInParentCatalog
+        /// Данный метод удаляет изображение из базы данных.
         /// </summary>
         /// <param name="id">Id значения, которое нужно удалить</param>
         public void DeletePicture(int id)

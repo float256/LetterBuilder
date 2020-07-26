@@ -25,23 +25,16 @@ namespace LetterBuilderWebAdmin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Upload(IFormFile upload)
         {
-            byte[] binaryData;
-            using (var bitmap = new Bitmap(upload.OpenReadStream()))
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    binaryData = memoryStream.ToArray();
-                }
-            }
-            Picture picture = new Picture { BinaryData = binaryData };
+            PictureResizer pictureResizer = new PictureResizer();
+            Bitmap bitmap = new Bitmap(upload.OpenReadStream());
+            Picture picture = new Picture { BinaryData = pictureResizer.GetPictureBinaryData(bitmap) };
             _directorySystemFacade.Add(picture);
-            return Json(new
+            return Json(new Dictionary<string, string>
             {
-                uploaded = true,
-                url = "/Admin/Picture/Get/" + picture.Id.ToString(),
-                width = "60%",
-                height = "auto"
+                { "uploaded", "true" },
+                { "url", $"/Admin/Picture/Get/{picture.Id.ToString()}" },
+                { "width", "100%" },
+                { "height", "auto" },
             });
         }
 
