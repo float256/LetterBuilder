@@ -28,6 +28,21 @@ function removeMoveButtonsFromEdgeElements() {
 
 function loadTextEditor() {
     CKEDITOR.replace('CatalogText');
+    CKEDITOR.on('instanceReady', function (ev) {
+        ev.editor.dataProcessor.htmlFilter.addRules({
+            elements: {
+                img: function (el) {
+                    var style = el.attributes.style;
+
+                    if (style) {
+                        el.attributes.style = style + ';max-width:100%'
+                    } else {
+                        el.attributes.style = 'max-width:100%'
+                    }
+                }
+            }
+        });
+    });
     CKEDITOR.instances.CatalogText.on('change', function () {
         $('#CatalogText').val(CKEDITOR.instances.CatalogText.getData());
         $('#CatalogText').text(null);

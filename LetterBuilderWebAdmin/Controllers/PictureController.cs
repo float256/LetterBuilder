@@ -25,7 +25,7 @@ namespace LetterBuilderWebAdmin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Upload(IFormFile upload)
         {
-            PictureResizer pictureResizer = new PictureResizer();
+            IPictureResizer pictureResizer = new PictureResizer();
             Bitmap bitmap = new Bitmap(upload.OpenReadStream());
             Picture picture = new Picture { BinaryData = pictureResizer.GetPictureBinaryData(bitmap) };
             _directorySystemFacade.Add(picture);
@@ -33,7 +33,7 @@ namespace LetterBuilderWebAdmin.Controllers
             {
                 { "uploaded", "true" },
                 { "url", $"/Admin/Picture/Get/{picture.Id.ToString()}" },
-                { "width", "100%" },
+                { "width", "auto" },
                 { "height", "auto" },
             });
         }

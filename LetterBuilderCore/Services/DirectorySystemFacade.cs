@@ -120,7 +120,7 @@ namespace LetterBuilderCore.Services
         /// <param name="picture">Объект типа Picture</param>
         public void Add(Picture picture)
         {
-            PictureResizer pictureResizer = new PictureResizer();
+            IPictureResizer pictureResizer = new PictureResizer();
             pictureResizer.ResizePicture(picture);
             _pictureDataAccess.Add(picture);
         }

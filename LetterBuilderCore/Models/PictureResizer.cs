@@ -9,7 +9,7 @@ using System.Text;
 
 namespace LetterBuilderCore.Models
 {
-    public class PictureResizer
+    public class PictureResizer: IPictureResizer
     {
         /// <summary>
         /// Данный метод принимает изображение и сжимает его до размера, 
