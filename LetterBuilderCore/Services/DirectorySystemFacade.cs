@@ -16,12 +16,14 @@ namespace LetterBuilderCore.Services
         private ITextBlockDataAccess _textDataAccess;
         private ICatalogDataAccess _catalogDataAccess;
         private IPictureDataAccess _pictureDataAccess;
+        private IPictureResizer _pictureResizer;
 
-        public DirectorySystemFacade(ITextBlockDataAccess textDataAccess, ICatalogDataAccess catalogDataAccess, IPictureDataAccess pictureDataAccess)
+        public DirectorySystemFacade(ITextBlockDataAccess textDataAccess, ICatalogDataAccess catalogDataAccess, IPictureDataAccess pictureDataAccess, IPictureResizer pictureResizer)
         {
             _textDataAccess = textDataAccess;
             _catalogDataAccess = catalogDataAccess;
             _pictureDataAccess = pictureDataAccess;
+            _pictureResizer = pictureResizer;
         }
 
         /// <summary>
@@ -120,8 +122,7 @@ namespace LetterBuilderCore.Services
         /// <param name="picture">Объект типа Picture</param>
         public void Add(Picture picture)
         {
-            IPictureResizer pictureResizer = new PictureResizer();
-            pictureResizer.ResizePicture(picture);
+            _pictureResizer.ResizePicture(picture);
             _pictureDataAccess.Add(picture);
         }
 

@@ -16,18 +16,19 @@ namespace LetterBuilderWebAdmin.Controllers
     public class PictureController : Controller
     {
         private IDirectorySystemFacade _directorySystemFacade;
-        public PictureController(IDirectorySystemFacade directorySystemFacade)
+        private IPictureResizer _pictureResizer;
+        public PictureController(IDirectorySystemFacade directorySystemFacade, IPictureResizer pictureResizer)
         {
             _directorySystemFacade = directorySystemFacade;
+            _pictureResizer = pictureResizer;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upload(IFormFile upload)
         {
-            IPictureResizer pictureResizer = new PictureResizer();
             Bitmap bitmap = new Bitmap(upload.OpenReadStream());
-            Picture picture = new Picture { BinaryData = pictureResizer.GetPictureBinaryData(bitmap) };
+            Picture picture = new Picture { BinaryData = _pictureResizer.GetPictureBinaryData(bitmap) };
             _directorySystemFacade.Add(picture);
             return Json(new Dictionary<string, string>
             {

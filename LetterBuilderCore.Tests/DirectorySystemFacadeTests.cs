@@ -40,8 +40,10 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<Catalog> expectedCatalogs = new List<Catalog>
             {
                 new Catalog{ Id = 1, Name = "Catalog1", OrderInParentCatalog = 1, ParentCatalogId = 0 },
@@ -99,8 +101,10 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<TextBlock> expectedTextBlocks = new List<TextBlock>
             {
                 new TextBlock{ Id = 2, Name = "TextBlock1", OrderInParentCatalog = 1, ParentCatalogId = 0, Text = "Text1" },
@@ -159,9 +163,11 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
 
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<Catalog> expectedCatalogs = new List<Catalog>
             {
                 new Catalog{ Id = 1, Name = "Catalog1", OrderInParentCatalog = 8, ParentCatalogId = 100 },
@@ -219,9 +225,11 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
 
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<TextBlock> exprectedTextBlocks = new List<TextBlock>
             {
                 new TextBlock{ Id = 2, Name = "TextBlock1", OrderInParentCatalog = 7, ParentCatalogId = 100, Text = "Text1" },
@@ -278,9 +286,11 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
 
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<Catalog> expectedCatalogs = new List<Catalog>
             {
                 new Catalog{ Id = 1, Name = "Catalog1", OrderInParentCatalog = 1, ParentCatalogId = 4 },
@@ -350,9 +360,11 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
 
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<Catalog> expectedCatalogs = new List<Catalog>
             {
                 new Catalog{ Id = 1, Name = "Catalog1", OrderInParentCatalog = 1, ParentCatalogId = 4 },
@@ -422,9 +434,11 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
 
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<Catalog> expectedCatalogs = new List<Catalog>
             {
                 new Catalog{ Id = 1, Name = "Catalog1", OrderInParentCatalog = 1, ParentCatalogId = 4 },
@@ -494,9 +508,11 @@ namespace LetterBuilderCore.Tests
 
             Mock<IPictureDataAccess> pictureDataAccessMock = new Mock<IPictureDataAccess>();
 
+            Mock<IPictureResizer> pictureResuzerMock = new Mock<IPictureResizer>();
+
             // Act
 
-            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object);
+            DirectorySystemFacade directorySystemFacade = new DirectorySystemFacade(textDataAccessMock.Object, catalogDataAccessMock.Object, pictureDataAccessMock.Object, pictureResuzerMock.Object);
             List<Catalog> expectedCatalogs = new List<Catalog>
             {
                 new Catalog{ Id = 1, Name = "Catalog1", OrderInParentCatalog = 1, ParentCatalogId = 4 },
