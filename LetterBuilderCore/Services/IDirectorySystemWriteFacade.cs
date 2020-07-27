@@ -9,8 +9,10 @@ namespace LetterBuilderCore.Services
     {
         void Add(Catalog catalog);
         void Add(TextBlock catalog);
+        void Add(Picture picture);
         void DeleteTextBlock(int id);
         void DeleteCatalog(int id);
+        void DeletePicture(int id);
         void UpdateValue(TextBlock textBlock);
         void UpdateValue(Catalog catalog);
         void UpdateOrder(TextBlock textBlock, OrderAction orderAction);

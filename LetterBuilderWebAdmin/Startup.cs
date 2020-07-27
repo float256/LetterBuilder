@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LetterBuilderCore.Models;
 using LetterBuilderCore.Services;
 using LetterBuilderCore.Services.DAO;
 using LetterBuilderWebAdmin.Services;
@@ -33,6 +34,8 @@ namespace LetterBuilderWebAdmin
             services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
             services.AddScoped<ICatalogDataAccess, CatalogDataAccess>(x => new CatalogDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>(x => new TextBlockDataAccess(Configuration.GetConnectionString("default")));
+            services.AddScoped<IPictureDataAccess, PictureDataAccess>(x => new PictureDataAccess(Configuration.GetConnectionString("default")));
+            services.AddScoped<IPictureResizer, PictureResizer>(x => new PictureResizer());
             services.AddScoped<IDirectorySystemFacade, DirectorySystemFacade>();
             services.AddScoped<IParsedCatalogsSaver, ParsedCatalogsSaver>();
         }

@@ -29,6 +29,7 @@ namespace LetterBuilderWebApi
             services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
             services.AddScoped<ICatalogDataAccess, CatalogDataAccess>(x => new CatalogDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<ITextBlockDataAccess, TextBlockDataAccess>(x => new TextBlockDataAccess(Configuration.GetConnectionString("default")));
+            services.AddScoped<IPictureDataAccess, PictureDataAccess>(x => new PictureDataAccess(Configuration.GetConnectionString("default")));
             services.AddScoped<IDirectorySystemReadFacade, DirectorySystemFacade>();
         }
 

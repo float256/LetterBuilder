@@ -11,6 +11,7 @@ namespace LetterBuilderCore.Services
         List<TextBlock> GetAllTextBlocks();
         TextBlock GetTextBlockById(int id);
         Catalog GetCatalogById(int id);
+        Picture GetPictureById(int id);
         List<Catalog> GetSubcatalogs(int id);
         List<TextBlock> GetCatalogAttachments(int id);
     }

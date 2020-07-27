@@ -1,7 +1,10 @@
 ﻿using LetterBuilderCore.Models;
 using LetterBuilderCore.Services.DAO;
+using LetterBuilderCore.Services;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -12,11 +15,15 @@ namespace LetterBuilderCore.Services
     {
         private ITextBlockDataAccess _textDataAccess;
         private ICatalogDataAccess _catalogDataAccess;
+        private IPictureDataAccess _pictureDataAccess;
+        private IPictureResizer _pictureResizer;
 
-        public DirectorySystemFacade(ITextBlockDataAccess textDataAccess, ICatalogDataAccess catalogDataAccess)
+        public DirectorySystemFacade(ITextBlockDataAccess textDataAccess, ICatalogDataAccess catalogDataAccess, IPictureDataAccess pictureDataAccess, IPictureResizer pictureResizer)
         {
             _textDataAccess = textDataAccess;
             _catalogDataAccess = catalogDataAccess;
+            _pictureDataAccess = pictureDataAccess;
+            _pictureResizer = pictureResizer;
         }
 
         /// <summary>
@@ -60,6 +67,17 @@ namespace LetterBuilderCore.Services
         }
 
         /// <summary>
+        /// Данный метод возвращает запись изображения из базы данных по Id
+        /// </summary>
+        /// <param name="id">Id записи</param>
+        /// <returns>Объект класса Picture, содержащий значения для указанного
+        /// изображения из базы данных. Если записи нет, то возвращается объект со значениями по-умолчанию</returns>
+        public Picture GetPictureById(int id)
+        {
+            return _pictureDataAccess.GetById(id);
+        }
+
+        /// <summary>
         /// Метод добавляет в базу данных каталог с указанными в catalog значениями. Порядковый номер элемента вычисляется внутри метода
         /// </summary>
         /// <param name="catalog">Объект типа Catalog</param>
@@ -95,6 +113,17 @@ namespace LetterBuilderCore.Services
             textBlock.OrderInParentCatalog = Math.Max(maxCatalogOrder, maxTextBlockOrder) + 1;
 
             _textDataAccess.Add(textBlock);
+        }
+
+        /// <summary>
+        /// Метод добавляет в базу данных изображение с указанными в textBlock значениями. 
+        /// Порядковый номер элемента вычисляется внутри метода
+        /// </summary>
+        /// <param name="picture">Объект типа Picture</param>
+        public void Add(Picture picture)
+        {
+            _pictureResizer.ResizePicture(picture);
+            _pictureDataAccess.Add(picture);
         }
 
         /// <summary>
@@ -192,12 +221,20 @@ namespace LetterBuilderCore.Services
 
         /// <summary>
         /// Данный метод удаляет текстовый файл из базы данных.
-        /// значение OrderInParentCatalog
         /// </summary>
         /// <param name="id">Id значения, которое нужно удалить</param>
         public void DeleteTextBlock(int id)
         {
             _textDataAccess.Delete(id);
+        }
+
+        /// <summary>
+        /// Данный метод удаляет изображение из базы данных.
+        /// </summary>
+        /// <param name="id">Id значения, которое нужно удалить</param>
+        public void DeletePicture(int id)
+        {
+            _pictureDataAccess.Delete(id);
         }
 
         /// <summary>
